@@ -1,0 +1,45 @@
+name: mock-taxonomy
+channels:
+  - conda-forge
+  - bioconda
+  - https://packages.qiime2.org/qiime2/2024.10/amplicon/released
+  - defaults
+dependencies:
+  - python>=3.7
+  - pip
+  - conda-forge::ipykernel
+  - conda-forge::joblib=1.4.2
+  - conda-forge::tqdm=4.67.1
+  - conda-forge::csvkit=2.0.1
+  - bioconda::csvtk=0.29.0
+  - bioconda::seqkit=2.8.2
+  - conda-forge::scikit-bio=0.6.0
+  - conda-forge::biom-format=2.1.15
+  - conda-forge::pandas=2.2.2
+  - conda-forge::statsmodels=0.14.4
+  - conda-forge::bokeh=3.6.0
+  - conda-forge::seaborn=0.12.2
+  - conda-forge::matplotlib=3.8.4
+  - conda-forge::scikit-learn=1.4.2
+  - conda-forge::biom-format=2.1.15
+  - bioconda::art=2016.06.05
+  - q2-feature-classifier=2024.10.0
+  - q2-phylogeny=2024.10.0
+  - q2-alignment=2024.10.0
+  - q2-types=2024.10.0
+  - q2-taxa=2024.10.0
+  - q2-demux=2024.10.0
+  - q2-feature-table=2024.10.0
+  - rescript=2024.10.0
+  - q2-dada2=2024.10.0
+  - qiime2=2024.10.1
+  - q2cli=2024.10.1
+  - conda-forge::r-data.table=1.17.0
+  - conda-forge::r-tidyverse=2.0.0
+  - conda-forge::pytorch>=1.10.0
+  - conda-forge::numpy>=1.19.2
+  - conda-forge::psutil>=5.8.0
+  - conda-forge::setproctitle>=1.3.0
+  - pip:
+    - brokenaxes>=0.5.0
+    - /home/kardokhk/taxonova_bench/taxonova-main.zip
