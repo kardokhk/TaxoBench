@@ -1,0 +1,8 @@
+name: mock-taxonomy-3
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - conda-forge::pandas
+  - bioconda::spingo=1.3

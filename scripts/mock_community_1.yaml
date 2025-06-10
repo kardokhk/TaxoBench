@@ -1,4 +1,4 @@
-name: mock-taxonomy
+name: mock-taxonomy-1
 channels:
   - conda-forge
   - bioconda

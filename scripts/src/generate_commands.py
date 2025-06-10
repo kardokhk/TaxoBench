@@ -26,13 +26,16 @@ def build_taxonova_command(
 
     # train on reference sequence if model is not available
     if model_file is None:
+        # define model_file
+        model_file = join(reference_dir, 'greengens2_taxonova_model.pt')
         if not dry_run:
-            # save final qza file
-            cmd = ["taxonova", "training", "--verbose",
-                   "--full_data", 
-                   "--train_db", reference_seqs, 
-                   "--model_output", model_file]
-            subprocess.run(cmd, check=True)
+            if not exists(model_file):
+                # train a model
+                cmd = ["taxonova", "training", "--verbose",
+                       "--full_data", 
+                       "--train_db", reference_seqs, 
+                       "--model_output", model_file]
+                subprocess.run(cmd, check=True)
 
     # Build threshold arguments from param_dict
     threshold_args = ""
@@ -214,35 +217,38 @@ def build_naive_bayes_command(
 
     # Import reference sequences and taxonomy and build classifier
     if model_file is None:
+        # define model_file
+        model_file = join(reference_dir, 'greengens2_sklearn_classifier.qza')
         if not dry_run:
-            # Import seqs
-            ref_seqs = Artifact.import_data(
-                'FeatureData[Sequence]',
-                reference_dict['seqs']
-            )
-
-            # Import taxonomy
-            ref_taxonomy = Artifact.import_data(
-                'FeatureData[Taxonomy]',
-                reference_dict['taxa'],
-                'HeaderlessTSVTaxonomyFormat'
-            )
-
-            # Train classifier
-            classifier, evaluation, observed_taxonomy = (
-            evaluate_fit_classifier(
-                sequences = ref_seqs, 
-                taxonomy = ref_taxonomy,
-                reads_per_batch = 'auto',
-                n_jobs = n_threads,
-                confidence = 0.7
+            if not exists(model_file):
+                # Import seqs
+                ref_seqs = Artifact.import_data(
+                    'FeatureData[Sequence]',
+                    reference_dict['seqs']
                 )
-            )
 
-            # Save outputs
-            classifier.save(model_file)
-            evaluation.save(evaluation_file)
-            observed_taxonomy.save(prediction_file)
+                # Import taxonomy
+                ref_taxonomy = Artifact.import_data(
+                    'FeatureData[Taxonomy]',
+                    reference_dict['taxa'],
+                    'HeaderlessTSVTaxonomyFormat'
+                )
+
+                # Train classifier
+                classifier, evaluation, observed_taxonomy = (
+                evaluate_fit_classifier(
+                    sequences = ref_seqs, 
+                    taxonomy = ref_taxonomy,
+                    reads_per_batch = 'auto',
+                    n_jobs = n_threads,
+                    confidence = 0.70
+                    )
+                )
+
+                # Save outputs
+                evaluation.save(evaluation_file)
+                observed_taxonomy.save(prediction_file)
+                classifier.save(model_file)
 
     # assemble command
     cmd = (
@@ -262,4 +268,50 @@ def build_naive_bayes_command(
             f'"'
     )
         
+    return cmd
+
+
+
+def build_IdTaxa_command(
+    rep_seq_base, outdir, param_dict, reference_dict, 
+    scripts_dir, conda_env, n_threads, dry_run
+):
+    # reference database dir
+    reference_dir = join(os.path.dirname(reference_dict['seqs']), 'IdTaxa')
+    if not exists(reference_dir):
+        if not dry_run:
+            os.makedirs(reference_dir)
+
+    # build reference/input/output paths
+    input_sequences = f"{rep_seq_base}.fasta"
+    reference_seqs = reference_dict['merged']
+    model_file = reference_dict['model']
+    taxonomy_raw = join(outdir, 'taxonomy_raw.tsv')
+    taxonomy_final = join(outdir, 'taxonomy_final.tsv')
+
+    # train on reference sequence if model is not available
+    if model_file is None:
+        # define model_file
+        model_file = join(reference_dir, 'greengens2_IdTaxa_classifier.RDS')
+        if not dry_run:
+            if not exists(model_file):
+                # train a model
+                cmd = (
+                    f"conda run -p {conda_env} bash -c \""
+                    f"Rscript {scripts_dir}/train_with_idTaxa.R "
+                        f"{reference_seqs} {model_file} \""
+                )
+                subprocess.run(cmd, shell=True, check=True)
+
+    # assemble command
+    cmd = (
+        f"conda run -p {conda_env} bash -c \""
+        f"mkdir -p {outdir} && "
+        f"Rscript {scripts_dir}/classify_with_idTaxa.R "
+            f"{model_file} {input_sequences} {taxonomy_raw} "
+            f"{param_dict['threshold']} {n_threads} && "
+        f"python {scripts_dir}/process_taxonova_output.py "
+            f"{taxonomy_raw} {taxonomy_final} False \""
+    )
+
     return cmd

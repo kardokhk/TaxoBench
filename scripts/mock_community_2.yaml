@@ -1,0 +1,9 @@
+name: mock-taxonomy-2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python>=3.6
+  - conda-forge::pandas=2.2.2
+  - bioconda::bioconductor-decipher=3.2.0
