@@ -1,0 +1,58 @@
+{
+    "_doc": "Confidence-sweep config (Reviewer 2 comment 2.3). Per-rank-confidence tools (taxonova/idtaxa/kraken2/mapseq/spingo) are run ONCE at the most permissive setting and then post-hoc threshold-swept by 04b_evaluate_sweep.py. Single-confidence tools (naive-bayes/vsearch/blast) are re-run at multiple confidence settings; each param dir then becomes one curve point.",
+
+    "classifiers": [
+        "taxonova", "vsearch", "blast", "naive-bayes",
+        "idtaxa",   "spingo",  "kraken2", "mapseq"
+    ],
+
+    "method_conda_envs": {
+        "taxonova":    "/path/to/conda/envs/taxobench-qiime2",
+        "vsearch":     "/path/to/conda/envs/taxobench-qiime2",
+        "blast":       "/path/to/conda/envs/taxobench-qiime2",
+        "naive-bayes": "/path/to/conda/envs/taxobench-qiime2",
+        "idtaxa":      "/path/to/conda/envs/taxobench-qiime2",
+        "kraken2":     "/path/to/conda/envs/taxobench-qiime2",
+        "mapseq":      "/path/to/conda/envs/taxobench-qiime2",
+        "spingo": {
+            "spingo_env":     "/path/to/conda/envs/taxobench-spingo",
+            "processing_env": "/path/to/conda/envs/taxobench-qiime2"
+        }
+    },
+
+    "method_parameters_combinations": {
+        "taxonova": {
+            "confidence_threshold": [0.0]
+        },
+        "vsearch": {
+            "p-maxaccepts":     [10],
+            "p-perc-identity":  [0.80],
+            "p-min-consensus":  [0.51, 0.65, 0.80, 0.95]
+        },
+        "blast": {
+            "p-maxaccepts":     [10],
+            "p-perc-identity":  [0.80],
+            "p-min-consensus":  [0.51, 0.65, 0.80, 0.95]
+        },
+        "naive-bayes": {
+            "p-confidence": [0.0, 0.5, 0.7, 0.9]
+        },
+        "idtaxa": {
+            "p-confidence": [0]
+        },
+        "spingo": {
+            "kmersize":  [8],
+            "bootstrap": [10],
+            "subsample": [10]
+        },
+        "kraken2": {
+            "confidence": [0.0],
+            "quick":      [false],
+            "use_names":  [true]
+        },
+        "mapseq": {
+            "nthreads": [20],
+            "cutoff":   [0.0]
+        }
+    }
+}

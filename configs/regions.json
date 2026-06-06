@@ -1,0 +1,25 @@
+{
+    "V4": {
+        "primers": {"f": "GTGCCAGCMGCCGCGGTAA", "r": "GGACTACNVGGGTWTCTAAT"},
+        "length":  {"min": 200, "max": 350}
+    },
+    "V3-V4": {
+        "primers": {"f": "CCTACGGGNGGCWGCAG",  "r": "GACTACHVGGGTATCTAATCC"},
+        "length":  {"min": 400, "max": 500}
+    },
+    "V1-V9": {
+        "primers": {"f": "AGAGTTTGATCMTGGCTCAG","r": "TACGGYTACCTTGTTACGACTT"},
+        "length":  {"min": 1300, "max": 1550}
+    },
+    "V5-V7": {
+        "primers": {"f": "AACMGGATTAGATACCCKG", "r": "ACGTCATCCCCACCTTCC"},
+        "length":  {"min": 300, "max": 500},
+        "note": "799F/1193R, plant microbiome / chloroplast-excluding amplicon, ~395 bp"
+    },
+    "RRN": {
+        "primers":  null,
+        "length":   {"min": 4600, "max": 5300},
+        "full_length": true,
+        "note": "Use full-length GROND/GTDB rrn operon sequences as-is (no primer extraction)."
+    }
+}

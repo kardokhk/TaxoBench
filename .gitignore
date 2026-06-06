@@ -1,0 +1,22 @@
+# Large inputs, reference databases, and run artifacts (not tracked).
+# See DATA.md for how to obtain and place these.
+data/
+results/
+backups/
+models/
+training/
+logs/
+output/
+slurm/
+runtime/
+.envs/
+
+# Python
+**/__pycache__/
+*.pyc
+
+# Trained models / checkpoints
+*.pt
+
+# Editor / OS / assistant cruft
+.DS_Store

@@ -1,0 +1,56 @@
+{
+    "classifiers": [
+        "taxonova", "vsearch", "blast", "naive-bayes",
+        "idtaxa",   "spingo",  "kraken2", "mapseq"
+    ],
+
+    "method_conda_envs": {
+        "taxonova":    "/path/to/conda/envs/taxobench-qiime2",
+        "vsearch":     "/path/to/conda/envs/taxobench-qiime2",
+        "blast":       "/path/to/conda/envs/taxobench-qiime2",
+        "naive-bayes": "/path/to/conda/envs/taxobench-qiime2",
+        "idtaxa":      "/path/to/conda/envs/taxobench-qiime2",
+        "kraken2":     "/path/to/conda/envs/taxobench-qiime2",
+        "mapseq":      "/path/to/conda/envs/taxobench-qiime2",
+        "spingo": {
+            "spingo_env":     "/path/to/conda/envs/taxobench-spingo",
+            "processing_env": "/path/to/conda/envs/taxobench-qiime2"
+        }
+    },
+
+    "method_parameters_combinations": {
+        "taxonova": {
+            "confidence_threshold": [0.7]
+        },
+        "vsearch": {
+            "p-maxaccepts":     [10],
+            "p-perc-identity":  [0.80],
+            "p-min-consensus":  [0.51]
+        },
+        "blast": {
+            "p-maxaccepts":     [10],
+            "p-perc-identity":  [0.80],
+            "p-min-consensus":  [0.51]
+        },
+        "naive-bayes": {
+            "p-confidence": [0.7]
+        },
+        "idtaxa": {
+            "p-confidence": [60]
+        },
+        "spingo": {
+            "kmersize":  [8],
+            "bootstrap": [10],
+            "subsample": [10]
+        },
+        "kraken2": {
+            "confidence": [0.0],
+            "quick":      [false],
+            "use_names":  [true]
+        },
+        "mapseq": {
+            "nthreads": [20],
+            "cutoff":   [0.4]
+        }
+    }
+}

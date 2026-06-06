@@ -1,0 +1,19 @@
+{
+    "project_dir": "/path/to/taxobench",
+    "data_dir":    "/path/to/taxobench/data",
+    "results_dir": "/path/to/taxobench/results",
+    "logs_dir":    "/path/to/taxobench/logs",
+    "scripts_dir": "/path/to/taxobench/src",
+    "reference_database_dir": "/path/to/taxobench/data/ref_dbs",
+    "mockrobiota_source_dir": "/path/to/taxobench/data/softy/mockrobiota/data",
+    "real_world_input_dir":   "/path/to/taxobench/data/real_world_input",
+    "mock_input_dir":         "/path/to/taxobench/data/mock_community/input_data",
+
+    "conda_envs": {
+        "qiime2": "/path/to/conda/envs/taxobench-qiime2",
+        "spingo": "/path/to/conda/envs/taxobench-spingo"
+    },
+
+    "default_n_threads": 20,
+    "default_n_jobs":    1
+}
