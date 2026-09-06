@@ -235,6 +235,6 @@ MIT — see [LICENSE](LICENSE).
 
 ## Contact and acknowledgments
 
-Questions: Kardokh Kaka Bra <kardokhkaka@gmail.com>.
+Questions: Kardokh Kakabra <kardokhkaka@gmail.com>.
 
 Developed in the Claesson Lab.
