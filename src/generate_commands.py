@@ -34,12 +34,32 @@ def build_taxonova_command(
                    "--model_output", model_file]
             subprocess.run(cmd, check=True)
 
-    # Build threshold arguments from param_dict
+    # Build threshold arguments from param_dict.
+    #
+    # The parent gates are stated explicitly rather than left to the package
+    # default. The published runs took that default, which was a flat 0.5 at
+    # every parent rank; taxonova now scales the graded profile (0.5 parents,
+    # 0.7 genus, 0.8 species) with --confidence_threshold, so an implicit gate
+    # would no longer mean 0.5 and this config would quietly stop reproducing
+    # the reported numbers. Pinning them here rather than in the config JSON
+    # keeps them out of param_dict, and so out of the param_id that names the
+    # results directory.
     threshold_args = ""
+    published_parent_gates = {
+        'domain_threshold': 0.5, 'phylum_threshold': 0.5,
+        'class_threshold': 0.5, 'order_threshold': 0.5,
+        'family_threshold': 0.5, 'genus_threshold': 0.5,
+    }
+    for param, gate in published_parent_gates.items():
+        if param not in param_dict:
+            threshold_args += f"--{param} {gate} "
+
     threshold_params = [
-        'confidence_threshold'
+        'confidence_threshold',
+        'domain_threshold', 'phylum_threshold', 'class_threshold',
+        'order_threshold', 'family_threshold', 'genus_threshold',
     ]
-    
+
     for param in threshold_params:
         if param in param_dict:
             threshold_args += f"--{param} {param_dict[param]} "

@@ -71,7 +71,17 @@ def main():
                 f"conda run -p {env} --no-capture-output bash -c \""
                 f"taxonova classification "
                 f"--input {in_fa} --model_input {model} --output {raw} "
-                f"--confidence_threshold 0.0 && "
+                # Parent gates stated explicitly. These runs took the
+                # package default, a flat 0.5 at every parent rank, and
+                # 04_evaluate.py reads their processed output to reproduce the
+                # published numbers. taxonova now scales the graded profile
+                # with --confidence_threshold, under which 0.0 would open every
+                # gate; that is what 04c_evaluate_opengates.py wants but not
+                # what these outputs were, so it is pinned rather than changed.
+                f"--confidence_threshold 0.0 "
+                f"--domain_threshold 0.5 --phylum_threshold 0.5 "
+                f"--class_threshold 0.5 --order_threshold 0.5 "
+                f"--family_threshold 0.5 --genus_threshold 0.5 && "
                 f"python {src_dir}/process_taxonova_output.py "
                 f"{raw} {out_tsv} False\""
             )
