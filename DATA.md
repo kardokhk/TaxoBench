@@ -5,10 +5,11 @@ gigabytes, the generated mock reads and real-world tables are large, and the
 trained models are big binaries. This document tells you what the pipeline expects
 on disk, where to get it, and how to lay it out so a run actually goes through.
 
-A note up front: the paths in `configs/pipeline_config.json` are absolute and point
-at the original development machine (under `/path/to/workdir/...`). On
-your own system you will need to edit `pipeline_config.json` so `project_dir`,
-`data_dir`, `results_dir`, etc. point at wherever you cloned this. Everything below
+A note up front: the directory paths in `configs/pipeline_config.json` are
+relative and resolve against the repo root, so `data/`, `results/` and so on sit
+inside your clone. To put them elsewhere, edit `pipeline_config.json` or set
+`TAXOBENCH_<KEY>` (for example `TAXOBENCH_DATA_DIR=/scratch/taxobench/data`).
+The conda environment paths still have to be edited by hand. Everything below
 is described relative to `data_dir` (the `data/` directory at the repo root by
 default). Some scripts also hardcode a `ROOT` path near the top — grep for `ROOT =`
 if a region-specific generator complains about a missing path.
@@ -163,7 +164,8 @@ EMP500 project (PRJEB42019).
 
 A minimal reproduction for one region, one mock would be:
 
-1. Edit `configs/pipeline_config.json` paths to your machine.
+1. Set the conda environment paths in `configs/pipeline_config.json` (and the
+   directory paths, if `data/` and `results/` should not live in the clone).
 2. Put the region's reference DB and per-tool indexes under `data/ref_dbs/<region>/`,
    including the Taxonova `.pt` from the Taxonova Releases page.
 3. Get the mock's `input_data` pair in place (clone Mockrobiota, or run the `01*`

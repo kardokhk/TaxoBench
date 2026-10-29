@@ -28,6 +28,8 @@ def main():
                     help="ART replicates per env-seqs file (default 5, matches existing V4/V3-V4)")
     ap.add_argument("--count", type=int, default=30,
                     help="ART reads per input sequence (default 30, matches existing mocks)")
+    ap.add_argument("--n-wildcard", action="store_true",
+                    help="Truth builder: treat N in a source sequence as a wildcard, as in the published v1 truth (default: N is a mismatch)")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
@@ -124,6 +126,7 @@ def main():
                 observed_sequences=str(rep_seqs_fa),
                 trueish_taxonomy=str(true_tax_out),
                 force=args.force,
+                n_wildcard=args.n_wildcard,
             )
         except Exception as exc:
             print(f"  ! trueish taxonomy failed: {exc}")

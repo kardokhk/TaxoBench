@@ -21,8 +21,18 @@ def src_dir() -> Path:
 
 
 def load_pipeline_config():
+    """Load configs/pipeline_config.json. Relative path values are resolved
+    against project_root(); TAXOBENCH_<KEY> environment variables (for example
+    TAXOBENCH_REFERENCE_DATABASE_DIR) override a key."""
     with open(configs_dir() / "pipeline_config.json") as fh:
-        return json.load(fh)
+        cfg = json.load(fh)
+    for k, v in list(cfg.items()):
+        env = os.environ.get("TAXOBENCH_" + k.upper())
+        if env:
+            cfg[k] = env
+        elif isinstance(v, str) and k.endswith("_dir") and not os.path.isabs(v):
+            cfg[k] = str(project_root() / v)
+    return cfg
 
 
 def load_classifiers_config():

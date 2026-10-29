@@ -159,6 +159,25 @@ just refreshes the affected rows. Predictions under
 No args needed for the full sweep: `python scripts/04_evaluate.py`. Optional
 `--mock-name` / `--regions` flags restrict the scan for debugging. No plots.
 
+Other options:
+
+- `--rules {v2,v2-strict,v1,v1-patched}`: scoring rules, `v2` by default. The
+  rules are described in README.md ("Scoring rules"). `v1` is the published
+  evaluator and, with the v1 truth, reproduces the paper's values.
+- `--truth-dir ROOT`: read the trueish files from `ROOT/mock_community/<mock>/<region>/`
+  instead of the data directory (for example a v1 or a rebuilt truth tree).
+- `--ref-dir ROOT`: reference root holding `<region>/taxonomy.tsv` and
+  `RRN/grond_clean.tsv`, which define the universe for specificity. If the
+  configured directory does not exist, `data/ref_dbs` of this checkout is used;
+  if no universe is found, specificity is written as NaN.
+- `--out-dir DIR`: write the evaluation tree to `DIR` instead of
+  `results/evaluation/`.
+
+Under `v2` and `v2-strict`, `all_metrics.csv` also holds `jaccard`, `fp_taxa`,
+`unassigned_fraction`, `tp`, `fp`, `fn` and, on the species rows, the group
+statistics and `strict_species_f`. In those modes L1/L2 and the taxon-set
+metrics are computed over named calls only.
+
 ## Step 05: real-world
 
 `scripts/05_realworld.py` runs all 8 classifiers on the rep-seq FASTAs in

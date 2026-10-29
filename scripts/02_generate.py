@@ -42,6 +42,8 @@ def main():
     ap.add_argument("--paired", action="store_true",
                     help="Simulate paired-end reads (default single-end). "
                          "Don't use for V1-V9 — 200+200bp can't merge ~1500bp.")
+    ap.add_argument("--n-wildcard", action="store_true",
+                    help="Truth builder: treat N in a source sequence as a wildcard, as in the published v1 truth (default: N is a mismatch)")
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -176,6 +178,7 @@ def main():
                     observed_sequences=rep_seqs_fa,
                     trueish_taxonomy=str(true_tax_out),
                     force=args.force,
+                    n_wildcard=args.n_wildcard,
                 )
             except Exception as exc:
                 print(f"  ! trueish taxonomy failed: {exc}")

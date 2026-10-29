@@ -341,17 +341,20 @@ def denoise_dada2(qiime_out,mockname, demux, paired = False,
 
 
 
-def single_character_matches(char, query, subject):
-    query = ((query == char) + (query == 'N')).astype(int)
-    subject = ((subject == char) + (subject == 'N')).astype(int)
-    return numpy.convolve(query[::-1], subject)
+# N handling in the expected (source) sequence. v1 (published) treated N as a
+# wildcard (N_WILDCARD = True). v2 default: N is a mismatch. The matching code
+# lives in truth_match.py (no QIIME 2 dependency) and is re-exported here.
+N_WILDCARD = False
 
-def gapless_mismatches(query, subject):
-    matches = single_character_matches('A', query, subject)
-    matches += single_character_matches('C', query, subject)
-    matches += single_character_matches('G', query, subject)
-    matches += single_character_matches('T', query, subject)
-    return len(query) - matches.max()
+def single_character_matches(char, query, subject, n_wildcard=None):
+    import truth_match
+    nw = N_WILDCARD if n_wildcard is None else n_wildcard
+    return truth_match.single_character_matches(char, query, subject, nw)
+
+def gapless_mismatches(query, subject, n_wildcard=None):
+    import truth_match
+    nw = N_WILDCARD if n_wildcard is None else n_wildcard
+    return truth_match.gapless_mismatches(query, subject, nw)
 
 def compute_lca(taxonomies, delimiter='; '):
     split_taxa = [t.split(delimiter) for t in taxonomies]
@@ -363,7 +366,8 @@ def compute_lca(taxonomies, delimiter='; '):
             break
     return delimiter.join(lca) if lca else 'unassigned'
 
-def compare_observed_and_expected(observed, expected, include_reverse_complement=True, return_strand=False):
+def compare_observed_and_expected(observed, expected, include_reverse_complement=True, return_strand=False,
+                                  n_wildcard=None):
     ids = [obs.metadata['id'] for obs in observed]
     observed_arr = [numpy.array(list(str(obs))) for obs in observed]
 
@@ -377,12 +381,12 @@ def compare_observed_and_expected(observed, expected, include_reverse_complement
     comparison = {}
     for i, _id in enumerate(ids):
         obs = observed_arr[i]
-        matches = [(gapless_mismatches(obs, exp), key, 'forward')
+        matches = [(gapless_mismatches(obs, exp, n_wildcard), key, 'forward')
                    for exp, key in zip(expected_arr, keys)]
 
         if include_reverse_complement:
             rev = rev_observed_arr[i]
-            matches += [(gapless_mismatches(rev, exp), key, 'reverse')
+            matches += [(gapless_mismatches(rev, exp, n_wildcard), key, 'reverse')
                         for exp, key in zip(expected_arr, keys)]
 
         matches.sort(key=lambda x: x[0])  # sort by mismatch count
@@ -400,7 +404,8 @@ def generate_trueish_taxonomies_master(data_dir, feature_table,
                                 observed_sequences, trueish_taxonomy,
                                 reverse_complement=True,
                                 max_mismatches=3,
-                                force=False):
+                                force=False,
+                                n_wildcard=None):
     # run only if not exist
     if not os.path.exists(trueish_taxonomy) or force:
         # load the taxonomy map
@@ -420,7 +425,8 @@ def generate_trueish_taxonomies_master(data_dir, feature_table,
         observed = list(observed)
         mismatches = compare_observed_and_expected(observed, expected, 
                                                    include_reverse_complement=reverse_complement, 
-                                                   return_strand=False)
+                                                   return_strand=False,
+                                                   n_wildcard=n_wildcard)
 
         # save the taxonomies of the matched reads
         with open(trueish_taxonomy, 'w') as result_fh:
@@ -471,7 +477,8 @@ def generate_trueish_taxonomies(data_dir, feature_table,
                                 lca_mode=True,
                                 reverse_complement=True,
                                 max_mismatches=3,
-                                force=False):
+                                force=False,
+                                n_wildcard=None):
     # run only if not exist
     if not os.path.exists(trueish_taxonomy) or force:
         # load the taxonomy map
@@ -491,7 +498,8 @@ def generate_trueish_taxonomies(data_dir, feature_table,
         observed = list(observed)
         mismatches = compare_observed_and_expected(observed, expected, 
                                                    include_reverse_complement=reverse_complement, 
-                                                   return_strand=False)
+                                                   return_strand=False,
+                                                   n_wildcard=n_wildcard)
 
         # save the taxonomies of the matched reads
         with open(trueish_taxonomy, 'w') as result_fh:

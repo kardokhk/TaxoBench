@@ -11,6 +11,10 @@ slurm/
 runtime/
 .envs/
 
+# Small test fixtures keep the results/ and data/ layout
+!tests/fixtures/**/data/
+!tests/fixtures/**/results/
+
 # Python
 **/__pycache__/
 *.pyc

@@ -128,6 +128,74 @@ genuinely cannot be resolved past a group of equally-good labels. Both the mock
 and the real-world evaluators parse those brackets and score the prediction as a
 correct hit if the true taxon is inside the set, rather than treating the whole
 string as one wrong label (`src/evaluate_results.py`, `scripts/04_evaluate.py`).
+See "Scoring rules" below for how abstentions and groups are scored.
+
+## Scoring rules (v1 and v2)
+
+`scripts/04_evaluate.py --rules` selects how calls are scored. The same rules
+apply to every classifier; no rule looks at which tool produced a label. The
+code is in `src/scoring_v2.py` (v2) and in `scripts/04_evaluate.py` (v1).
+
+| `--rules` | abstention (`...; g__X; s__`, `Unassigned`, `unclassified_*`) | group label `s__[A\|B]` | taxon identity in taxon-set metrics |
+|---|---|---|---|
+| `v2` (default) | no call: a false negative in P/R/F; left out of detection, sensitivity, specificity, Jaccard and L1/L2; reported as `unassigned_fraction` | correct if the truth is a member, at every rank where both are named | rank prefix + name |
+| `v2-strict` | as `v2` | a multi-member group is no call at that rank and below | as `v2` |
+| `v1` | counted as a taxon of its own, so it is a false-positive taxon in specificity, detection and L1/L2 | credited rank by rank (same outcome as `v2` when the truth has one species) | whole label string |
+| `v1-patched` | as `v1`, but dropped from the taxon-set and L1/L2 metrics | as `v1` | as `v1` |
+
+`v1` is the evaluator used for the Taxonova paper. It has two known defects that
+`v2` corrects: an abstention lowers specificity, so a tool that abstains more
+can look as if it calls more absent taxa; and a correct call whose upper ranks
+are blank (SPINGO writes `d__; p__; ...; g__X; s__X y`) never equals the truth
+string, so it counts as a false-positive taxon plus a missed one. Under `v2` a
+tool that abstains a lot can reach specificity 1.0 with low recall, so report
+specificity together with recall or F, not as a ranking on its own.
+
+Under `v2` and `v2-strict` the species rows also carry `n_named_calls`,
+`n_group_calls`, `group_share`, `group_size_mean`, `group_size_max`,
+`group_truth_in`, `group_truth_out`, `strict_species_f`, `jaccard`,
+`unassigned_fraction` and `tp` / `fp` / `fn`.
+
+**Ground truth and N bases.** The truth builder (`src/process_mock.py`, step 02)
+now treats an `N` in a source sequence as a mismatch. Up to the published runs
+it was a wildcard, so a source sequence with a long run of `N` matched ASVs it
+does not represent. Pass `--n-wildcard` to `02_generate.py` or
+`02b_generate_v5v7.py` (or set `process_mock.N_WILDCARD = True`) to restore the
+old rule. `src/rebuild_truth.py` rebuilds one truth file without QIIME 2:
+
+```bash
+python src/rebuild_truth.py \
+  --observed data/mock_community/gutmock/V5-V7/paired/rep_seqs_gutmock.fasta \
+  --expected data/mock_community/input_data/gutmock_seqs.fasta \
+  --taxonomy data/mock_community/input_data/gutmock_taxa.txt \
+  --out gutmock_V5-V7_truth.tsv            # add --n-wildcard for the v1 rule
+```
+
+With N as a mismatch the labels change in five of the published cells: gutmock
+V5-V7 (125 of 138 ASVs; 124 deepen from genus to species), *Bilophila* genus to
+*B. intracellularis* in biome_digestive_system and biome_sputum at V4 and V3-V4
+(1 ASV each), and one mbarc26 whole-16S ASV that becomes `other`. Cells whose
+truth was written by the generator rather than by sequence matching (RRN, and
+whole 16S of the biome mocks, Mockrobiota-16S, gutmock and vaginalmock) are not
+affected. The corrected gutmock V5-V7 truth is
+`tests/fixtures/gutmock_V5-V7/data/mock_community/gutmock/V5-V7/trueish_taxonomy_gutmock.tsv`;
+the copy in the original data archive was built with the wildcard rule.
+
+**Reproducing the paper's numbers.** Use the v1 rules with the v1 truth: the
+truth files from the data archive (DATA.md), with gutmock V5-V7 replaced by the
+corrected file above (the paper scored that cell on the corrected truth).
+
+```bash
+python scripts/04_evaluate.py --rules v1 \
+  --results-dir <results root> --truth-dir <data root holding the v1 truth> \
+  --ref-dir data/ref_dbs --out-dir results/evaluation_v1
+```
+
+Run this way on the published classifier outputs, the evaluator reproduced all
+26,400 values of the published `all_metrics.csv` with maximum absolute difference
+0 (gutmock V5-V7 excluded there, because it was rescored on the corrected truth;
+`tests/test_regression_v1.py` checks its 240 published values on a small fixture). `scripts/04b_evaluate_sweep.py`
+still uses the v1 rules.
 
 ## Pipeline flow
 
@@ -161,7 +229,9 @@ end to end, or rerun just the part you changed. Paths come from
    discovers every (mock x region) that has both predictions and a truth file,
    computes all the per-rank and abundance metrics above, and writes a single
    consolidated tree under `results/evaluation/` (tidy long form plus per-metric
-   wide tables). `04b_evaluate_sweep.py` produces precision/recall/F-vs-confidence
+   wide tables). `--rules` picks the scoring rules (v2 by default; v1 for the
+   published numbers), `--truth-dir`, `--ref-dir` and `--out-dir` override the
+   configured locations. `04b_evaluate_sweep.py` produces precision/recall/F-vs-confidence
    sweep curves.
 
 5. **`05_realworld_classify.py`** then **`05_realworld_evaluate.py`** — the
@@ -184,7 +254,9 @@ There are a few small reporting helpers alongside these (`build_tau_grid.py`,
 Everything is config-first. The JSON files under `configs/` are the single source
 of truth:
 
-- `pipeline_config.json` — directory layout, conda environments, thread/job defaults
+- `pipeline_config.json`: directory layout (relative paths resolve against the
+  repo root; `TAXOBENCH_<KEY>` environment variables, for example
+  `TAXOBENCH_DATA_DIR`, override a key), conda environments, thread/job defaults
 - `regions.json` — primers and length windows per amplicon region
 - `mocks.json` — the full mock matrix (which mocks exist, which regions each is
   evaluated on, RRN counterparts, and the real-world study definitions)
@@ -218,6 +290,15 @@ The classifier this framework was built around lives at
 pretrained per-region Taxonova checkpoints are published on that repo's Releases
 page; drop them into the reference-DB layout described in DATA.md to reproduce the
 Taxonova rows.
+
+## Tests
+
+```bash
+cd tests && python -m unittest test_scoring_rules test_truth_match test_regression_v1
+```
+
+The gutmock V5-V7 truth rebuild test runs only when the generated data tree is
+present (`TAXOBENCH_DATA_DIR` or `data_dir`); it takes a few minutes.
 
 ## Documentation
 

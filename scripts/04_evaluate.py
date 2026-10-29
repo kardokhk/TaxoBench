@@ -30,6 +30,15 @@ Re-run any time params change. The evaluation tree is overwritten in full;
 prediction directories are not touched.
 
 Optional --mock-name / --regions flags restrict the scan for debugging.
+
+Scoring rules (--rules; details in src/scoring_v2.py and README.md):
+    v2 (default)  an abstention is no call (FN in P/R/F, never a taxon in the
+                  taxon-set or L1/L2 metrics); a group label is correct iff
+                  the truth is a member; taxon identity is rank prefix + name.
+    v2-strict     as v2, but a multi-member group is no call.
+    v1            the published rules; with the v1 truth (--truth-dir, see
+                  README.md) this reproduces the published values.
+    v1-patched    v1 with abstentions dropped from the taxon-set metrics only.
 """
 
 import argparse
@@ -111,13 +120,18 @@ def _ref_taxonomy_fp(region):
     """Path to the per-region reference taxonomy TSV used to define the
     'universe' of possible taxa for specificity (TN / (TN + FP))."""
     cfg = _common.load_pipeline_config()
-    ref_root = Path(cfg["reference_database_dir"])
+    ref_root = Path(_REF_DIR_OVERRIDE or cfg["reference_database_dir"])
+    if not ref_root.exists():
+        # The configured path does not exist (for example the placeholder in
+        # configs/pipeline_config.json); fall back to this checkout.
+        ref_root = _common.project_root() / "data" / "ref_dbs"
     if region == "RRN":
         return ref_root / "RRN" / "grond_clean.tsv"
     return ref_root / region / "taxonomy.tsv"
 
 
 _UNIVERSE_CACHE = {}
+_REF_DIR_OVERRIDE = None   # set by --ref-dir
 
 
 def _universe_size(region, level_int):
@@ -187,6 +201,14 @@ def _truncate_tax(tax_str, level_int):
     return ";".join(parts[:level_int + 1])
 
 
+def _is_abstention(tax_str, level_int):
+    parts = [x.strip() for x in tax_str.split(";")]
+    if len(parts) <= level_int:
+        return True
+    last = parts[level_int]
+    return last in ("", "Unassigned", "Unclassified") or (len(last) == 3 and last.endswith("__"))
+
+
 def _find_trueish(data_root, mock, region):
     candidates = [
         data_root / "mock_community" / mock / region / "trueish-taxonomies.tsv",
@@ -215,7 +237,88 @@ def _discover(res_root, data_root, mock_filter, region_filter):
             yield mock_dir.name, region_dir.name, region_dir, true_fp
 
 
-def _evaluate_combo(mock, region, region_dir, true_fp, prf_fn):
+def _v1_level_row(pairs, region, lvl_int, prf_fn, drop_abstentions):
+    """Published (v1) metric computation for one level. With
+    drop_abstentions=False this is the published code exactly; True is the
+    2026-10-29 diagnosis patch (abstentions out of taxon-set and L1/L2)."""
+    exp_taxa, obs_taxa = [], []
+    obs_taxa_resolved = []
+    for _id, (te, to) in pairs.items():
+        exp_full = _truncate_tax(te, lvl_int)
+        obs_full = _truncate_tax(to, lvl_int)
+        exp_taxa.append(exp_full)
+        obs_taxa.append(obs_full)
+        # Bracket-aware resolution: a bracket whose members
+        # contain the truth collapses to the truth taxon; an
+        # unmatched bracket stays as one opaque bucket (1 row =
+        # 1 prediction unit). Used for taxon-set ops and L1/L2;
+        # NOT used for prf_fn (which is already bracket-aware
+        # via evaluate_classification / _expand_group_label).
+        obs_taxa_resolved.append(_resolve_obs_against_truth(exp_full, obs_full))
+    if drop_abstentions:
+        # An abstention at this level ("...;g__X;s__", or "Unassigned") is not a
+        # predicted taxon: keep it out of the taxon-set and abundance metrics so it
+        # is not counted as a false-positive taxon (P/R/F already score it as FN).
+        obs_taxa_resolved = [o for o in obs_taxa_resolved if not _is_abstention(o, lvl_int)]
+    _, _, p, r, f, _ = prf_fn(exp_taxa, obs_taxa)
+    exp_set, obs_set = set(exp_taxa), set(obs_taxa_resolved)
+    det = round(len(exp_set & obs_set) / max(1, len(exp_set)), 3)
+    l1, l2 = _abundance_norms(exp_taxa, obs_taxa_resolved)
+
+    # Taxon-set sensitivity / specificity (Selten reviewer 1.9):
+    # universe = unique taxa at this level in the per-region reference DB
+    tp_t = len(exp_set & obs_set)
+    fp_t = len(obs_set - exp_set)
+    fn_t = len(exp_set - obs_set)
+    sens = round(tp_t / (tp_t + fn_t), 4) if (tp_t + fn_t) else 0.0
+    N = _universe_size(region, lvl_int)
+    if N is None or N <= 0:
+        spec = float("nan")  # was "": a blank string makes the by_metric pivot crash
+    else:
+        tn_t = max(0, N - len(exp_set | obs_set))
+        spec = round(tn_t / (tn_t + fp_t), 6) if (tn_t + fp_t) else 0.0
+    union = exp_set | obs_set
+    return {
+        "precision": p, "recall": r,
+        "f-score": f, "detection_rate": det,
+        "sensitivity": sens, "specificity": spec,
+        "l1_error": l1, "l2_error": l2,
+        "jaccard": round(tp_t / len(union), 4) if union else float("nan"),
+        "fp_taxa": fp_t,
+    }
+
+
+def _evaluate_pairs(pairs, region, rules, prf_fn):
+    """All levels for one (truth, prediction) pair set. Returns a list of
+    per-level metric dicts (without the identifying columns)."""
+    import scoring_v2
+    out = []
+    for level_name, lvl_int in LEVEL_TO_INT.items():
+        if rules == "v1":
+            row = _v1_level_row(pairs, region, lvl_int, prf_fn, drop_abstentions=False)
+        elif rules == "v1-patched":
+            row = _v1_level_row(pairs, region, lvl_int, prf_fn, drop_abstentions=True)
+        else:
+            row = scoring_v2.score_rows(pairs, lvl_int, rules,
+                                        universe_size=_universe_size(region, lvl_int))
+        row["level"] = level_name
+        out.append(row)
+    if rules != "v1":
+        gs = scoring_v2.group_stats(pairs, 6)
+        strict = scoring_v2.score_rows(pairs, 6, "v2-strict",
+                                       universe_size=_universe_size(region, 6))
+        for row in out:
+            if row["level"] == "Species":
+                row.update(gs)
+                row["strict_species_f"] = strict["f-score"]
+    return out
+
+
+def _evaluate_combo(mock, region, region_dir, true_fp, prf_fn, rules="v2",
+                    tie_hook=None):
+    """``tie_hook(mock, region, method, param, pred_fp, pairs) -> pairs`` may
+    rewrite calls before scoring (for example to rebuild search-hit ties as
+    group labels in a sensitivity analysis)."""
     rows = []
     for pred_fp in sorted(region_dir.glob("*/*/taxonomy_final.tsv")):
         method = pred_fp.parent.parent.name
@@ -225,47 +328,12 @@ def _evaluate_combo(mock, region, region_dir, true_fp, prf_fn):
         except Exception as exc:
             print(f"  ! {mock}/{region}/{method}/{param}: load failed ({exc})")
             continue
-        for level_name, lvl_int in LEVEL_TO_INT.items():
-            exp_taxa, obs_taxa = [], []
-            obs_taxa_resolved = []
-            for _id, (te, to) in pairs.items():
-                exp_full = _truncate_tax(te, lvl_int)
-                obs_full = _truncate_tax(to, lvl_int)
-                exp_taxa.append(exp_full)
-                obs_taxa.append(obs_full)
-                # Bracket-aware resolution: a bracket whose members
-                # contain the truth collapses to the truth taxon; an
-                # unmatched bracket stays as one opaque bucket (1 row =
-                # 1 prediction unit). Used for taxon-set ops and L1/L2;
-                # NOT used for prf_fn (which is already bracket-aware
-                # via evaluate_classification / _expand_group_label).
-                obs_taxa_resolved.append(_resolve_obs_against_truth(exp_full, obs_full))
-            _, _, p, r, f, _ = prf_fn(exp_taxa, obs_taxa)
-            exp_set, obs_set = set(exp_taxa), set(obs_taxa_resolved)
-            det = round(len(exp_set & obs_set) / max(1, len(exp_set)), 3)
-            l1, l2 = _abundance_norms(exp_taxa, obs_taxa_resolved)
-
-            # Taxon-set sensitivity / specificity (Selten reviewer 1.9):
-            # universe = unique taxa at this level in the per-region reference DB
-            tp_t = len(exp_set & obs_set)
-            fp_t = len(obs_set - exp_set)
-            fn_t = len(exp_set - obs_set)
-            sens = round(tp_t / (tp_t + fn_t), 4) if (tp_t + fn_t) else 0.0
-            N = _universe_size(region, lvl_int)
-            if N is None or N <= 0:
-                spec = ""
-            else:
-                tn_t = max(0, N - len(exp_set | obs_set))
-                spec = round(tn_t / (tn_t + fp_t), 6) if (tn_t + fp_t) else 0.0
-            rows.append({
-                "mock": mock, "region": region,
-                "method": method, "param": param,
-                "level": level_name,
-                "precision": p, "recall": r,
-                "f-score": f, "detection_rate": det,
-                "sensitivity": sens, "specificity": spec,
-                "l1_error": l1, "l2_error": l2,
-            })
+        if tie_hook is not None:
+            pairs = tie_hook(mock, region, method, param, pred_fp, pairs)
+        for row in _evaluate_pairs(pairs, region, rules, prf_fn):
+            row.update({"mock": mock, "region": region,
+                        "method": method, "param": param})
+            rows.append(row)
     return rows
 
 
@@ -279,7 +347,24 @@ def main():
                     help="Override results root (default: cfg.results_dir)")
     ap.add_argument("--data-dir", default=None,
                     help="Override data root (default: cfg.data_dir)")
+    ap.add_argument("--truth-dir", default=None,
+                    help="Data root to read trueish files from instead of --data-dir "
+                         "(same <mock>/<region>/ layout; e.g. a corrected-truth tree)")
+    ap.add_argument("--ref-dir", default=None,
+                    help="Reference root holding <region>/taxonomy.tsv and RRN/grond_clean.tsv "
+                         "(specificity universe); default cfg.reference_database_dir")
+    ap.add_argument("--out-dir", default=None,
+                    help="Write the evaluation tree here (default <results-dir>/evaluation)")
+    ap.add_argument("--rules", default="v2", choices=["v1", "v1-patched", "v2", "v2-strict"],
+                    help="v2 (default): abstention = no call, group label correct iff "
+                         "truth is a member, taxon identity by rank name. "
+                         "v1: published rules (reproduces the paper with the v1 truth). "
+                         "v1-patched: v1 plus the diagnosis patch (abstentions dropped from "
+                         "taxon-set metrics). v2-strict: v2 with "
+                         "group labels treated as no call. See src/scoring_v2.py.")
     args = ap.parse_args()
+    global _REF_DIR_OVERRIDE
+    _REF_DIR_OVERRIDE = args.ref_dir
 
     cfg = _common.load_pipeline_config()
     _common.add_src_to_path()
@@ -287,14 +372,16 @@ def main():
 
     res_root  = Path(args.results_dir) if args.results_dir else Path(cfg["results_dir"])
     data_root = Path(args.data_dir)    if args.data_dir    else Path(cfg["data_dir"])
-    out_root  = res_root / "evaluation"
+    out_root  = Path(args.out_dir) if args.out_dir else res_root / "evaluation"
+    truth_root = Path(args.truth_dir) if args.truth_dir else data_root
 
     print(f"[04_evaluate] scanning {res_root}")
     all_rows = []
     for mock, region, region_dir, true_fp in _discover(
-            res_root, data_root, args.mock_name, args.regions):
+            res_root, truth_root, args.mock_name, args.regions):
         rows = _evaluate_combo(mock, region, region_dir, true_fp,
-                               evaluate_results.precision_recall_fscore)
+                               evaluate_results.precision_recall_fscore,
+                               rules=args.rules)
         if not rows:
             print(f"  - {mock}/{region}: no predictions")
             continue
@@ -312,9 +399,14 @@ def main():
     (tmp_root / "by_metric").mkdir(parents=True)
 
     df = pd.DataFrame(all_rows)
+    if args.rules == "v1":
+        value_vars = list(METRIC_TO_COL.keys())
+    else:
+        value_vars = [c for c in df.columns
+                      if c not in ("mock", "region", "method", "param", "level")]
     long = df.melt(
         id_vars=["mock", "region", "method", "param", "level"],
-        value_vars=list(METRIC_TO_COL.keys()),
+        value_vars=value_vars,
         var_name="metric", value_name="value",
     )
     long_fp = tmp_root / "all_metrics.csv"
@@ -322,6 +414,7 @@ def main():
     print(f"[04_evaluate] wrote {long_fp} ({len(long):,} rows)")
 
     for metric in METRIC_TO_COL:
+        df[metric] = pd.to_numeric(df[metric], errors="coerce")
         pivot = df.pivot_table(
             index=["mock", "region", "method", "param"],
             columns="level", values=metric, aggfunc="mean",

@@ -1,5 +1,34 @@
 # taxobench_final — refactor changelog
 
+## 2026-10-29: scoring v2 (default), N-as-mismatch truth, path and SPINGO fixes
+
+* **Scoring rules** (`scripts/04_evaluate.py --rules`, `src/scoring_v2.py`).
+  New default `v2`: an abstention is no call (false negative in P/R/F, never a
+  taxon in detection, sensitivity, specificity, Jaccard or L1/L2; share reported
+  as `unassigned_fraction`); a group label is correct iff the truth is a member
+  at every rank where both are named; taxon identity in the taxon-set metrics
+  is rank prefix + name. `v2-strict` treats a multi-member group as no call.
+  `v1` keeps the published code path unchanged and reproduces the published
+  values; `v1-patched` is v1 with abstentions dropped from the taxon-set
+  metrics only. New options `--truth-dir`, `--ref-dir`, `--out-dir`.
+* **SPINGO taxon identity.** Under v1 a correct SPINGO call (blank upper ranks)
+  never equalled the truth string and counted as a false-positive taxon plus a
+  missed taxon. Fixed in v2 by comparing rank + name.
+* **Specificity sentinel.** A missing reference universe now gives NaN rather
+  than an empty string, which made the `by_metric` pivot fail.
+* **Truth builder.** `src/process_mock.py` treats N in a source sequence as a
+  mismatch (was a wildcard). Matching code moved to `src/truth_match.py`
+  (no QIIME 2 dependency); `src/rebuild_truth.py` rebuilds one truth file.
+  `--n-wildcard` on `02_generate.py` / `02b_generate_v5v7.py` restores the old
+  rule. Labels change in 5 published cells, among them gutmock V5-V7 (125 of
+  138 ASVs, the correction already used for the paper's round-3 tables).
+* **Paths.** `configs/pipeline_config.json` uses relative paths, resolved
+  against the repo root; `TAXOBENCH_<KEY>` environment variables override a key.
+* **Tests** (`tests/`, 24 tests, one of which needs the data tree): abstention
+  formats of every tool, group in/out, strict, SPINGO format, N rule, fast
+  search equal to brute force, gutmock V5-V7 truth rebuild, and v1 regression
+  against the 240 published gutmock V5-V7 values.
+
 ## 2026-05-10 — add MBARC-26 to v_mocks panel; reject CAMI2; drop ZymoBIOMICS
 
 * **Adds**: `mbarc26` (Singer 2016 Sci. Data, 23 bacteria + 3 archaea,
