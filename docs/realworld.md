@@ -24,8 +24,9 @@ rep_seqs_<study>.fasta                          ASV sequences (classifier input)
 ```
 
 `paired_samples.csv` needs at least the columns `sample_id`, `amplicon_16s_run` and
-`shotgun_wgs_run`. These files for the published studies are not yet public; the
-accessions of the raw data are listed in [DATA.md](../DATA.md).
+`shotgun_wgs_run`. These files, the classifier outputs and the preprocessing records of
+the published studies are in the Zenodo deposit ([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)); the accessions of the raw
+data are listed in [DATA.md](../DATA.md).
 
 ## Registering a study
 

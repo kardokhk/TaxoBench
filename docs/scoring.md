@@ -83,7 +83,7 @@ On the classifier outputs and truth behind the paper, this reproduced all 26,400
 values of the published `all_metrics.csv` with a maximum absolute difference of 0
 (gut mock V5-V7 excluded, because it was rescored on the corrected truth;
 `tests/test_regression_v1.py` checks its 240 published values on a small fixture).
-Those outputs and the truth tree are not yet public. A cell regenerated from
+Those outputs and the truth tree are on Zenodo ([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)). A cell regenerated from
 `mocks/inputs/` need not match the published one: the read simulation settings of
 each published cell (`--count`, `--length`, `--paired`) are not recorded in this
 repository, and the reads and ASVs also depend on the ART, QIIME 2 and DADA2 versions. The long-read biome cells

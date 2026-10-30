@@ -90,8 +90,8 @@ regenerated cell need not match the published one: the simulation settings of ea
 published cell are not recorded here, and the reads depend on the ART, QIIME 2 and
 DADA2 versions ([docs/scoring.md](docs/scoring.md)). On the classifier outputs and
 truth behind the paper, `--rules v1` reproduces the published metric tables with a
-maximum absolute difference of 0. Those outputs are not yet public; this repository
-includes the gut mock V5-V7 cell, which `tests/test_regression_v1.py` checks. Results
+maximum absolute difference of 0. Those outputs and the truth are on Zenodo
+([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)), with the exact commands; this repository also includes the gut mock V5-V7 cell, which `tests/test_regression_v1.py` checks. Results
 are reported in the paper and are not repeated here.
 
 ## Adding a classifier or a mock

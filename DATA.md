@@ -12,7 +12,8 @@ prefixes once, in `conda_envs` of the same file (docs/environments.md). Everythi
 below is relative to `data_dir` (`data/` at the repository root by default).
 
 The mock community inputs are in this repository (`mocks/inputs/`). The classifier
-outputs and generated mock cells behind the paper are not yet public; the repository
+outputs, scoring truth and query sequences behind the paper are deposited on Zenodo
+([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)); the repository also
 includes one published cell (gut mock, V5-V7) under `tests/fixtures/` as an example
 and a regression fixture.
 
