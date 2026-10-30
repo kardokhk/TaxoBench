@@ -172,7 +172,9 @@ class PerformanceBenchmarker:
         for v_region, files in common.items():
             v_dir = os.path.join(ref_root, v_region)
 
-            taxonova_model = _first_glob(os.path.join(v_dir, 'taxonova', '*model.pt'))
+            taxonova_model = generate_commands.resolve_taxonova_model(
+                v_region, v_dir, self.config.get('taxonova_settings') or {},
+                ref_root=ref_root)
             nb_model       = _first_glob(os.path.join(v_dir, 'naive-bayes', '*sklearn*qza'))
             idtaxa_model   = (_first_glob(os.path.join(v_dir, 'idtaxa', '*.rds'))
                               or _first_glob(os.path.join(v_dir, 'idtaxa', '*.RData')))
@@ -224,7 +226,8 @@ class PerformanceBenchmarker:
             return generate_commands.build_taxonova_command(
                 rep_seq_base=test_base, outdir=bench_dir, param_dict=params,
                 reference_dict=reference_database['taxonova'][v_region],
-                scripts_dir=scripts_dir, conda_env=envs['taxonova'], dry_run=False)
+                scripts_dir=scripts_dir, conda_env=envs['taxonova'], dry_run=False,
+                settings=self.config.get('taxonova_settings'))
         if classifier == 'vsearch':
             return generate_commands.build_vsearch_command(
                 rep_seq_base=test_base, outdir=bench_dir, param_dict=params,
@@ -356,7 +359,7 @@ class PerformanceBenchmarker:
 
 # ---------------------------------------------------------------------------
 def _first_glob(pattern):
-    matches = glob.glob(pattern)
+    matches = sorted(glob.glob(pattern))
     return matches[0] if matches else None
 
 

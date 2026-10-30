@@ -9,7 +9,6 @@ results/runtime/{classifier}_runtime.csv with columns:
 """
 
 import argparse
-import json
 from pathlib import Path
 
 import _common
@@ -37,10 +36,7 @@ def main():
     args = ap.parse_args()
 
     cfg = _common.load_pipeline_config()
-    classifiers_cfg = _common.load_classifiers_config()
-    if args.params_config:
-        with open(args.params_config) as fh:
-            classifiers_cfg = json.load(fh)
+    classifiers_cfg = _common.load_classifiers_config(args.params_config)
 
     threads = args.threads or cfg.get("default_n_threads", 4)
     out_dir = Path(args.results_dir) if args.results_dir \
@@ -79,6 +75,7 @@ def main():
         "n_replicates":           args.replicates,
         "n_threads":              threads,
         "conda_envs":             flat_envs,
+        "taxonova_settings":      classifiers_cfg.get("taxonova", {}),
         "classifier_params": {
             c: {k: (v[0] if isinstance(v, list) else v)
                 for k, v in classifiers_cfg["method_parameters_combinations"].get(c, {}).items()}
