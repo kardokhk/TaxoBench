@@ -1,166 +1,94 @@
-# Real-world amplicon trimming/denoising QC: paired-end audit (2026-05-04)
+# Real-world amplicon preprocessing: paired-end audit (2026-05-04)
 
-A dated audit of the real-world preprocessing. The batch scripts it names
-(`slurm/*.sbatch`) belong to the benchmark data tree and are not part of this
-repository.
+A dated audit of how four real-world studies (Mantri, Virtanen, Cao (coral) and Zuo)
+were primer-trimmed, filtered and denoised with DADA2, and of an error found in the
+paired-end handling of Zuo. The per-study preprocessing scripts belong to the archived
+benchmark data and are not yet in this repository.
 
-This note audits how each of the four real-world studies (virtanen, mantri,
-coral, zuo) handles primer trimming, quality filtering, and DADA2 denoising,
-and documents the bug found in the paired-end handling.
+## Summary
 
----
+| Study | Region | Read layout | Pipeline | Outcome |
+|---|---|---|---|---|
+| Mantri | V3-V4 | MiSeq 2x300 | cutadapt, DADA2 paired (`truncLen` 270/200), merge | correct; ASVs 402 to 427 bp |
+| Virtanen | V3-V4 | MiSeq 2x300 | Trim Galore, DADA2 paired (270/260), merge | correct; ASVs 442 to 466 bp |
+| Cao (coral) | V4 | iSeq 2x150 with primers | cutadapt (primers removed), DADA2 single-end (125) | kept; the pair cannot merge (below) |
+| Zuo | V4 | MiSeq 2x150, primers already removed | cutadapt (quality only), DADA2 single-end (110) | error; rerun paired-end (below) |
 
-## TL;DR
+## Reference values
 
-| Study    | Region | Read layout                   | Pipeline                                         | Verdict                                |
-|----------|--------|-------------------------------|--------------------------------------------------|----------------------------------------|
-| mantri   | V3-V4  | MiSeq 2×300                   | cutadapt → DADA2 paired (270/200) → merge        | yes correct (ASVs ~402–427 bp)          |
-| virtanen | V3-V4  | MiSeq 2×300                   | trim_galore → DADA2 paired (270/260) → merge     | yes correct (ASVs 442–466 bp)           |
-| coral    | V4     | iSeq **2×150 with primers**   | cutadapt (primers stripped) → DADA2 single-end (125) | yes kept (paired-end is mathematically infeasible, see §3) |
-| **zuo**  | V4     | MiSeq 2×150 (**pre-trimmed**) | cutadapt-Q only → DADA2 **single-end** (110)     | no paired-end SHOULD merge, fixed     |
-
----
-
-## 1. Reference numbers used below
-
-| Region | Primers (length)            | Insert length          | Source |
-|--------|-----------------------------|------------------------|--------|
-| V4     | 515F (19 nt) / 806R (20 nt) | ~252–253 bp (already excludes primers) | Earth Microbiome Project; Illumina app note |
-| V3-V4  | 341F (17 nt) / 785R (21 nt) | ~444–460 bp            | Klindworth et al. 2013 |
+| Region | Primers (length) | Insert length, primers excluded | Source |
+|---|---|---|---|
+| V4 | 515F (19 nt) / 806R (20 nt) | about 252 to 253 bp | Earth Microbiome Project; Illumina application note |
+| V3-V4 | 341F (17 nt) / 785R (21 nt) | about 444 to 460 bp | Klindworth et al. 2013 |
 
 DADA2 `mergePairs()` defaults: `minOverlap = 12`, `maxMismatch = 0`.
 
-> **Important convention for V4.** "V4 is ~252 bp" refers to the length of
-> the amplified insert *between* the primer-binding sites; the primers
-> themselves are not included. So once cutadapt removes the primers from a
-> 150 bp read, the remaining 131 bp / 130 bp covers a portion of the *252
-> bp* insert (not a portion of "252 + 39"). An earlier draft of this audit
-> used the wrong convention, which led to over-optimistic merge math for
-> coral. Both layouts below have been re-verified empirically.
+The V4 insert length excludes the primers. Once cutadapt removes the primers from a
+150 bp read, the remaining 131 or 130 bp cover part of the 252 bp insert, not part of
+252 + 39 bp. An earlier draft of this audit used the wrong convention, which gave an
+optimistic overlap for the coral study. Both layouts below were checked on the reads.
 
----
+## Per study
 
-## 2. Per-study findings
+**Mantri.** Reads after cutadapt: R1 about 284 bp, R2 about 280 bp. With
+`truncLen = c(270, 200)` the overlap is 270 + 200 - 410 = 60 bp. Observed ASVs: 402 to
+427 bp.
 
-### 2.1 mantri yes correct (kept as reference)
+**Virtanen.** Trim Galore (primers and quality), DADA2 paired with
+`truncLen = c(270, 260)`, `mergePairs`. About 92% of filtered reads merged; 1,294 ASVs
+of 442 to 466 bp.
 
-Sampled lengths after cutadapt: R1 ≈ 284 bp, R2 ≈ 280 bp.
-DADA2 `truncLen = c(270, 200)`. Merge math: 270 + 200 − ~410 = **60 bp** ≥ 12 OK.
-Observed ASV peak 402–427 bp.
-
-### 2.2 virtanen yes correct (kept as reference)
-
-Pipeline at `data/real_world_input/virtanen/dada2_output/dada2_analysis.R`:
-trim_galore (primer + quality) → DADA2 paired `truncLen = c(270, 260)` →
-mergePairs. ~92 % of filtered reads merge. 1 294 ASVs at 442–466 bp.
-
-### 2.3 coral: paired-end infeasible with default DADA2 yes keep single-end
-
-`slurm/coral_amplicon_pipeline.sbatch` runs cutadapt to strip the
-515FY/806RB primers (19+20 nt) and then DADA2 single-end with
-`truncLen = 125`.
-
-The original justification ("9 bp overlap < 12") is correct under the
-right insert convention:
+**Cao (coral).** cutadapt removes the 515FY/806RB primers (19 and 20 nt), then DADA2
+runs single-end with `truncLen = 125`. A paired-end merge is not possible with the
+DADA2 defaults:
 
 ```
-post-cutadapt:  R1 ≈ 131 bp, R2 ≈ 130 bp
-V4 insert:      ~252 bp
-overlap:        131 + 130 − 252  =  9 bp  <  12  no
+after cutadapt:  R1 about 131 bp, R2 about 130 bp
+V4 insert:       about 252 bp
+overlap:         131 + 130 - 252 = 9 bp, below the 12 bp minimum
 ```
 
-I verified this empirically: a paired-end variant with `truncLen=c(140,140)`
-dropped *every* read in `filterAndTrim` (because most post-cutadapt reads
-are already shorter than 140 bp), and lower `truncLen` values would push
-the available overlap below DADA2's minimum. The Earth Microbiome 515F/806R
-+ 2×150 layout is well known not to merge cleanly without bespoke
-parameters.
+A paired-end run with `truncLen = c(140, 140)` lost every read in `filterAndTrim`,
+because most reads are shorter than 140 bp after primer removal; a lower `truncLen`
+reduces the overlap further. Lowering `minOverlap` to 8 risks false merges and was not
+adopted. The single-end ASVs (125 bp, the first half of V4) are what every classifier
+in the panel receives.
 
-Possible future paths (not adopted now to keep the panel uniform with
-defaults):
-- run DADA2 with `mergePairs(..., minOverlap=8)`, risks false merges;
-- skip cutadapt and use `filterAndTrim(..., trimLeft=c(19,20),
-  truncLen=c(140,140))`, same overlap budget, no gain;
-- ignore primers, use full 150 bp, overlap 150+150−290 = 10 bp, still
-  below default.
-
-The original single-end (`truncLen = 125`) is the right baseline. ASVs are
-125 bp covering the front half of V4, that is what every classifier in
-the panel sees, so the comparison is fair.
-
-### 2.4 zuo: paired-end was disabled in error yes fixed
-
-`slurm/zuo_amplicon_pipeline.sbatch` reasons:
-
-> V4 252bp amplicon + 2x150 MiSeq + 39bp primers leaves ~111bp post-trim
-> reads with no overlap.
-
-…and runs DADA2 single-end with `truncLen = 110`.
-
-**The math is wrong.** Zuo reads were already primer-trimmed by the
-submitter (the script itself notes this and skips the primer step in
-cutadapt). So the reads start at the V4 insert and are the full 150 bp:
+**Zuo.** The original run used single-end DADA2 with `truncLen = 110`, on the
+assumption that primer removal leaves about 111 bp per read. The submitted reads had
+already been primer-trimmed, so each read is 150 bp of insert:
 
 ```
-R1 + R2  − insert  =  150 + 150 − 252  =  48 bp  ≥ 12  OK
+overlap:  150 + 150 - 252 = 48 bp, above the 12 bp minimum
 ```
 
-**Fix applied** (`slurm/zuo_amplicon_pipeline_paired.sbatch`, run
-2026-05-04 as job 9168, COMPLETED in 23 min):
+The study was rerun with DADA2 paired-end, `truncLen = c(145, 140)` and the
+`mergePairs` defaults, after the same quality-only cutadapt step:
 
-- Same download + Q-only cutadapt as before.
-- DADA2 paired-end with `truncLen = c(145, 140)`.
-- `mergePairs` (defaults).
+| | Single-end (`truncLen` 110) | Paired-end |
+|---|---|---|
+| ASVs | 1,769 | 3,218 |
+| ASV length | 110 bp (all) | 252 to 253 bp (2,633 of 3,218 at 253 bp) |
+| Samples | 42 | 42 |
 
-Result:
+`rep_seqs_zuo.fasta` and the DADA2 tables were replaced by the paired-end output; the
+sample keys of `asv_table_ids.csv` still match `paired_samples.csv` (all 42 samples
+checked). The Mantri, Virtanen and coral outputs did not change.
 
-| Metric          | Before (single-end, truncLen=110) | After (paired-end) |
-|-----------------|------------------------------------|--------------------|
-| Total ASVs      | 1 769                              | **3 218**          |
-| ASV length      | 110 bp (all)                       | **252–253 bp** (peak; 2633 of 3218 at 253) |
-| Samples         | 42                                 | 42                 |
+## Why the two V4 studies differ
 
-The new `rep_seqs_zuo.fasta` is in place at
-`data/real_world_input/rep_seqs_zuo.fasta`. The original DADA2 outputs in
-`zuo/dada2_output/` were overwritten by the new run; the asv_table_ids.csv
-keys still match `metadata/paired_samples.csv` (verified all 42 samples).
+Both are V4 2x150. In the coral study the first 19 or 20 bases of each read are primer,
+so the pair covers 261 bp of a 252 bp insert (9 bp overlap). In the Zuo study the reads
+start in the insert, so the pair covers 300 bp (48 bp overlap).
 
----
+## References
 
-## 3. Why merging is impossible for coral but trivial for zuo
-
-Both studies are V4 2×150. The difference is *what the 150 bp covers*:
-
-- **coral (raw + primers)**: read[0:19/20] is primer; only ~131 bp of each
-  read is insert. R1+R2 covers 261/252 of the insert ⇒ overlap = 9 bp.
-- **zuo (submitter pre-trimmed)**: read[0:150] is already insert.
-  R1+R2 covers 300/252 of the insert ⇒ overlap = 48 bp.
-
-This is also why `truncLen=140` failed for coral: most reads were
-already shorter than 140 bp post-cutadapt and `filterAndTrim` dropped
-them all.
-
----
-
-## 4. Effect on downstream evaluation
-
-For zuo: the new ASVs cover the **full V4 variable region** instead of
-just the first ~110 bp, restoring ~140 bp of variable-region signal.
-Species-level scores for zuo are expected to rise across all 8
-classifiers; the relative ordering of classifiers is the comparable axis
-for the manuscript.
-
-For coral, virtanen, mantri: no change.
-
----
-
-## 5. References (web)
-
-- DADA2 `mergePairs` defaults `minOverlap=12`, `maxMismatch=0`,
-  https://rdrr.io/bioc/dada2/man/mergePairs.html ;
-  https://github.com/benjjneb/dada2/issues/852
-- Earth Microbiome Project 16S protocol (515F/806R; insert ≈ 252 bp),
-  https://earthmicrobiome.ucsd.edu/protocols-and-standards/16s/
-- Illumina V4 amplicon length / 2×150 limitations,
-  https://www.illumina.com/content/dam/illumina-marketing/documents/products/appnotes/appnote_miseq_16S.pdf
-- V3-V4 amplicon length (Klindworth et al. 2013, Nucleic Acids Res.)
+- DADA2 `mergePairs` defaults: <https://rdrr.io/bioc/dada2/man/mergePairs.html>;
+  <https://github.com/benjjneb/dada2/issues/852>
+- Earth Microbiome Project 16S protocol (515F/806R):
+  <https://earthmicrobiome.ucsd.edu/protocols-and-standards/16s/>
+- Illumina 16S metagenomic sequencing application note:
+  <https://www.illumina.com/content/dam/illumina-marketing/documents/products/appnotes/appnote_miseq_16S.pdf>
+- Klindworth A, et al. Evaluation of general 16S ribosomal RNA gene PCR primers for
+  classical and next-generation sequencing-based diversity studies. Nucleic Acids Res.
+  2013;41(1):e1. doi:10.1093/nar/gks808
