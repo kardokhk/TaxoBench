@@ -24,11 +24,22 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import _common  # noqa
 
 
-CONTINUOUS = ("taxonova", "idtaxa", "naive-bayes")
-BIMODAL    = ("mapseq", "spingo")
+# MAPseq carries 5,455 distinct species-rank confidences on the loco2k V4 novel
+# split, so it is continuous and was mis-classed as bimodal. SPINGO has 101,
+# which is genuinely coarse. Measured 2026-08-29.
+CONTINUOUS = ("taxonova", "idtaxa", "naive-bayes", "mapseq")
+BIMODAL    = ("spingo",)
 EXCLUDED   = ("blast", "vsearch", "kraken2")
 
-PERCENTILES_CONTINUOUS = [10, 25, 40, 50, 60, 70, 80, 85, 90, 93, 95, 97, 99]
+# Dense by design. The grid is uniform in CONFIDENCE, but the quantity a reader
+# matches on is UNDER-CLASSIFICATION, and the map between them is steep in the
+# saturated tail: with the previous 13 percentiles the points bracketing
+# UC = 0.50 were up to 0.283 apart at RRN, so reading the curve at the nearest
+# grid point was arbitrary and could move species over-classification from
+# 0.045 to 0.060. Percentiles at 1 % steps, with extra density in both tails,
+# put real measured points where the curve is read.
+PERCENTILES_CONTINUOUS = ([0.1, 0.5, 1, 2] + list(range(3, 98)) +
+                          [98, 98.5, 99, 99.5, 99.9])
 PERCENTILES_BIMODAL    = [10, 25, 50, 75, 90, 99]
 
 DEFAULT_TAU = {

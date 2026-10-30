@@ -20,8 +20,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 import _common  # noqa
+#: The conda executable used for `conda run`. `conda run` is needed to
+#: activate the qiime2 env properly for R and QIIME 2 (PATH alone is not
+#: enough). Set TAXOBENCH_CONDA_BIN or "conda_bin" in pipeline_config.json
+#: when conda is not on PATH (for example on some HPC compute nodes).
+CONDA_BIN = _common.conda_bin()
 
-VALID = ("taxonova", "idtaxa", "naive-bayes", "blast-vsearch", "spingo")
+VALID = ("taxonova", "idtaxa", "naive-bayes", "blast-vsearch", "spingo",
+         "kraken2", "mapseq")
 
 
 def _spingo_format(merged_fasta, taxonomy_tsv, out_fasta):
@@ -81,6 +87,16 @@ def _spingo_format(merged_fasta, taxonomy_tsv, out_fasta):
     print(f"[spingo] wrote {n} sequences -> {out_fasta}")
 
 
+def _region_dir(args):
+    """Region directory name, optionally tagged so replicates coexist.
+
+    An empty --tag counts as no tag: shell callers pass "${TAG:-}" and an
+    unset TAG must not silently produce a 'V4__' directory.
+    """
+    tag = (args.tag or "").strip()
+    return f"{args.region}__{tag}" if tag else args.region
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--region", required=True,
@@ -88,10 +104,16 @@ def main():
     ap.add_argument("--classifier", required=True, choices=VALID)
     ap.add_argument("--threads", type=int, default=20)
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--loco-root", default="loco",
+                    help="Subdirectory of data/ holding the holdout. Default "
+                         "'loco' is the shipped 200-species run; the 2,000-species "
+                         "replicates live under 'loco2k'.")
+    ap.add_argument("--tag", default=None,
+                    help="Suffix on the region directory, e.g. 'seed2026'.")
     args = ap.parse_args()
 
     cfg = _common.load_pipeline_config()
-    base = Path(cfg["data_dir"]) / "loco" / args.region / "retained_ref"
+    base = Path(cfg["data_dir"]) / args.loco_root / _region_dir(args) / "retained_ref"
     fa  = base / "sequences.fasta"
     tax = base / "taxonomy.tsv"
     merged = base / "merged.fasta"
@@ -107,10 +129,9 @@ def main():
             print(f"[loco/02] skip taxonova: {out_model} exists")
             return
         env = cfg["conda_envs"]["qiime2"]
-        # Canonical tx_wip_09 per-region recipe. The previous --smart_full_data
+        # Per-region training recipe used for the published LOCO runs. The previous --smart_full_data
         # invocation underfit at ~15 epochs / loss 3.4 / overall F1 0.14, which
         # collapsed species/genus/family softmax mass to ~0 across all controls.
-        # See corrections/comments_addressed/diagnosis_sweep_loco_2026-05-20.md.
         recipe = {
             "V4":    {"epochs": 45, "tau": None},
             "V3-V4": {"epochs": 20, "tau": 0.6},
@@ -119,9 +140,10 @@ def main():
             "RRN":   {"epochs": 60, "tau": None},
         }[args.region]
         raw_model = cls_dir / "model.raw.pt"
+        # Binaries resolved from the env prefix rather than `conda run`: conda
+        # may not be on PATH on compute nodes.
         cmd = [
-            "conda", "run", "-p", env, "--no-capture-output",
-            "taxonova", "training", "--verbose",
+            f"{env}/bin/taxonova", "training", "--verbose",
             "--train_db", str(merged),
             "--model_output", str(raw_model),
             "--epochs", str(recipe["epochs"]),
@@ -135,8 +157,7 @@ def main():
         subprocess.run(cmd, check=True)
         if recipe["tau"] is not None:
             cmd_tau = [
-                "conda", "run", "-p", env, "--no-capture-output",
-                sys.executable, "-m", "taxonova.calibration.tau_norm",
+                f"{env}/bin/python", "-m", "taxonova.calibration.tau_norm",
                 "--in_ckpt", str(raw_model),
                 "--out_ckpt", str(out_model),
                 "--tau", str(recipe["tau"]),
@@ -153,7 +174,7 @@ def main():
             return
         env = cfg["conda_envs"]["qiime2"]
         cmd = [
-            "conda", "run", "-p", env, "--no-capture-output",
+            CONDA_BIN, "run", "-p", env, "--no-capture-output",
             "Rscript", str(ROOT / "src" / "loco" / "train_idtaxa.R"),
             str(fa), str(tax), str(out_model),
         ]
@@ -167,7 +188,7 @@ def main():
             return
         env = cfg["conda_envs"]["qiime2"]
         cmd = [
-            "conda", "run", "-p", env, "--no-capture-output",
+            CONDA_BIN, "run", "-p", env, "--no-capture-output",
             sys.executable,
             str(ROOT / "src" / "loco" / "train_naive_bayes.py"),
             str(fa), str(tax), str(out_model),
@@ -184,7 +205,7 @@ def main():
             return
         env = cfg["conda_envs"]["qiime2"]
         cmd = [
-            "conda", "run", "-p", env, "--no-capture-output",
+            CONDA_BIN, "run", "-p", env, "--no-capture-output",
             sys.executable,
             str(ROOT / "src" / "loco" / "build_blast_vsearch.py"),
             str(fa), str(tax), str(cls_dir),
@@ -198,6 +219,32 @@ def main():
             print(f"[loco/02] skip spingo: {out_fa} exists")
             return
         _spingo_format(str(merged), str(tax), str(out_fa))
+
+    elif args.classifier == "mapseq":
+        ref_fa = cls_dir / "reference.fasta"
+        ref_tax = cls_dir / "reference.tax"
+        if ref_fa.exists() and ref_tax.exists() and not args.force:
+            print(f"[loco/02] skip mapseq: artifacts exist in {cls_dir}")
+            return
+        cmd = [sys.executable, str(ROOT / "src" / "loco" / "build_mapseq.py"),
+               str(fa), str(tax), str(cls_dir)]
+        print("[loco/02 mapseq]", " ".join(cmd), flush=True)
+        subprocess.run(cmd, check=True)
+
+    elif args.classifier == "kraken2":
+        k2d = ("hash.k2d", "opts.k2d", "taxo.k2d")
+        if all((cls_dir / f).exists() for f in k2d) and not args.force:
+            print(f"[loco/02] skip kraken2: artifacts exist in {cls_dir}")
+            return
+        # Called directly rather than via `conda run`: this script already runs
+        # inside the qiime2 env, and `conda` is not on PATH on compute nodes.
+        cmd = [
+            sys.executable,
+            str(ROOT / "src" / "loco" / "build_kraken2.py"),
+            str(fa), str(tax), str(cls_dir), str(args.threads),
+        ]
+        print("[loco/02 kraken2]", " ".join(cmd), flush=True)
+        subprocess.run(cmd, check=True)
 
 
 if __name__ == "__main__":

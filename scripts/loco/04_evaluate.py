@@ -49,6 +49,8 @@ DEFAULT_TAU = {
     "blast":       0.51,   # consensus threshold
     "vsearch":     0.51,
     "spingo":      0.5,
+    "kraken2":     0.0,    # kraken2's own --confidence default is 0
+    "mapseq":      0.4,    # the cutoff the mock panel used
 }
 
 
@@ -80,12 +82,26 @@ def _strip_prefix(name):
     return name.split("__", 1)[-1].strip() if name else ""
 
 
+#: Every way a classifier in this panel says "no call at this rank". MAPseq
+#: writes a literal "N/A"; without it here that is scored as a taxon named N/A,
+#: i.e. a guaranteed error, which understates MAPseq. Adding it changes no
+#: published number: no output from the six previously evaluated classifiers
+#: contains the string (checked 2026-08-19).
+#: Deliberately NOT here: "root". IDTAXA emits it 214,377 times as the leading
+#: element of its lineage, which load_predictions already strips by position.
+#: Treating it as an abstention token would reclassify real IDTAXA calls and
+#: move published numbers. Nor "na"/"none", which no output contains and which
+#: could collide with a genuine taxon name.
+ABSTENTION_TOKENS = ("unclassified", "unknown", "unassigned", "n/a",
+                     "no blast hit", "ambiguous")
+
+
 def _is_empty(name):
     """True if a lineage cell is missing (e.g. 'g__' or '')."""
     if not name:
         return True
     s = _strip_prefix(name)
-    return s == "" or s.lower() in ("unclassified", "unknown", "unassigned")
+    return s == "" or s.lower() in ABSTENTION_TOKENS
 
 
 def _parse_confidence_field(field, n_levels=7):
@@ -261,34 +277,66 @@ def evaluate_one(region, classifier, predictions_dir, truth_paths, thresholds):
     return rows
 
 
+def _region_from_dir(dir_name, tag):
+    """Bare region name for a (possibly tagged) region directory.
+
+    Replicates coexist as '<region>__<tag>' (see 03_classify.py::_region_dir).
+    The tag is stripped here so the 'region' column keeps reading 'V4' rather
+    than 'V4__seed2026', which is what 05_plot.py and the figure scripts match
+    on. Provenance is not lost: each replicate writes into its own
+    results/<loco-root>/evaluation/ directory.
+    """
+    if tag and dir_name.endswith("__" + tag):
+        return dir_name[: -(len(tag) + 2)]
+    return dir_name
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--regions", nargs="+", default=None)
+    ap.add_argument("--regions", nargs="+", default=None,
+                    help="Bare region names, e.g. V4. Compared after the --tag "
+                         "suffix is stripped from the directory name.")
     ap.add_argument("--classifiers", nargs="+", default=None)
     ap.add_argument("--tau-grid", default=str(ROOT / "configs" / "tau_grids.json"),
                     help="JSON with per-classifier LOCO tau grids.")
+    ap.add_argument("--loco-root", default="loco",
+                    help="Subdirectory of data/ and results/ holding the run. "
+                         "Default 'loco' is the shipped 200-species holdout; "
+                         "the 2,000-species replicate is 'loco2k'.")
+    ap.add_argument("--tag", default=None,
+                    help="Only evaluate region directories carrying this "
+                         "suffix, e.g. 'seed2026' for '<region>__seed2026'.")
     args = ap.parse_args()
     per_cls_grids = _load_tau_grids(args.tau_grid)
     if per_cls_grids:
         print(f"[loco/04] loaded per-classifier tau grids for: {sorted(per_cls_grids)}")
 
     cfg = _common.load_pipeline_config()
-    res_root  = Path(cfg["results_dir"]) / "loco"
-    data_root = Path(cfg["data_dir"]) / "loco"
-    out_root  = Path(cfg["results_dir"]) / "loco" / "evaluation"
+    res_root  = Path(cfg["results_dir"]) / args.loco_root
+    data_root = Path(cfg["data_dir"]) / args.loco_root
+    out_root  = res_root / "evaluation"
+    if not res_root.is_dir():
+        sys.exit("missing {}; run 03_classify.py --loco-root {} first".format(
+            res_root, args.loco_root))
     out_root.mkdir(parents=True, exist_ok=True)
 
     rows = []
+    wrong_tag = []
     for region_dir in sorted(res_root.iterdir()):
         if not region_dir.is_dir() or region_dir.name == "evaluation":
             continue
-        region = region_dir.name
+        # A tagged run must not silently pick up an untagged sibling sitting in
+        # the same root, and a mistyped tag must not read as "no results".
+        if args.tag and not region_dir.name.endswith("__" + args.tag):
+            wrong_tag.append(region_dir.name)
+            continue
+        region = _region_from_dir(region_dir.name, args.tag)
         if args.regions and region not in args.regions:
             continue
         truth_paths = {
-            "novel_truth":   data_root / region / "novel_truth.tsv",
-            "control_truth": data_root / region / "control_truth.tsv",
-            "novel_meta":    data_root / region / "novel_meta.tsv",
+            "novel_truth":   data_root / region_dir.name / "novel_truth.tsv",
+            "control_truth": data_root / region_dir.name / "control_truth.tsv",
+            "novel_meta":    data_root / region_dir.name / "novel_meta.tsv",
         }
         for cls_dir in sorted(region_dir.iterdir()):
             if not cls_dir.is_dir():
@@ -305,6 +353,9 @@ def main():
                   flush=True)
             rows.extend(evaluate_one(region, classifier, cls_dir, truth_paths, thresholds))
 
+    if wrong_tag:
+        print("[loco/04] skipped (tag != {!r}): {}".format(
+            args.tag, ", ".join(sorted(wrong_tag))), file=sys.stderr)
     if not rows:
         print("[loco/04] no predictions found")
         return

@@ -109,8 +109,14 @@ def overview_figure(rows, out_dir):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description="Plot the LOCO MC/OC curves from "
+                                 "<results>/<loco-root>/evaluation/mc_oc_curve.csv.")
+    ap.add_argument("--loco-root", default="loco",
+                    help="Subdirectory of results/ holding the run (default 'loco').")
+    args = ap.parse_args()
     cfg = _common.load_pipeline_config()
-    eval_dir = Path(cfg["results_dir"]) / "loco" / "evaluation"
+    eval_dir = Path(cfg["results_dir"]) / args.loco_root / "evaluation"
     curve_fp = eval_dir / "mc_oc_curve.csv"
     if not curve_fp.exists():
         sys.exit(f"missing {curve_fp}; run scripts/loco/04_evaluate.py first")

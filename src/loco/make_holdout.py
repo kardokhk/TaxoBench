@@ -71,10 +71,19 @@ def load_reference(taxonomy_tsv, sequences_fasta):
             yield cur_id, tax_map[cur_id], "".join(cur_seq)
 
 
-def select_holdout_taxa(records, rank_targets, min_seqs, seed):
+def select_holdout_taxa(records, rank_targets, min_seqs, seed, fixed_ranks=None):
     """records: list[(id, tax_parts, seq)]. Returns dict[level_int] -> set of
-    holdout lineage strings at that level. Stratified across the taxonomy."""
+    holdout lineage strings at that level. Stratified across the taxonomy.
+
+    fixed_ranks: optional dict[rank_name] -> iterable of lineage strings. Those
+    ranks are NOT redrawn; the given lineages are used verbatim. Used to hold
+    the higher-rank strata constant across replicates so that only the species
+    draw varies. Without it, redrawing all five strata moves the retained
+    reference by -41 % to +20 % between seeds, which swamps the species-level
+    sampling variability the replicates are meant to measure.
+    """
     rng = random.Random(seed)
+    fixed_ranks = fixed_ranks or {}
     # Build counts of sequences per lineage at each rank.
     counts_by_rank = defaultdict(Counter)
     for _, parts, _ in records:
@@ -88,6 +97,21 @@ def select_holdout_taxa(records, rank_targets, min_seqs, seed):
     for rank_name in ["species", "genus", "family", "order", "class"]:
         lvl = LEVEL_TO_INT[rank_name]
         target = rank_targets[rank_name]
+        if rank_name in fixed_ranks:
+            # Carried over from a previous replicate. Verify every lineage is
+            # still present in this reference rather than silently holding out
+            # nothing, which would inflate the retained reference.
+            chosen = set(fixed_ranks[rank_name])
+            present = set(counts_by_rank[lvl])
+            absent = sorted(chosen - present)
+            if absent:
+                raise SystemExit(
+                    "[loco/01] FATAL: %d fixed %s lineages are absent from this "
+                    "reference, e.g. %s" % (len(absent), rank_name, absent[:3]))
+            for lin in chosen:
+                already_held.add((lvl, lin))
+            holdout_lineages[lvl] = chosen
+            continue
         # Eligible: has >= min_seqs sequences AND its parent rank has at least
         # 2 child taxa (else removing it strips the parent entirely).
         parent_lvl = lvl - 1
@@ -161,6 +185,12 @@ def main():
     ap.add_argument("--n-orders",   type=int, default=25)
     ap.add_argument("--n-classes",  type=int, default=10)
     ap.add_argument("--min-seqs-per-taxon", type=int, default=4)
+    ap.add_argument("--fixed-higher-ranks", default=None, metavar="MANIFEST",
+                    help="Path to a previous replicate's holdout_manifest.json. "
+                         "Its genus, family, order and class hold-outs are reused "
+                         "verbatim and only the species stratum is redrawn, so that "
+                         "replicates differ in the species draw alone and the "
+                         "retained reference stays comparable.")
     ap.add_argument("--n-controls", type=int, default=2000,
                     help="Random sample of retained sequences used as MC controls")
     args = ap.parse_args()
@@ -190,9 +220,21 @@ def main():
         "order":    args.n_orders,
         "class":    args.n_classes,
     }
+    fixed_ranks = None
+    fixed_src = None
+    if args.fixed_higher_ranks:
+        with open(args.fixed_higher_ranks) as fh:
+            prev = json.load(fh)
+        fixed_ranks = {r: prev["holdout_taxa"][r]
+                       for r in ("genus", "family", "order", "class")}
+        fixed_src = args.fixed_higher_ranks
+        print("[loco/01] higher ranks fixed from %s: %s"
+              % (fixed_src, {r: len(v) for r, v in fixed_ranks.items()}))
+
     holdout = select_holdout_taxa(
         [(r[0], r[1], r[3]) for r in records],
         rank_targets, args.min_seqs_per_taxon, args.seed,
+        fixed_ranks=fixed_ranks,
     )
     print("[loco] holdout taxa per rank:")
     for lvl in sorted(holdout):
@@ -252,6 +294,7 @@ def main():
     manifest = {
         "region": args.region,
         "seed": args.seed,
+        "fixed_higher_ranks_from": fixed_src,
         "rank_targets": rank_targets,
         "min_seqs_per_taxon": args.min_seqs_per_taxon,
         "n_total_records": len(records),
