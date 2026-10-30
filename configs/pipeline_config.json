@@ -9,7 +9,7 @@
     "real_world_input_dir":   "data/real_world_input",
     "mock_input_dir":         "data/mock_community/input_data",
 
-    "_conda_envs": "Prefixes of the conda environments (docs/ENVIRONMENTS.md). Classifier configs refer to these by key.",
+    "_conda_envs": "Prefixes of the conda environments (docs/environments.md). Classifier configs refer to these by key.",
     "conda_envs": {
         "qiime2":         "/path/to/conda/envs/taxobench-qiime2",
         "spingo":         "/path/to/conda/envs/taxobench-spingo",
