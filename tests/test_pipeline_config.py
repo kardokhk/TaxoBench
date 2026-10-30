@@ -164,6 +164,16 @@ class TestTaxonovaCommand(unittest.TestCase):
             with self.assertRaises(ValueError):
                 G.resolve_taxonova_model("V4", str(region_dir), spec, ref_root=tmp)
 
+    def test_model_id_needs_no_reference_dir(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ids = {"models": {"V4": "v4"}}
+            ref = _common.ref_dict("taxonova", tmp, "V4", ids)
+            self.assertEqual(ref["model"], "v4")
+            # A checkpoint path, or another classifier, still needs the directory.
+            paths = {"models": {"V4": "V4/taxonova/a_model.pt"}}
+            self.assertIsNone(_common.ref_dict("taxonova", tmp, "V4", paths))
+            self.assertIsNone(_common.ref_dict("blast", tmp, "V4", ids))
+
 
 class TestScriptsLoad(unittest.TestCase):
     """Every script compiles; the orchestration scripts answer --help."""

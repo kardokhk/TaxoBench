@@ -101,6 +101,15 @@ def ref_dict(classifier, ref_root, region, taxonova_settings=None):
     from os.path import join, exists
     region_dir = join(ref_root, region)
     if not os.path.isdir(region_dir):
+        # Taxonova with a model id (for example "v4") needs no reference
+        # files: the package downloads and verifies the model itself.
+        if classifier == "taxonova":
+            add_src_to_path()
+            import generate_commands
+            model = generate_commands.resolve_taxonova_model(
+                region, region_dir, taxonova_settings or {}, ref_root=ref_root)
+            if model and not (model.endswith(".pt") or os.sep in model):
+                return {"seqs": None, "taxa": None, "merged": None, "model": model}
         return None
     if region == "RRN":
         seqs = join(region_dir, "grond_clean.fasta")
