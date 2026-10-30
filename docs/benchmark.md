@@ -35,13 +35,13 @@ so each amplicon profile is compared with a shotgun profile of the same sample
 (Woltka OGU tables). Studies are defined in the `real_world` block of
 `configs/mocks.json`:
 
-| Study | Environment | Region | Amplicon | Shotgun |
-|---|---|---|---|---|
-| Zuo et al. | gut, pediatric ulcerative colitis | V4 | PRJNA759642 | PRJNA759642 |
-| Mantri et al. | soil | V3-V4 | PRJNA717918 | PRJNA717813 |
-| Virtanen et al. | vaginal | V3-V4 | PRJEB25778 | PRJEB43447 |
-| Cao et al. | coral reef | V4 | PRJNA910824 | PRJNA910824 |
-| EMP500 forest soil, plant phyllosphere | soil, plant | V4 | PRJEB42019 | PRJEB42019 |
+| Study | Environment | Region | Amplicon | Shotgun | In the paper |
+|---|---|---|---|---|---|
+| Zuo et al. | gut, pediatric ulcerative colitis | V4 | PRJNA759642 | PRJNA759642 | yes |
+| Mantri et al. | soil | V3-V4 | PRJNA717918 | PRJNA717813 | yes |
+| Virtanen et al. | vaginal | V3-V4 | PRJEB25778 | PRJEB43447 | yes |
+| Cao et al. | coral reef | V4 | PRJNA910824 | PRJNA910824 | no |
+| EMP500 forest soil, plant phyllosphere | soil, plant | V4 | PRJEB42019 | PRJEB42019 | no |
 
 Downloading, trimming, denoising and shotgun profiling are done once per study
 ([realworld.md](realworld.md), [realworld_amplicon_qc.md](realworld_amplicon_qc.md)).

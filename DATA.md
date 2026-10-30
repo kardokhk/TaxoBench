@@ -1,9 +1,8 @@
 # Data acquisition and layout
 
-None of the large inputs ship with this repo: the reference databases are tens of
-gigabytes, the generated mock reads and real-world tables are large, and the
-trained models are big binaries. This document tells you what the pipeline expects
-on disk, where to get it, and how to lay it out so a run actually goes through.
+The reference databases, generated mock reads, real-world tables and model
+checkpoints are too large for the repository. This document lists what the pipeline
+expects on disk, where to obtain it and where to place it.
 
 The directory paths in `configs/pipeline_config.json` are relative and resolve
 against the repository root, so `data/`, `results/` and so on sit inside the clone.
@@ -12,9 +11,10 @@ example `TAXOBENCH_DATA_DIR=/scratch/taxobench/data`). Set the conda environment
 prefixes once, in `conda_envs` of the same file (docs/environments.md). Everything
 below is relative to `data_dir` (`data/` at the repository root by default).
 
-The classifier outputs and generated mock cells behind the paper are not part of this
-repository. The repository includes one published cell (gut mock, V5-V7) under
-`tests/fixtures/` as an example and a regression fixture.
+The mock community inputs are in this repository (`mocks/inputs/`). The classifier
+outputs and generated mock cells behind the paper are not yet public; the repository
+includes one published cell (gut mock, V5-V7) under `tests/fixtures/` as an example
+and a regression fixture.
 
 ## Top-level data layout
 
@@ -104,32 +104,38 @@ a pair of files per mock in `data/mock_community/input_data/`:
 
 ```
 <mock>_seqs.fasta     # reference sequences for the mock's members
-<mock>_taxa.txt       # their taxonomy
+<mock>_taxa.txt       # their taxonomy (Feature ID, Taxon)
 ```
 
-The expected filenames per mock are listed in `configs/mocks.json` (`input_seqs`,
-`input_taxa`, or `v_seqs`/`v_taxa` for the biomes). For example
-`mockrobiota-16S_seqs.fasta`, `mbarc26_seqs.fasta`,
-`biome_soil_seqs.fasta`, and so on.
+The files used for the published cells are in this repository, gzipped, in
+`mocks/inputs/` (with `MD5SUMS`): Mockrobiota-16S, MBARC-26, the gut and vaginal mocks,
+the nine `biome_*` mocks and their nine `gtdb_*` RRN counterparts. Place them with
 
-- **Mockrobiota** mocks: `scripts/01_prepare.py` builds these by scanning a
-  Mockrobiota checkout at `data/softy/mockrobiota/data/`
-  (`mockrobiota_source_dir` in the config). Clone Mockrobiota and point the config
-  at it. If you already have prepared `input_data` files symlinked in, step 01 is a
-  no-op.
-- **MBARC-26**: `scripts/01b_prepare_extra_mocks.py` fetches the 16S records from
-  NCBI RefSeq and writes `mbarc26_{seqs,taxa}`.
-- **Biome mocks** (`biome_*`): built by sampling Greengenes2 sequences at
-  biome-realistic genus abundances. Those abundance profiles come from MGnify and
-  are checked in under `mgnify/results/2025-08-20_snapshot/` (top-100 taxa per rank
-  per biome). The retriever that produced them is in `mgnify/`, see
-  `mgnify/README.md`. Each biome's full-operon counterpart (`gtdb_*`, for RRN) is
-  built from GTDB/GROND sequences.
+```bash
+python scripts/01a_unpack_mock_inputs.py              # all mocks
+python scripts/01a_unpack_mock_inputs.py --mock-name mbarc26 biome_soil
+```
 
-Once the `input_data` pairs exist, `scripts/02_generate.py` (and the `02b`/`02c`
-variants) turn them into per-region simulated reads under
-`data/mock_community/<mock>/<region>/` and produce the trueish taxonomy that the
-evaluator scores against.
+The expected file names per mock are listed in `configs/mocks.json` (`input_seqs`,
+`input_taxa`, or `v_seqs`/`v_taxa` for the biomes). How the inputs were built:
+
+- **Mockrobiota-16S**: the 16S mocks of a Mockrobiota checkout
+  (`mockrobiota_source_dir`), collected by `scripts/01_prepare.py`.
+- **MBARC-26**: 16S records from NCBI RefSeq, fetched by
+  `scripts/01b_prepare_extra_mocks.py` (needs Biopython and network access). The
+  published taxonomy labels were then resolved against the Greengenes2 2024.09
+  taxonomy, so they differ from the labels 01b writes; use the file in
+  `mocks/inputs/` to reproduce the published cells.
+- **Biome mocks** (`biome_*`): Greengenes2 sequences sampled at biome-specific genus
+  abundances from MGnify. The abundance profiles are in
+  `mgnify/results/2025-08-20_snapshot/` (top-100 taxa per rank per biome), retrieved
+  with the scripts in `mgnify/` (see `mgnify/README.md`). Each biome's full-operon
+  counterpart (`gtdb_*`, for RRN) was built from GROND sequences. The sampling
+  script is not part of this repository; the inputs it produced are.
+
+`scripts/02_generate.py` (and the `02b`, `02c` and `02d` variants) turn the inputs
+into per-region cells under `data/mock_community/<mock>/<region>/` and write the
+truth that the evaluator scores against.
 
 ## Tier 3 real-world studies
 
@@ -153,7 +159,8 @@ and `docs/realworld_amplicon_qc.md` documents the primer/denoising QC. After tha
 `scripts/05_realworld_classify.py` and `05_realworld_evaluate.py` are cheap to
 rerun.
 
-Study accessions (the three headline studies plus the development studies):
+Study accessions. The paper reports the first three (Zuo, Mantri, Virtanen); the
+other three were used during development:
 
 | Study | Biome | Region | Amplicon accession | Shotgun accession |
 |-------|-------|--------|--------------------|-------------------|
@@ -176,8 +183,7 @@ A minimal reproduction for one region, one mock would be:
    directory paths, if `data/` and `results/` should not live in the clone).
 2. Put the region's reference DB and per-tool indexes under `data/ref_dbs/<region>/`,
    and download the Taxonova models (`taxonova models download all`).
-3. Get the mock's `input_data` pair in place (clone Mockrobiota, or run the `01*`
-   prep script).
+3. Place the mock's input pair (`scripts/01a_unpack_mock_inputs.py`).
 4. Run `02_generate.py` -> `03_assign.py` -> `04_evaluate.py` for that
    (mock, region).
 

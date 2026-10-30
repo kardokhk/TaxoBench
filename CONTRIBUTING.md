@@ -27,15 +27,17 @@ Add a line to `CHANGELOG.md` for any change in behavior. Changes to scoring must
 5. Add a test in `tests/test_scoring_rules.py` for the tool's abstention format if it
    differs from those already covered.
 
-To score outputs produced elsewhere, step 4 alone is not needed: place the files as
+To score outputs produced elsewhere, none of these steps is needed: place the files as
 `<results>/<mock>/<region>/<tool>/<parameters>/taxonomy_final.tsv` and run
 `scripts/04_evaluate.py --results-dir <results>`.
 
 ## Adding a mock community
 
-1. Write `<mock>_seqs.fasta` and `<mock>_taxa.txt` (`Feature ID`, `Taxon`) to the
-   input directory (`mock_input_dir` in `configs/pipeline_config.json`), by hand or
-   with a `01*` script.
+1. Write `<mock>_seqs.fasta` and `<mock>_taxa.txt` (`Feature ID`, `Taxon`), by hand
+   or with a `01*` script. To share the mock, add both files gzipped to
+   `mocks/inputs/` and their md5 sums (of the uncompressed files) to
+   `mocks/inputs/MD5SUMS`; `01a_unpack_mock_inputs.py` then places them in the input
+   directory (`mock_input_dir` in `configs/pipeline_config.json`).
 2. Register the mock in `configs/mocks.json` with the regions it is evaluated on.
 3. Generate the cells: `02_generate.py` for V4, V3-V4 and V5-V7;
    `02c_generate_v1v9_direct.py` for V1-V9; `02d_generate_longread_biomes.py` for
