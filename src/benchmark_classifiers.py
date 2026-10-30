@@ -227,7 +227,7 @@ class PerformanceBenchmarker:
                 rep_seq_base=test_base, outdir=bench_dir, param_dict=params,
                 reference_dict=reference_database['taxonova'][v_region],
                 scripts_dir=scripts_dir, conda_env=envs['taxonova'], dry_run=False,
-                settings=self.config.get('taxonova_settings'))
+                settings=self.config.get('taxonova_settings'), n_threads=n_threads)
         if classifier == 'vsearch':
             return generate_commands.build_vsearch_command(
                 rep_seq_base=test_base, outdir=bench_dir, param_dict=params,

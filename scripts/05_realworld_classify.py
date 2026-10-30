@@ -124,6 +124,7 @@ def main():
                     kw["scripts_dir"] = src_dir
                 if classifier == "taxonova":
                     kw["settings"] = tx_settings
+                    kw["n_threads"] = threads
                 if classifier in ("vsearch", "blast", "naive-bayes",
                                   "spingo", "kraken2", "mapseq"):
                     kw["n_threads"] = threads

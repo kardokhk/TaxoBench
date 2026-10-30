@@ -117,7 +117,7 @@ def _check_pinned_model(path, spec):
 
 def build_taxonova_command(
     rep_seq_base, outdir, param_dict, reference_dict,
-    scripts_dir, conda_env, dry_run, settings=None
+    scripts_dir, conda_env, dry_run, settings=None, n_threads=None
 ):
     """Command line for one taxonova run.
 
@@ -131,6 +131,8 @@ def build_taxonova_command(
                     every parent rank, as in the published runs)
     The species threshold comes from param_dict["confidence_threshold"], so
     it names the results directory (confidence_threshold-<value>).
+    n_threads is passed as --threads with cli "classify" only; the
+    "classification" command is left exactly as the published runs used it.
     """
     settings = taxonova_settings({"taxonova": settings or {}})
     cli = settings["cli"]
@@ -175,9 +177,11 @@ def build_taxonova_command(
         threshold_args = f"--confidence {species} " if species is not None else ""
         threshold_args += "".join(f"--{r}_threshold {gates[r]} "
                                   for r in TAXONOVA_PARENT_RANKS if r in gates)
+        threads = f"--threads {n_threads} " if n_threads else ""
         run = (f"taxonova classify {input_sequences} "
                f"--model {model} "
                f"{threshold_args}"
+               f"{threads}"
                f"-o {taxonomy_raw}")
     else:
         threshold_args = "".join(f"--{r}_threshold {gates[r]} "

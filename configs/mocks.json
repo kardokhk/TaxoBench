@@ -7,6 +7,7 @@
       "regions_v": [
         "V4",
         "V3-V4",
+        "V5-V7",
         "V1-V9"
       ],
       "rrn_counterpart": null,
@@ -18,11 +19,42 @@
       "description": "MBARC-26 mock community (Singer 2016 Sci. Data)",
       "input_seqs": "mbarc26_seqs.fasta",
       "input_taxa": "mbarc26_taxa.txt",
-      "regions_v": ["V4", "V3-V4", "V5-V7", "V1-V9"],
+      "regions_v": [
+        "V4",
+        "V3-V4",
+        "V5-V7",
+        "V1-V9"
+      ],
       "rrn_counterpart": null,
       "source": "NCBI RefSeq NR_ 16S records, fetched 2026-05-10 by scripts/01b_prepare_extra_mocks.py",
       "truth_kind": "uneven_4_orders",
       "note": "23 bacteria + 3 archaea spanning 10 phyla. Reference 16S is one representative full-length NR_ record per species (no rrn-copy multiplicity). Singer reports DNA-mass abundance spanning 4 orders of magnitude; for taxobench's Jaccard / detection-rate metrics this is fine, but L1/L2 abundance error is not meaningful here (truth is per-species, not per-rep_seq)."
+    },
+    "gutmock": {
+      "description": "Gut mock community",
+      "input_seqs": "gutmock_seqs.fasta",
+      "input_taxa": "gutmock_taxa.txt",
+      "regions_v": [
+        "V4",
+        "V3-V4",
+        "V5-V7",
+        "V1-V9"
+      ],
+      "rrn_counterpart": null,
+      "note": "Part of the published panel. Inputs and generated cells are in the benchmark data (DATA.md); not built by the 01 scripts."
+    },
+    "vaginalmock": {
+      "description": "Vaginal mock community",
+      "input_seqs": "vaginalmock_seqs.fasta",
+      "input_taxa": "vaginalmock_taxa.txt",
+      "regions_v": [
+        "V4",
+        "V3-V4",
+        "V5-V7",
+        "V1-V9"
+      ],
+      "rrn_counterpart": null,
+      "note": "Part of the published panel. Inputs and generated cells are in the benchmark data (DATA.md); not built by the 01 scripts."
     }
   },
   "biomes": {
@@ -114,7 +146,7 @@
       "wgs_ogu_biom": "coral/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "coral/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "coral/metadata/paired_samples.csv",
-      "note": "Florida Coral Reef paired 16S V4 + shotgun WGS (PRJNA910824, 15 paired biospecimens \u2014 coral tissue + seawater). Pipeline scripts: slurm/coral_*.sbatch. Added 2026-05-04."
+      "note": "Florida Coral Reef paired 16S V4 + shotgun WGS (PRJNA910824, 15 paired biospecimens — coral tissue + seawater). Pipeline scripts: slurm/coral_*.sbatch. Added 2026-05-04."
     },
     "emp500_soil": {
       "fasta": "rep_seqs_emp500_soil.fasta",
@@ -125,7 +157,7 @@
       "wgs_ogu_biom": "emp500_soil/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "emp500_soil/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "emp500_soil/metadata/paired_samples.csv",
-      "note": "EMP500 soil sub-study (myrold.59) \u2014 22 paired biospecimens. 16S V4 single-end MiSeq (Caporaso 515F/806R EMP standard) + Illumina NovaSeq shotgun. Added 2026-05-04. Pipelines: slurm/emp500_*.sbatch."
+      "note": "EMP500 soil sub-study (myrold.59) — 22 paired biospecimens. 16S V4 single-end MiSeq (Caporaso 515F/806R EMP standard) + Illumina NovaSeq shotgun. Added 2026-05-04. Pipelines: slurm/emp500_*.sbatch."
     },
     "emp500_plant": {
       "fasta": "rep_seqs_emp500_plant.fasta",
@@ -136,13 +168,14 @@
       "wgs_ogu_biom": "emp500_plant/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "emp500_plant/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "emp500_plant/metadata/paired_samples.csv",
-      "note": "EMP500 plant phyllosphere sub-study (berry.2) \u2014 20 paired biospecimens. 16S V4 single-end MiSeq + Illumina NovaSeq shotgun. Added 2026-05-04."
+      "note": "EMP500 plant phyllosphere sub-study (berry.2) — 20 paired biospecimens. 16S V4 single-end MiSeq + Illumina NovaSeq shotgun. Added 2026-05-04."
     }
   },
   "matrix": {
     "v_regions": [
       "V4",
       "V3-V4",
+      "V5-V7",
       "V1-V9"
     ],
     "rrn_region": "RRN",
@@ -157,7 +190,9 @@
       "biome_marine",
       "biome_plants",
       "biome_ocean",
-      "mbarc26"
+      "mbarc26",
+      "gutmock",
+      "vaginalmock"
     ],
     "rrn_mocks": [
       "gtdb_sputum",

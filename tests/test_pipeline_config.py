@@ -110,6 +110,16 @@ class TestTaxonovaCommand(unittest.TestCase):
                           "--confidence 0.8 -o /out/taxonomy_raw.tsv", cmd)
             self.assertNotIn("_threshold", cmd)
 
+    def test_threads_only_with_classify(self):
+        for name, has in (("classifiers_default.json", True), ("classifiers_paper.json", False)):
+            cfg = _common.load_classifiers_config(name)
+            settings = G.taxonova_settings(cfg)
+            cmd = G.build_taxonova_command(
+                "/in/q", "/out", {"confidence_threshold": 0.8},
+                {"seqs": "/r/s.fasta", "model": "/m.pt"}, "/src", "/env", True,
+                settings, n_threads=8)
+            self.assertEqual("--threads 8" in cmd, has, name)
+
     def test_param_dict_gate_overrides_config(self):
         settings = {"cli": "classification",
                     "parent_gates": {r: 0.5 for r in G.TAXONOVA_PARENT_RANKS}}
