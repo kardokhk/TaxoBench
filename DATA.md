@@ -5,14 +5,16 @@ gigabytes, the generated mock reads and real-world tables are large, and the
 trained models are big binaries. This document tells you what the pipeline expects
 on disk, where to get it, and how to lay it out so a run actually goes through.
 
-A note up front: the directory paths in `configs/pipeline_config.json` are
-relative and resolve against the repo root, so `data/`, `results/` and so on sit
-inside your clone. To put them elsewhere, edit `pipeline_config.json` or set
-`TAXOBENCH_<KEY>` (for example `TAXOBENCH_DATA_DIR=/scratch/taxobench/data`).
-The conda environment paths still have to be edited by hand. Everything below
-is described relative to `data_dir` (the `data/` directory at the repo root by
-default). Some scripts also hardcode a `ROOT` path near the top — grep for `ROOT =`
-if a region-specific generator complains about a missing path.
+The directory paths in `configs/pipeline_config.json` are relative and resolve
+against the repository root, so `data/`, `results/` and so on sit inside the clone.
+To put them elsewhere, edit `pipeline_config.json` or set `TAXOBENCH_<KEY>` (for
+example `TAXOBENCH_DATA_DIR=/scratch/taxobench/data`). Set the conda environment
+prefixes once, in `conda_envs` of the same file (docs/environments.md). Everything
+below is relative to `data_dir` (`data/` at the repository root by default).
+
+The classifier outputs and generated mock cells behind the paper are not part of this
+repository. The repository includes one published cell (gut mock, V5-V7) under
+`tests/fixtures/` as an example and a regression fixture.
 
 ## Top-level data layout
 
@@ -34,11 +36,11 @@ The exact directory names come from `pipeline_config.json`:
 
 Two source databases back the whole benchmark:
 
-- **Greengenes2, 2024.09 release** — the backbone for the short/standard 16S
+- **Greengenes2, 2024.09 release**: the backbone for the short/standard 16S
   regions (V4, V3-V4, V5-V7, V1-V9). Download from
   <https://greengenes2.ucsd.edu/>.
-- **GROND** (and GTDB-derived rrn sequences) — the full rRNA operon reference for
-  the RRN region. See <https://github.com/PaulCotter/GROND>.
+- **GROND**, the build for GTDB release 207: the full rRNA operon reference for the
+  RRN region (<https://zenodo.org/records/10889037>).
 
 Each region gets its own subdirectory under `data/ref_dbs/`, and within it a common
 set of files plus one subfolder per classifier that needs a prebuilt index. Observed
@@ -63,8 +65,8 @@ data/ref_dbs/
     ... taxonova/gtdb_rrn_mrgroups_model.pt
 ```
 
-How the per-tool indexes are located is in `scripts/03_assign.py`
-(`_ref_dict`): BLAST/VSEARCH/naive-bayes/IDTAXA each look for their artifact under
+How the per-tool indexes are located is in `scripts/_common.py`
+(`ref_dict`): BLAST/VSEARCH/naive-bayes/IDTAXA each look for their artifact under
 `<region>/<tool>/`, Kraken 2 wants `hash.k2d / opts.k2d / taxo.k2d` under
 `<region>/kraken2/`, MAPseq wants `reference.fasta` + `reference.tax` under
 `<region>/mapseq/`, and SPINGO wants a `.fasta` database. Build these from the
@@ -73,21 +75,27 @@ artifacts for the QIIME-based tools, `kraken2-build`, etc.).
 
 ### Taxonova models
 
-The per-region Taxonova checkpoints are the `.pt` files above:
+The default panel (`configs/classifiers_default.json`) uses model ids, and the
+Taxonova package downloads and verifies the models itself:
 
-| Region | Filename |
-|--------|----------|
+```bash
+taxonova models download all        # into $TAXONOVA_MODELS_DIR, default ~/.taxonova/models
+```
+
+The paper configuration (`configs/classifiers_paper.json`) uses the v1.0.0 checkpoints
+from the Taxonova v1.0.0 release, placed under `data/ref_dbs/<region>/taxonova/`:
+
+| Region | File |
+|--------|------|
 | V4 | `gg2_v4_mrgroups_model.pt` |
 | V3-V4 | `gg2_v3v4_mrgroups_model.pt` |
 | V5-V7 | `gg2_v5v7_mrgroups_model.pt` |
 | V1-V9 | `gg2_v1v9_mrgroups_model.pt` |
 | RRN | `gtdb_rrn_mrgroups_model.pt` |
 
-`scripts/03_assign.py` resolves the Taxonova model by globbing
-`<region>/taxonova/*model.pt`, so the filename matters only loosely, but these are
-the canonical names. The pretrained checkpoints are published on the Taxonova
-repo's Releases page: <https://github.com/kardokhk/taxonova>. Place each region's
-`.pt` under `data/ref_dbs/<region>/taxonova/`.
+Each entry of that config gives the download URL and md5, and `03_assign.py` checks the
+md5 before a run. A config without a `models` entry for a region uses the first
+`<region>/taxonova/*model.pt`.
 
 ## Tier 1 and 2 mock inputs
 
@@ -114,7 +122,7 @@ The expected filenames per mock are listed in `configs/mocks.json` (`input_seqs`
 - **Biome mocks** (`biome_*`): built by sampling Greengenes2 sequences at
   biome-realistic genus abundances. Those abundance profiles come from MGnify and
   are checked in under `mgnify/results/2025-08-20_snapshot/` (top-100 taxa per rank
-  per biome). The retriever that produced them is in `mgnify/` — see
+  per biome). The retriever that produced them is in `mgnify/`, see
   `mgnify/README.md`. Each biome's full-operon counterpart (`gtdb_*`, for RRN) is
   built from GTDB/GROND sequences.
 
@@ -140,8 +148,8 @@ real_world_input/
 
 You generate these once per study by downloading the raw reads, primer-trimming and
 denoising the amplicon side (DADA2), and profiling the shotgun side (bowtie2 +
-woltka into an OGU table). `docs/REALWORLD.md` walks through onboarding a new study,
-and `docs/REALWORLD_AMPLICON_QC.md` documents the primer/denoising QC. After that,
+woltka into an OGU table). `docs/realworld.md` walks through onboarding a new study,
+and `docs/realworld_amplicon_qc.md` documents the primer/denoising QC. After that,
 `scripts/05_realworld_classify.py` and `05_realworld_evaluate.py` are cheap to
 rerun.
 
@@ -164,10 +172,10 @@ EMP500 project (PRJEB42019).
 
 A minimal reproduction for one region, one mock would be:
 
-1. Set the conda environment paths in `configs/pipeline_config.json` (and the
+1. Set the conda environment prefixes in `configs/pipeline_config.json` (and the
    directory paths, if `data/` and `results/` should not live in the clone).
 2. Put the region's reference DB and per-tool indexes under `data/ref_dbs/<region>/`,
-   including the Taxonova `.pt` from the Taxonova Releases page.
+   and download the Taxonova models (`taxonova models download all`).
 3. Get the mock's `input_data` pair in place (clone Mockrobiota, or run the `01*`
    prep script).
 4. Run `02_generate.py` -> `03_assign.py` -> `04_evaluate.py` for that
@@ -175,7 +183,3 @@ A minimal reproduction for one region, one mock would be:
 
 For the real-world tier, drop a study's `real_world_input/<study>/` tree in place
 and run the two `05_*` scripts.
-
-Be honest with yourself about paths: several scripts were written against the
-original absolute layout, so expect to adjust `pipeline_config.json` and the
-occasional in-script `ROOT` before a fresh checkout runs clean.

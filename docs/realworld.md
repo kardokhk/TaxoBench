@@ -7,7 +7,8 @@ ties it all together: `scripts/05_realworld_classify.py` (classification)
 
 The whole system is designed so that the *expensive* steps (downloading
 raw reads, trimming, DADA2, bowtie2/woltka) are run **once** per study,
-their compact outputs are checked into the repo, and the cheap steps
+their compact outputs are kept in the benchmark data tree (they are not part
+of this git repository; see DATA.md), and the cheap steps
 (re-classifying ASVs with a refreshed Taxonova model and re-comparing
 to WGS) can be re-run any time.
 
@@ -17,36 +18,36 @@ to WGS) can be re-run any time.
 
 ```
 data/real_world_input/
-├── rep_seqs_<study>.fasta        # ASV sequences (DADA2 output) — IN-REPO
-├── rep_seqs_<study>.qza          # same, QIIME2-imported               — IN-REPO
+├── rep_seqs_<study>.fasta        # ASV sequences (DADA2 output)  (kept)
+├── rep_seqs_<study>.qza          # same, QIIME2-imported  (kept)
 └── <study>/                      # per-study dir
-    ├── data/                     # raw reads + reference indexes      — DELETED after processing
-    ├── trimmed_16S/              # trim_galore output                 — DELETED after processing
-    ├── alignments/               # bowtie2 .sam/.bam                  — DELETED after processing
+    ├── data/                     # raw reads + reference indexes  (deleted after processing)
+    ├── trimmed_16S/              # trim_galore output  (deleted after processing)
+    ├── alignments/               # bowtie2 .sam/.bam  (deleted after processing)
     ├── dada2_output/
     │   ├── asv_sequences.fasta
-    │   ├── asv_table_ids.csv     # sample × ASV count matrix          — IN-REPO (small)
-    │   ├── asv_table.csv         # sample × ASV-sequence count matrix — IN-REPO
-    │   └── filtered/             # intermediate filtered FASTQs       — DELETED
+    │   ├── asv_table_ids.csv     # sample × ASV count matrix  (kept)
+    │   ├── asv_table.csv         # sample × ASV-sequence count matrix  (kept)
+    │   └── filtered/             # intermediate filtered FASTQs  (deleted)
     ├── woltka_output/
-    │   └── ogu_table.biom        # OGU × sample count matrix          — IN-REPO (small)
+    │   └── ogu_table.biom        # OGU × sample count matrix  (kept)
     ├── qiime2_output/
     │   ├── ogu_table.qza
     │   ├── ogu_gg2_filtered.qza
     │   ├── taxonomy.qza
-    │   └── exported_taxonomy/taxonomy.tsv  # OGU → GG2 taxonomy lookup — IN-REPO
+    │   └── exported_taxonomy/taxonomy.tsv  # OGU → GG2 taxonomy lookup  (kept)
     ├── metadata/
     │   └── sample_metadata.tsv
     └── <study>_study/
         ├── data_info/metadata/<bioproject>_runinfo.csv
         ├── paired/paired_samples.csv         # `sample_id, amplicon_16s_run, shotgun_wgs_run, …`
-        └── scripts/                          # per-study processing scripts
+        └── scripts/                          # per-study processing scripts (data tree, not this repository)
             ├── download_sra/
             ├── 16S/                          # trim_galore + DADA2
             └── shotgun_woltka/                # bowtie2 + woltka + qiime2 (GG2)
 ```
 
-The `paired_samples.csv` file is the key — it's how
+The `paired_samples.csv` file is the key, it's how
 `05_realworld_evaluate.py` joins amplicon → shotgun samples
 (typically the same biospecimens were sequenced twice).
 
@@ -81,7 +82,7 @@ IDs and run-name patterns to onboard a new study.
 
 ```bash
 # Pick a working dir on a node with disk headroom (raw data is heavy).
-WORKDIR=/path/to/taxobench/data/real_world_input/<study>
+WORKDIR=data/real_world_input/<study>   # relative to the TaxoBench checkout
 mkdir -p $WORKDIR/data/{16S_ITS_combined,shotgun} $WORKDIR/metadata
 cp <bioproject>_runinfo.csv $WORKDIR/data/metadata/
 
@@ -135,7 +136,7 @@ qiime tools import --input-path data/real_world_input/rep_seqs_<study>.fasta \
     --output-path data/real_world_input/rep_seqs_<study>.qza
 ```
 
-### 2.5. **Storage cleanup — required**
+### 2.5. **Storage cleanup: required**
 
 The repo lives on a 500 GB-budget partition. After step 2.3, **delete**:
 
@@ -170,7 +171,7 @@ evaluator will skip the study.
 
 ```bash
 conda activate taxobench-qiime2
-cd /path/to/taxobench
+cd TaxoBench
 python scripts/05_realworld_classify.py --studies virtanen mantri zuo \
     --classifiers all --threads 16 --n-jobs 2
 ```
@@ -186,15 +187,15 @@ python scripts/05_realworld_evaluate.py --studies virtanen
 
 Outputs:
 
-- `results/evaluation/realworld/all_metrics.csv` — tidy long, **per
+- `results/evaluation/realworld/all_metrics.csv`: tidy long, **per
   paired sample**: study, classifier, param, level, amplicon_sample,
   wgs_sample, jaccard, bray_curtis, precision, recall, f-score,
   l1_error, l2_error, n_amplicon_taxa, n_wgs_taxa.
-- `results/evaluation/realworld/by_metric/<metric>.csv` — wide
+- `results/evaluation/realworld/by_metric/<metric>.csv`: wide
   pivot: rows = `(study, classifier, param)`, cols = level, values =
   mean across paired samples.
 - `results/evaluation/realworld/per_sample/<study>_<classifier>_<param>.csv`
-  — species-level per-sample detail (useful for plots / outlier
+ , species-level per-sample detail (useful for plots / outlier
   inspection).
 
 ### 3.3. Re-running after a Taxonova update
@@ -209,22 +210,22 @@ python scripts/05_realworld_evaluate.py
 
 Only Taxonova's `taxonomy_final.tsv` is overwritten; the other
 classifiers' outputs are untouched and the evaluator picks up whatever
-predictions exist. This is the intended "fast loop" — no re-DADA2,
+predictions exist. This is the intended "fast loop", no re-DADA2,
 no re-shotgun.
 
 ---
 
 ## 4. Metric semantics
 
-| Metric        | Definition                                         | Reviewer |
-|---------------|----------------------------------------------------|----------|
-| `jaccard`     | per-sample taxon-set overlap at level L           | (already in mss) |
-| `bray_curtis` | per-sample weighted abundance dissimilarity        | 1.8 (weighted) |
-| `precision`   | amplicon TP / (TP + FP), with WGS as truth         | —        |
-| `recall`      | amplicon TP / (TP + FN), with WGS as truth         | —        |
-| `f-score`     | 2 P R / (P + R)                                   | —        |
-| `l1_error`    | Σ \|p_amp − p_wgs\| over taxa at level L          | —        |
-| `l2_error`    | Σ (p_amp − p_wgs)²                                | —        |
+| Metric        | Definition                                         |
+|---------------|----------------------------------------------------|
+| `jaccard`     | per-sample taxon-set overlap at level L            |
+| `bray_curtis` | per-sample weighted abundance dissimilarity        |
+| `precision`   | amplicon TP / (TP + FP), with WGS as truth         |
+| `recall`      | amplicon TP / (TP + FN), with WGS as truth         |
+| `f-score`     | 2 P R / (P + R)                                    |
+| `l1_error`    | Σ \|p_amp − p_wgs\| over taxa at level L           |
+| `l2_error`    | Σ (p_amp − p_wgs)²                                 |
 
 WGS taxa are derived from `ogu_table.biom × taxonomy.tsv` aggregated to
 level L; amplicon taxa from `asv_table_ids.csv × <classifier prediction>`
@@ -235,13 +236,9 @@ double-counting at species rank.
 
 ---
 
-## 5. Currently registered studies
+## 5. Registered studies
 
-| Study     | Region | BioProject(s)        | WGS pairing wired? |
-|-----------|--------|----------------------|--------------------|
-| zuo       | V4     | (Zuo et al)          | No                 |
-| mantri    | V3-V4  | PRJNA717813 / 717918 | No                 |
-| virtanen  | V3-V4  | PRJEB43447           | **Yes**            |
-
-To add WGS pairing for zuo/mantri later: process them with the
-recipe in §2 and fill in their `mocks.json` entries.
+All six studies in the `real_world` block of `configs/mocks.json` have their
+amplicon table, shotgun OGU table and pairing file registered: `zuo` (V4),
+`mantri` (V3-V4), `virtanen` (V3-V4), `coral` (V4), `emp500_soil` (V4) and
+`emp500_plant` (V4). Accessions are listed in DATA.md.

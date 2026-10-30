@@ -1,4 +1,9 @@
-# taxobench_final — refactor changelog
+# Development log
+
+Kept while the benchmark was built for the Taxonova paper (April to October 2026).
+It is a historical record: paths, script names and review-round references in it
+refer to the development tree and may no longer exist. Current changes are in
+[CHANGELOG.md](../CHANGELOG.md).
 
 ## 2026-10-29: scoring v2 (default), N-as-mismatch truth, path and SPINGO fixes
 

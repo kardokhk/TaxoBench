@@ -1,4 +1,4 @@
-# mgnify — biome-level abundant-taxa retriever
+# mgnify: biome-level abundant-taxa retriever
 
 Standalone helper for pulling the most abundant taxa per rank for a given
 **MGnify biome**. The output CSVs feed the biome-mock generation step
@@ -39,10 +39,10 @@ python fetch_top_taxa.py --lineage 'root:Environmental:Aquatic:Marine:Oceanic' \
 
 Useful flags:
 
-- `--max-samples N` — cap samples fetched per biome (network-bound; ~5–10 s/sample).
-- `--top-n N` — top-N taxa per rank to write (default 100).
-- `--run-tag NAME` — override the timestamped output dir name.
-- `--verbose` — log HTTP back-off / pagination details to stderr.
+- `--max-samples N`: cap samples fetched per biome (network-bound; ~5–10 s/sample).
+- `--top-n N`: top-N taxa per rank to write (default 100).
+- `--run-tag NAME`: override the timestamped output dir name.
+- `--verbose`: log HTTP back-off / pagination details to stderr.
 
 ## Output format
 
@@ -52,7 +52,7 @@ results/<run-tag>/<biome>__<rank>__top<N>.csv
 
 CSV columns: `rank, taxon, taxa_level, total_abundance` (one row per taxon,
 sorted by abundance descending). Ranks emitted: `species, genus, family,
-order, class, phylum, kingdom, domain` — but only the ranks present in the
+order, class, phylum, kingdom, domain`, but only the ranks present in the
 underlying analyses get a file.
 
 ## How biome short-names resolve

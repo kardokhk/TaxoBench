@@ -1,11 +1,12 @@
-# Real-world amplicon trimming/denoising QC — paired-end audit (2026-05-04)
+# Real-world amplicon trimming/denoising QC: paired-end audit (2026-05-04)
+
+A dated audit of the real-world preprocessing. The batch scripts it names
+(`slurm/*.sbatch`) belong to the benchmark data tree and are not part of this
+repository.
 
 This note audits how each of the four real-world studies (virtanen, mantri,
 coral, zuo) handles primer trimming, quality filtering, and DADA2 denoising,
 and documents the bug found in the paired-end handling.
-
-It supports the user concern: *"there was an issue using paired end reads in
-some of the studies"*.
 
 ---
 
@@ -15,8 +16,8 @@ some of the studies"*.
 |----------|--------|-------------------------------|--------------------------------------------------|----------------------------------------|
 | mantri   | V3-V4  | MiSeq 2×300                   | cutadapt → DADA2 paired (270/200) → merge        | yes correct (ASVs ~402–427 bp)          |
 | virtanen | V3-V4  | MiSeq 2×300                   | trim_galore → DADA2 paired (270/260) → merge     | yes correct (ASVs 442–466 bp)           |
-| coral    | V4     | iSeq **2×150 with primers**   | cutadapt (primers stripped) → DADA2 single-end (125) | yes kept (paired-end is mathematically infeasible — see §3) |
-| **zuo**  | V4     | MiSeq 2×150 (**pre-trimmed**) | cutadapt-Q only → DADA2 **single-end** (110)     | no paired-end SHOULD merge — fixed     |
+| coral    | V4     | iSeq **2×150 with primers**   | cutadapt (primers stripped) → DADA2 single-end (125) | yes kept (paired-end is mathematically infeasible, see §3) |
+| **zuo**  | V4     | MiSeq 2×150 (**pre-trimmed**) | cutadapt-Q only → DADA2 **single-end** (110)     | no paired-end SHOULD merge, fixed     |
 
 ---
 
@@ -30,7 +31,7 @@ some of the studies"*.
 DADA2 `mergePairs()` defaults: `minOverlap = 12`, `maxMismatch = 0`.
 
 > **Important convention for V4.** "V4 is ~252 bp" refers to the length of
-> the amplified insert *between* the primer-binding sites — primers
+> the amplified insert *between* the primer-binding sites; the primers
 > themselves are not included. So once cutadapt removes the primers from a
 > 150 bp read, the remaining 131 bp / 130 bp covers a portion of the *252
 > bp* insert (not a portion of "252 + 39"). An earlier draft of this audit
@@ -53,7 +54,7 @@ Pipeline at `data/real_world_input/virtanen/dada2_output/dada2_analysis.R`:
 trim_galore (primer + quality) → DADA2 paired `truncLen = c(270, 260)` →
 mergePairs. ~92 % of filtered reads merge. 1 294 ASVs at 442–466 bp.
 
-### 2.3 coral — paired-end infeasible with default DADA2 yes keep single-end
+### 2.3 coral: paired-end infeasible with default DADA2 yes keep single-end
 
 `slurm/coral_amplicon_pipeline.sbatch` runs cutadapt to strip the
 515FY/806RB primers (19+20 nt) and then DADA2 single-end with
@@ -77,17 +78,17 @@ parameters.
 
 Possible future paths (not adopted now to keep the panel uniform with
 defaults):
-- run DADA2 with `mergePairs(..., minOverlap=8)` — risks false merges;
+- run DADA2 with `mergePairs(..., minOverlap=8)`, risks false merges;
 - skip cutadapt and use `filterAndTrim(..., trimLeft=c(19,20),
-  truncLen=c(140,140))` — same overlap budget, no gain;
-- ignore primers, use full 150 bp — overlap 150+150−290 = 10 bp, still
+  truncLen=c(140,140))`, same overlap budget, no gain;
+- ignore primers, use full 150 bp, overlap 150+150−290 = 10 bp, still
   below default.
 
 The original single-end (`truncLen = 125`) is the right baseline. ASVs are
-125 bp covering the front half of V4 — that is what every classifier in
+125 bp covering the front half of V4, that is what every classifier in
 the panel sees, so the comparison is fair.
 
-### 2.4 zuo — paired-end was disabled in error yes fixed
+### 2.4 zuo: paired-end was disabled in error yes fixed
 
 `slurm/zuo_amplicon_pipeline.sbatch` reasons:
 
@@ -155,11 +156,11 @@ For coral, virtanen, mantri: no change.
 
 ## 5. References (web)
 
-- DADA2 `mergePairs` defaults `minOverlap=12`, `maxMismatch=0` —
+- DADA2 `mergePairs` defaults `minOverlap=12`, `maxMismatch=0`,
   https://rdrr.io/bioc/dada2/man/mergePairs.html ;
   https://github.com/benjjneb/dada2/issues/852
-- Earth Microbiome Project 16S protocol (515F/806R; insert ≈ 252 bp) —
+- Earth Microbiome Project 16S protocol (515F/806R; insert ≈ 252 bp),
   https://earthmicrobiome.ucsd.edu/protocols-and-standards/16s/
-- Illumina V4 amplicon length / 2×150 limitations —
+- Illumina V4 amplicon length / 2×150 limitations,
   https://www.illumina.com/content/dam/illumina-marketing/documents/products/appnotes/appnote_miseq_16S.pdf
 - V3-V4 amplicon length (Klindworth et al. 2013, Nucleic Acids Res.)
