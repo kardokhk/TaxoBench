@@ -129,8 +129,8 @@ present (`TAXOBENCH_DATA_DIR`).
 If you use TaxoBench, please cite the Taxonova paper:
 
 > Kakabra K, Patel S, Temko A, Claesson MJ. Taxonova: deep learning enables fast and
-> confidence-aware microbiome species-level amplicon classification. PLOS Comput Biol.
-> 2026. doi:[10.1371/journal.pcbi.1014912](https://doi.org/10.1371/journal.pcbi.1014912)
+> confidence-aware microbiome species-level amplicon classification. PLoS Comput Biol.
+> 2026;22(10):e1014912. doi:[10.1371/journal.pcbi.1014912](https://doi.org/10.1371/journal.pcbi.1014912)
 
 ## License
 
