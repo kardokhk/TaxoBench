@@ -1,8 +1,8 @@
 # Changelog
 
 Changes to TaxoBench that affect how it runs or what it reports. The development log
-kept while the benchmark was built for the paper is in
-[docs/development-log.md](docs/development-log.md).
+kept while the benchmark was built for the paper is in the git history
+(`docs/CHANGELOG.md` at commit 77b619d).
 
 ## 26.10.1 (2026-10-30)
 
@@ -18,6 +18,10 @@ are unchanged.
   checkpoints (path, URL, md5 and sha256), 0.5 at every rank above species, 0.7 at
   species. Score with `--rules v1`. `classifiers_sweep.json` uses the same settings.
 - A pinned checkpoint is checked against its md5 before use.
+- `scripts/install_taxonova_paper.sh` installs Taxonova 1.0.0; the `v1.0.0` tag cannot
+  be installed with `pip install git+...` because its `setup.py` names a missing
+  launcher.
+- With a model id, Taxonova runs even when `data/ref_dbs/<region>/` does not exist.
 - Behavior change for custom configs without a `taxonova` block: the parent-rank
   thresholds are no longer forced to 0.5; the package defaults apply. Add
   `"parent_gates"` to keep the old behavior.
@@ -33,6 +37,13 @@ are unchanged.
   overwritten; MAPseq `N/A`, `no blast hit` and `ambiguous` count as no call;
   `04c_evaluate_opengates.py`; VSEARCH `--maxrejects`.
 - `build_tau_grid.py`: MAPseq treated as continuous; dense percentile grid.
+
+**Mock inputs**
+
+- `mocks/inputs/` holds the 44 mock input files behind the published cells (gzipped,
+  with md5 sums), and `scripts/01a_unpack_mock_inputs.py` places them. Nothing in the
+  repository could rebuild the biome inputs, and `01b_prepare_extra_mocks.py` writes
+  MBARC-26 labels that differ from the published ones.
 
 **Other fixes**
 
@@ -54,7 +65,9 @@ are unchanged.
 **Repository**
 
 - Shorter README; design, scoring, pipeline and environment notes in `docs/`
-  (lower-case file names, as cited in the paper).
+  (lower-case file names, as cited in the paper). `docs/realworld.md` describes the
+  preprocessing steps by tool; the per-study scripts are not yet public. The
+  reproduction notes state that the v1 truth needs `--n-wildcard`.
 - Continuous integration (`.github/workflows/ci.yml`), `requirements-eval.txt`,
   `CITATION.cff`, `CONTRIBUTING.md`, tests for the configurations and command building.
 
