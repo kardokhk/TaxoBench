@@ -35,7 +35,23 @@ import numpy as np
 _GROUP_RE = re.compile(r"([dpcofgs]__)\[([^\]]+)\]")
 _SPECIES_PREFIX = "s__"
 
-_DEFAULT_GG2_DIR = Path("/path/to/taxobench/data/ref_dbs/Greengenes2_backbone")
+def _reference_dir() -> Path:
+    """reference_database_dir from configs/pipeline_config.json, honouring
+    TAXOBENCH_REFERENCE_DATABASE_DIR."""
+    import os
+    env = os.environ.get("TAXOBENCH_REFERENCE_DATABASE_DIR")
+    if env:
+        return Path(env)
+    root = Path(__file__).resolve().parents[1]
+    try:
+        cfg = json.loads((root / "configs" / "pipeline_config.json").read_text())
+        ref = Path(cfg.get("reference_database_dir", "data/ref_dbs"))
+    except (OSError, ValueError):
+        ref = Path("data/ref_dbs")
+    return ref if ref.is_absolute() else root / ref
+
+
+_DEFAULT_GG2_DIR = _reference_dir() / "Greengenes2_backbone"
 _DEFAULT_TAXONOMY = _DEFAULT_GG2_DIR / "2024.09_taxonomy.tsv"
 _DEFAULT_TREE = _DEFAULT_GG2_DIR / "2024.09.phylogeny.id.nwk"
 _CACHE_DIR = _DEFAULT_GG2_DIR / ".unifrac_cache"

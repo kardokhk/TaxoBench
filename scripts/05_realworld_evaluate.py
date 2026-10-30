@@ -15,8 +15,8 @@ this script:
   5. Joins amplicon and WGS samples via `paired_samples.csv`
      (`amplicon_16s_run` ↔ `shotgun_wgs_run`).
   6. For each rank L ∈ {Phylum,…,Species}, computes:
-       - Jaccard (taxon-set overlap; reviewer 1.8 baseline)
-       - Bray-Curtis dissimilarity (weighted; reviewer 1.8 ask)
+       - Jaccard (taxon-set overlap)
+       - Bray-Curtis dissimilarity (weighted)
        - precision, recall, F1 (per-sample taxon set)
        - L1, L2 abundance error (per-sample)
      Per-sample metrics are mean-aggregated per (study × classifier × param × level).

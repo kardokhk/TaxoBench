@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plot confidence-threshold sweep curves (Reviewer 2 comment 2.3).
+"""Plot confidence-threshold sweep curves.
 
 Reads results/sweep/evaluation/all_metrics.csv (produced by
 04b_evaluate_sweep.py) and writes one supplementary figure per (mock,

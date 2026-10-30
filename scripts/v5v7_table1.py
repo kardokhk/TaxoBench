@@ -53,8 +53,11 @@ def evaluate(true_fp, pred_fp):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--results-root", default="/path/to/taxobench/results")
-    ap.add_argument("--data-root", default="/path/to/taxobench/data")
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import _common
+    cfg = _common.load_pipeline_config()
+    ap.add_argument("--results-root", default=cfg["results_dir"])
+    ap.add_argument("--data-root", default=cfg["data_dir"])
     ap.add_argument("--region", default="V5-V7")
     ap.add_argument("--mocks", nargs="+",
                     default=["biome_digestive_system","biome_lung","biome_mixed",

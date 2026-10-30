@@ -31,8 +31,10 @@ import time
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-TAXOBENCH = Path("/path/to/taxobench")
-INPUT_DIR = TAXOBENCH / "data" / "mock_community" / "input_data"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _common  # noqa: E402
+
+INPUT_DIR = Path(_common.load_pipeline_config()["mock_input_dir"])
 
 # MBARC-26 strain set (Singer 2016, Sci. Data) — gg2-style taxonomies for the
 # 23 bacteria + 3 archaea. Species labels are the canonical binomials Singer

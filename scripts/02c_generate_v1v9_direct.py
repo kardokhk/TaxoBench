@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 """Step 02c — V1-V9 generator for *curated* mocks (no MGnify, no backbone).
 
-Mirrors the manuscript's long-read mutation recipe used by
-`taxonova/tx_wip_08/scripts/regenerate_env_biome_repseqs.py` for the env
-biomes, except the source pool is the curated mock species directly
-(input_data/<mock>_seqs.fasta), not gg2-backbone × MGnify abundance.
+Mirrors the long-read recipe of 02d_generate_longread_biomes.py, except that
+the source pool is the curated mock species directly
+(input_data/<mock>_seqs.fasta), not the Greengenes2 backbone with MGnify
+abundances.
 
-Why a separate script: the env-biome regenerator's `BROKEN_CELLS` list and
-MGnify abundance lookup is biome-specific. For curated mocks like MBARC-26
-or ZymoBIOMICS, the source-selection rule is simply "use the species fasta
-that 02_generate.py would feed to ART." Lives in taxobench (not taxonova)
-so the production tx_wip_05 install is untouched per ops policy.
+Why a separate script: the biome generator's cell list and MGnify abundance
+lookup are biome-specific. For curated mocks such as MBARC-26 the source
+pool is simply the species FASTA that 02_generate.py would give to ART.
 
 Recipe:
   1. Read data/mock_community/input_data/<mock>_seqs.fasta — already
@@ -41,9 +39,13 @@ import subprocess
 import zlib
 from pathlib import Path
 
-TAXOBENCH = Path("/path/to/taxobench")
-INPUT_DIR = TAXOBENCH / "data" / "mock_community" / "input_data"
-MOCK_DIR = TAXOBENCH / "data" / "mock_community"
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _common  # noqa: E402
+
+_CFG = _common.load_pipeline_config()
+INPUT_DIR = Path(_CFG["mock_input_dir"])
+MOCK_DIR = Path(_CFG["data_dir"]) / "mock_community"
 
 N_REPLICATES = 10
 DEFAULT_SEQS_PER_REP = 75

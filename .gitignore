@@ -1,26 +1,29 @@
-# Large inputs, reference databases, and run artifacts (not tracked).
-# See DATA.md for how to obtain and place these.
-data/
-results/
-backups/
-models/
-training/
-logs/
-output/
-slurm/
-runtime/
-.envs/
-
-# Small test fixtures keep the results/ and data/ layout
-!tests/fixtures/**/data/
-!tests/fixtures/**/results/
+# Large inputs, reference databases and run outputs are not tracked.
+# DATA.md says how to obtain and place them.
+/data/
+/results/
+/backups/
+/models/
+/training/
+/logs/
+/output/
+/slurm/
+/runtime/
+/.envs/
 
 # Python
-**/__pycache__/
-*.pyc
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
 
-# Trained models / checkpoints
+# Checkpoints and QIIME 2 artefacts
 *.pt
+*.qza
+*.qzv
 
-# Editor / OS / assistant cruft
+# Editors and operating systems
 .DS_Store
+.idea/
+.vscode/
+*.swp

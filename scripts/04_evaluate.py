@@ -12,14 +12,14 @@ Metrics:
     f-score          — 2 P R / (P + R)
     detection_rate   — taxon-set TP / (TP + FN), i.e. fraction of true taxa detected
     sensitivity      — taxon-set TP / (TP + FN); mathematically identical to
-                       `detection_rate`. Provided as a separate column with the
-                       reviewer-requested name (Reviewer 1, comment 1.9).
+                       `detection_rate`. Provided as a separate column under
+                       the conventional name.
     specificity      — taxon-set TN / (TN + FP) where the universe is the unique
                        taxa at this level in the per-region reference DB
                        (Greengenes2 backbone for V4/V3-V4/V5-V7/V1-V9; GROND for
                        RRN). Quantifies the rate at which a tool correctly
                        refrains from predicting taxa that are absent from the
-                       ground truth (Reviewer 1, comment 1.9).
+                       ground truth.
     l1_error         — sum_t |freq_exp_t - freq_obs_t| (abundance distance)
     l2_error         — sum_t (freq_exp_t - freq_obs_t)^2
 
@@ -265,7 +265,7 @@ def _v1_level_row(pairs, region, lvl_int, prf_fn, drop_abstentions):
     det = round(len(exp_set & obs_set) / max(1, len(exp_set)), 3)
     l1, l2 = _abundance_norms(exp_taxa, obs_taxa_resolved)
 
-    # Taxon-set sensitivity / specificity (Selten reviewer 1.9):
+    # Taxon-set sensitivity / specificity:
     # universe = unique taxa at this level in the per-region reference DB
     tp_t = len(exp_set & obs_set)
     fp_t = len(obs_set - exp_set)

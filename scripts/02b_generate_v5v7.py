@@ -9,12 +9,10 @@ exactly like 02_generate.py.
 import argparse, glob, os, shutil, sys
 from pathlib import Path
 
-ROOT = Path("/path/to/taxobench")
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 import _common
-import extract_reads
-import process_mock
 
 PRIMERS = {"f": "AACMGGATTAGATACCCKG", "r": "ACGTCATCCCCACCTTCC"}
 LEN = (300, 500)
@@ -32,6 +30,8 @@ def main():
                     help="Truth builder: treat N in a source sequence as a wildcard, as in the published v1 truth (default: N is a mismatch)")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
+    import extract_reads   # needs the QIIME 2 environment (scikit-bio)
+    import process_mock
 
     cfg = _common.load_pipeline_config()
     data_root = Path(cfg["data_dir"])

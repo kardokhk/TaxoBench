@@ -55,7 +55,7 @@ def convert_taxonomy_with_all_confidences(input_tsv, output_tsv, ncbi_style_taxo
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: python convert_deepTaxonomist_outputs.py <input_tsv> <output_tsv> <ncbi_style_taxonomy>")
+        print("Usage: python process_taxonova_output.py <input_tsv> <output_tsv> <ncbi_style_taxonomy>")
         sys.exit(1)
 
     input_file = sys.argv[1]

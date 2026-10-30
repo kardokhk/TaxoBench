@@ -51,21 +51,18 @@ def main():
     # Guard: V1-V9 and RRN are long-read regions and must NOT go through
     # ART/DADA2. ART caps at ~300 bp Illumina reads, so applying it to
     # V1-V9 (~1500 bp) or RRN (~5000 bp) silently produces 200 bp rep_seqs
-    # the V1-V9/RRN models cannot classify (see the 2026-05-09 incident
-    # write-up at corrections/comments_addressed/comment_1_2_biomes_and_realworld.md
-    # and tx_wip_08/docs/01_root_cause_length_mismatch.md). Use the dedicated
-    # mutate-from-backbone regenerator instead:
-    #   python /path/to/workdir/taxonova/tx_wip_08/scripts/regenerate_env_biome_repseqs.py \
-    #       --biome <biome> --region V1-V9   # or --region RRN
+    # the V1-V9/RRN models cannot classify. Use the long-read generators
+    # instead: 02d_generate_longread_biomes.py (biome mocks) or
+    # 02c_generate_v1v9_direct.py (curated mocks).
     long_read_regions = {"V1-V9", "RRN"}
     bad = sorted(set(args.regions) & long_read_regions)
     if bad:
         ap.error(
             f"02_generate.py must not be used for long-read regions {bad}. "
             "ART produces ≤200 bp reads and the V1-V9/RRN models require full-length "
-            "inputs. Use scripts/regenerate_env_biome_repseqs.py "
-            "(in the tx_wip_08 source tree) instead — it mutates gg2-backbone / "
-            "GROND sequences directly per the manuscript recipe."
+            "inputs. Use scripts/02d_generate_longread_biomes.py (biome mocks) "
+            "or scripts/02c_generate_v1v9_direct.py (curated mocks), which mutate "
+            "full-length sequences directly."
         )
 
     cfg = _common.load_pipeline_config()

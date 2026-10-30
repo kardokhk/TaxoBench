@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Step 04b - Confidence-threshold sweep evaluator (Reviewer 2 comment 2.3).
+"""Step 04b - Confidence-threshold sweep evaluator.
 
 For every (mock x region x classifier) under a sweep results tree, build a
 P / R / F-vs-confidence-threshold curve at every taxonomic level.

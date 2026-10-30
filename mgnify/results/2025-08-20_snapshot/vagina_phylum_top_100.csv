@@ -1,0 +1,17 @@
+rank,taxon,taxa_level,total_abundance
+1,Firmicutes,phylum,12349
+2,Bacteroidetes,phylum,4265
+3,Actinobacteria,phylum,2599
+4,Fusobacteria,phylum,1969
+5,Chordata,phylum,1589
+6,Arthropoda,phylum,60
+7,Proteobacteria,phylum,22
+8,Tenericutes,phylum,12
+9,Nematoda,phylum,11
+10,Streptophyta,phylum,8
+11,Basidiomycota,phylum,5
+12,Chloroflexi,phylum,3
+13,Acidobacteria,phylum,2
+14,Chlorophyta,phylum,1
+15,Bryozoa,phylum,1
+16,Calditrichaeota,phylum,1

@@ -1,0 +1,15 @@
+rank,taxon,taxa_level,total_abundance
+1,Firmicutes,phylum,100505
+2,Bacteroidetes,phylum,55310
+3,Proteobacteria,phylum,6372
+4,Tenericutes,phylum,4395
+5,Cyanobacteria,phylum,900
+6,Actinobacteria,phylum,647
+7,Verrucomicrobia,phylum,643
+8,Euryarchaeota,phylum,275
+9,Lentisphaerae,phylum,210
+10,Elusimicrobia,phylum,159
+11,Fusobacteria,phylum,80
+12,Synergistetes,phylum,77
+13,Spirochaetes,phylum,19
+14,TM7,phylum,11
