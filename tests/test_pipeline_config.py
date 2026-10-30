@@ -72,7 +72,10 @@ class TestClassifierConfigs(unittest.TestCase):
         tx = cfg["taxonova"]
         self.assertEqual(tx["cli"], "classification")
         self.assertEqual(tx["scoring_rules"], "v1")
-        self.assertIn("@v1.0.0", tx["requirement"])
+        self.assertEqual(tx["requirement"], "taxonova==1.0.0")
+        self.assertIn("install_taxonova_paper.sh", tx["install"])
+        for m in tx["models"].values():
+            self.assertEqual(sorted(m), ["md5", "path", "sha256", "url"])
         self.assertEqual(tx["parent_gates"],
                          {r: 0.5 for r in G.TAXONOVA_PARENT_RANKS})
         self.assertEqual(cfg["method_parameters_combinations"]["taxonova"],

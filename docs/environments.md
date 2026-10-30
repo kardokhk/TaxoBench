@@ -63,14 +63,19 @@ mamba create -n taxobench-spingo -y -c bioconda -c conda-forge spingo
 
 ## taxobench-taxonova-paper (published configuration)
 
-Taxonova as used for the paper, from the `v1.0.0` tag, with the v1.0.0 checkpoints
-placed as listed in `configs/classifiers_paper.json` (each entry gives the download URL
-and md5; `03_assign.py` checks the md5 before use).
+Taxonova 1.0.0, the version used for the paper, with the v1.0.0 checkpoints placed as
+listed in `configs/classifiers_paper.json` (each entry gives the download URL, md5 and
+sha256; `03_assign.py` checks the md5 before use).
+
+Taxonova 1.0.0 is not on PyPI, and the `v1.0.0` tag cannot be installed with
+`pip install git+...@v1.0.0`: its `setup.py` names a launcher, `bin/taxonova`, that the
+tag does not contain. `scripts/install_taxonova_paper.sh` checks out the tag, adds the
+launcher (a call to `taxonova.main:main`) and installs the package:
 
 ```bash
-mamba create -n taxobench-taxonova-paper -y -c conda-forge python=3.10 pandas
-mamba run -n taxobench-taxonova-paper pip install \
-    "taxonova @ git+https://github.com/kardokhk/taxonova@v1.0.0"
+mamba create -n taxobench-taxonova-paper -y -c conda-forge python=3.10 pandas git
+mamba run -n taxobench-taxonova-paper bash scripts/install_taxonova_paper.sh
+mamba run -n taxobench-taxonova-paper taxonova classification --help
 ```
 
 The output parser `src/process_taxonova_output.py` runs in the same environment and

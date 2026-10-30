@@ -24,7 +24,8 @@
         }
     },
     "taxonova": {
-        "requirement": "taxonova @ git+https://github.com/kardokhk/taxonova@v1.0.0",
+        "requirement": "taxonova==1.0.0",
+        "install": "bash scripts/install_taxonova_paper.sh (the v1.0.0 tag cannot be installed with pip directly; docs/environments.md)",
         "cli": "classification",
         "models": {
             "V4": {
@@ -54,7 +55,8 @@
             "RRN": {
                 "path": "RRN/taxonova/gtdb_rrn_mrgroups_model.pt",
                 "url": "https://github.com/kardokhk/taxonova/releases/download/v1.0.0/gtdb_rrn_mrgroups_model.pt",
-                "md5": "6f5d4ef039888a33ad765ef41725b624"
+                "md5": "6f5d4ef039888a33ad765ef41725b624",
+                "sha256": "9ac36fea212edd569198027c9e6fb182199bb316acacad188d758929c9408289"
             }
         },
         "parent_gates": {

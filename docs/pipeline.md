@@ -78,6 +78,7 @@ parameters). The `taxonova` block sets:
 | Key | Meaning |
 |---|---|
 | `requirement` | the Taxonova package the environment must provide |
+| `install` | how to install it, where `pip install` of the requirement is not enough |
 | `cli` | `classify` (model ids; taxonova 26.10.1 or later) or `classification` (every release) |
 | `models` | per region: a model id (`v4`), a checkpoint path relative to the reference root, or `{path, url, md5, sha256}` |
 | `parent_gates` | `null` for the package defaults, or a threshold per rank above species |
