@@ -6,8 +6,8 @@ No ground truth -> no evaluation, only `taxonomy_final.tsv` per
 """
 
 import argparse
-import json
 import subprocess
+import sys
 from itertools import product
 from os.path import join, exists
 from pathlib import Path
@@ -27,50 +27,6 @@ def _expand(params):
     return [dict(zip(keys, c)) for c in product(*vals)] or [{}]
 
 
-def _ref_dict(classifier, ref_root, region):
-    # Same logic as 03_assign — duplicated to keep this module standalone.
-    region_dir = join(ref_root, region)
-    if not Path(region_dir).is_dir():
-        return None
-    if region == "RRN":
-        seqs = join(region_dir, "grond_clean.fasta")
-        taxa = join(region_dir, "grond_clean.tsv")
-        merged = seqs
-    else:
-        seqs = join(region_dir, "sequences.fasta")
-        taxa = join(region_dir, "taxonomy.tsv")
-        merged = join(region_dir, "merged.fasta")
-        if not exists(merged):
-            merged = None
-    base = {"seqs": seqs, "taxa": taxa, "merged": merged}
-
-    import glob
-    if classifier == "taxonova":
-        m = glob.glob(join(region_dir, "taxonova", "*model.pt"))
-        base["model"] = m[0] if m else None
-    elif classifier == "naive-bayes":
-        m = glob.glob(join(region_dir, "naive-bayes", "*sklearn*qza"))
-        base["model"] = m[0] if m else None
-    elif classifier == "idtaxa":
-        m = (glob.glob(join(region_dir, "idtaxa", "*.rds")) or
-             glob.glob(join(region_dir, "idtaxa", "*.RData")))
-        base["model"] = m[0] if m else None
-    elif classifier == "spingo":
-        m = glob.glob(join(region_dir, "spingo", "*.fasta"))
-        base["database"] = m[0] if m else None
-    elif classifier == "kraken2":
-        kdir = join(region_dir, "kraken2")
-        ok = all(exists(join(kdir, f)) for f in ("hash.k2d", "opts.k2d", "taxo.k2d"))
-        base["database"] = kdir if ok else None
-    elif classifier == "mapseq":
-        mdir = join(region_dir, "mapseq")
-        fa = join(mdir, "reference.fasta")
-        tx = join(mdir, "reference.tax")
-        base["database_fasta"] = fa if exists(fa) else None
-        base["database_tax"]   = tx if exists(tx) else None
-    return base
-
-
 def _run(cmd, log_fp):
     Path(log_fp).parent.mkdir(parents=True, exist_ok=True)
     with open(log_fp, "w") as fh:
@@ -79,13 +35,21 @@ def _run(cmd, log_fp):
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=(
+        "Run the classifiers on the real-world ASV FASTAs (no truth; writes "
+        "taxonomy_final.tsv per study, classifier and parameter set). "
+        "--dry-run prints the commands without running them."))
     ap.add_argument("--studies", nargs="+",
                     default=["zuo", "mantri", "virtanen"])
     ap.add_argument("--region", default=None,
                     help="override per-study region from mocks.json")
     ap.add_argument("--classifiers", nargs="+", default=list(SUPPORTED))
-    ap.add_argument("--params-config", default=None)
+    ap.add_argument("--params-config", default=None,
+                    help="Classifier config: a JSON path or a name under configs/ "
+                         "(default classifiers_default.json)")
+    ap.add_argument("--ref-root", default=None,
+                    help="Reference database root (default: reference_database_dir "
+                         "of pipeline_config.json)")
     ap.add_argument("--threads", type=int, default=None)
     ap.add_argument("--n-jobs", type=int, default=1)
     ap.add_argument("--results-dir", default=None,
@@ -94,10 +58,7 @@ def main():
     args = ap.parse_args()
 
     cfg = _common.load_pipeline_config()
-    classifiers_cfg = _common.load_classifiers_config()
-    if args.params_config:
-        with open(args.params_config) as fh:
-            classifiers_cfg = json.load(fh)
+    classifiers_cfg = _common.load_classifiers_config(args.params_config)
     mocks_cfg = _common.load_mocks_config()
 
     bad = [c for c in args.classifiers if c not in SUPPORTED]
@@ -105,7 +66,7 @@ def main():
         ap.error(f"Unsupported classifiers: {bad}")
 
     threads = args.threads or cfg.get("default_n_threads", 4)
-    ref_root = cfg["reference_database_dir"]
+    ref_root = args.ref_root or cfg["reference_database_dir"]
     src_dir = cfg["scripts_dir"]
     rw_input = Path(cfg["real_world_input_dir"])
     res_root = Path(args.results_dir) if args.results_dir \
@@ -113,6 +74,7 @@ def main():
 
     _common.add_src_to_path()
     import generate_commands  # noqa
+    tx_settings = generate_commands.taxonova_settings(classifiers_cfg)
 
     params_all = classifiers_cfg["method_parameters_combinations"]
     envs_all   = classifiers_cfg["method_conda_envs"]
@@ -129,6 +91,7 @@ def main():
     }
 
     jobs = []
+    study_fasta = {}
     for study in args.studies:
         meta = mocks_cfg["real_world"].get(study)
         if not meta:
@@ -138,11 +101,12 @@ def main():
         if not fasta.exists():
             print(f"[05_realworld] missing fasta {fasta}; skip {study}")
             continue
+        study_fasta[study] = fasta
         rep_base = str(fasta.with_suffix(""))
         region = args.region or meta.get("region", "V3-V4")
 
         for classifier in args.classifiers:
-            ref_dict = _ref_dict(classifier, ref_root, region)
+            ref_dict = _common.ref_dict(classifier, ref_root, region, tx_settings)
             if ref_dict is None:
                 print(f"[05_realworld] skip {classifier}/{region}: no ref")
                 continue
@@ -151,12 +115,15 @@ def main():
             for param_dict in param_grid:
                 param_id = "_".join(f"{k}-{v}" for k, v in sorted(param_dict.items())) or "default"
                 outdir = res_root / study / classifier / param_id
-                outdir.mkdir(parents=True, exist_ok=True)
+                if not args.dry_run:
+                    outdir.mkdir(parents=True, exist_ok=True)
                 kw = dict(rep_seq_base=rep_base, outdir=str(outdir),
                           param_dict=param_dict, reference_dict=ref_dict,
                           conda_env=conda_env, dry_run=args.dry_run)
                 if classifier in ("taxonova", "idtaxa", "spingo", "kraken2", "mapseq"):
                     kw["scripts_dir"] = src_dir
+                if classifier == "taxonova":
+                    kw["settings"] = tx_settings
                 if classifier in ("vsearch", "blast", "naive-bayes",
                                   "spingo", "kraken2", "mapseq"):
                     kw["n_threads"] = threads
@@ -178,6 +145,40 @@ def main():
     )
     fails = [r for r in results if r[1] != 0]
     print(f"[05_realworld] done. {len(jobs) - len(fails)} ok / {len(fails)} failed.")
+
+    # Every classifier must have scored exactly the query set it was given.
+    # Feature ids are positional (ASV_1..ASV_n), so a stale imported artifact
+    # with a different sequence set would otherwise be joined to the counts by
+    # id without any error. A row count alone is not enough; the ids must agree.
+    mismatches = []
+    for _, _, classifier, study in jobs:
+        fasta = study_fasta.get(study)
+        if fasta is None or not fasta.exists():
+            continue
+        want = set()
+        with open(fasta) as fh:
+            for line in fh:
+                if line.startswith(">"):
+                    want.add(line[1:].split()[0])
+        for out in sorted(res_root.glob(f"{study}/{classifier}/*/taxonomy_final.tsv")):
+            got = set()
+            with open(out) as fh:
+                next(fh, None)
+                for line in fh:
+                    if line.strip():
+                        got.add(line.split("\t")[0])
+            if got != want:
+                mismatches.append(
+                    f"{study}/{classifier}: {len(got)} rows against "
+                    f"{len(want)} query sequences, {len(want - got)} missing, "
+                    f"{len(got - want)} unexpected ({out})")
+    if mismatches:
+        print("[05_realworld] FATAL: output does not match the query set:",
+              file=sys.stderr)
+        for m in mismatches:
+            print("  " + m, file=sys.stderr)
+        sys.exit(1)
+    print("[05_realworld] query-set check passed for all cells")
 
 
 if __name__ == "__main__":

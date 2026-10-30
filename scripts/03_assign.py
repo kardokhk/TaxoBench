@@ -6,7 +6,6 @@ via `generate_commands` and run them in parallel via joblib.
 """
 
 import argparse
-import json
 import os
 import subprocess
 from itertools import product
@@ -29,52 +28,6 @@ def _expand_param_grid(params):
     return [dict(zip(keys, c)) for c in product(*vals)]
 
 
-def _ref_dict(classifier, ref_root, region):
-    region_dir = join(ref_root, region)
-    if not os.path.isdir(region_dir):
-        return None
-    if region == "RRN":
-        seqs = join(region_dir, "grond_clean.fasta")
-        taxa = join(region_dir, "grond_clean.tsv")
-        merged = seqs
-    else:
-        seqs = join(region_dir, "sequences.fasta")
-        taxa = join(region_dir, "taxonomy.tsv")
-        merged = join(region_dir, "merged.fasta")
-        if not exists(merged):
-            merged = None
-    base = {"seqs": seqs, "taxa": taxa, "merged": merged}
-
-    if classifier == "taxonova":
-        import glob
-        models = glob.glob(join(region_dir, "taxonova", "*model.pt"))
-        base["model"] = models[0] if models else None
-    elif classifier == "naive-bayes":
-        import glob
-        models = glob.glob(join(region_dir, "naive-bayes", "*sklearn*qza"))
-        base["model"] = models[0] if models else None
-    elif classifier == "idtaxa":
-        import glob
-        m = (glob.glob(join(region_dir, "idtaxa", "*.rds")) or
-             glob.glob(join(region_dir, "idtaxa", "*.RData")))
-        base["model"] = m[0] if m else None
-    elif classifier == "spingo":
-        import glob
-        m = glob.glob(join(region_dir, "spingo", "*.fasta"))
-        base["database"] = m[0] if m else None
-    elif classifier == "kraken2":
-        kdir = join(region_dir, "kraken2")
-        ok = all(exists(join(kdir, f)) for f in ("hash.k2d", "opts.k2d", "taxo.k2d"))
-        base["database"] = kdir if ok else None
-    elif classifier == "mapseq":
-        mdir = join(region_dir, "mapseq")
-        fa = join(mdir, "reference.fasta")
-        tx = join(mdir, "reference.tax")
-        base["database_fasta"] = fa if exists(fa) else None
-        base["database_tax"]   = tx if exists(tx) else None
-    return base
-
-
 def _run_single(cmd, log_fp):
     Path(os.path.dirname(log_fp)).mkdir(parents=True, exist_ok=True)
     with open(log_fp, "w") as fh:
@@ -84,12 +37,19 @@ def _run_single(cmd, log_fp):
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=(
+        "Run the classifiers on one mock: one job per region, classifier and "
+        "parameter set. --dry-run prints the commands without running them."))
     ap.add_argument("--mock-name", required=True)
     ap.add_argument("--regions", nargs="+", default=["V4", "V3-V4", "V5-V7", "V1-V9", "RRN"])
     ap.add_argument("--classifiers", nargs="+", default=list(SUPPORTED))
     ap.add_argument("--params-config", default=None,
-                    help="JSON file with method_parameters_combinations and method_conda_envs")
+                    help="Classifier config: a JSON path or a name under configs/ "
+                         "(default classifiers_default.json; classifiers_paper.json "
+                         "pins the published Taxonova runs)")
+    ap.add_argument("--ref-root", default=None,
+                    help="Reference database root (default: reference_database_dir "
+                         "of pipeline_config.json)")
     ap.add_argument("--threads", type=int, default=None)
     ap.add_argument("--n-jobs", type=int, default=1)
     ap.add_argument("--mock-data-dir", default=None,
@@ -100,17 +60,14 @@ def main():
     args = ap.parse_args()
 
     cfg = _common.load_pipeline_config()
-    classifiers_cfg = _common.load_classifiers_config()
-    if args.params_config:
-        with open(args.params_config) as fh:
-            classifiers_cfg = json.load(fh)
+    classifiers_cfg = _common.load_classifiers_config(args.params_config)
 
     bad = [c for c in args.classifiers if c not in SUPPORTED]
     if bad:
         ap.error(f"Unsupported classifiers: {bad}. Allowed: {SUPPORTED}")
 
     threads = args.threads or cfg.get("default_n_threads", 4)
-    ref_root = cfg["reference_database_dir"]
+    ref_root = args.ref_root or cfg["reference_database_dir"]
     src_dir = cfg["scripts_dir"]
     mock_data_dir = Path(args.mock_data_dir) if args.mock_data_dir \
         else Path(cfg["data_dir"]) / "mock_community" / args.mock_name
@@ -119,6 +76,7 @@ def main():
 
     _common.add_src_to_path()
     import generate_commands  # noqa
+    tx_settings = generate_commands.taxonova_settings(classifiers_cfg)
 
     params_all = classifiers_cfg["method_parameters_combinations"]
     envs_all   = classifiers_cfg["method_conda_envs"]
@@ -152,7 +110,7 @@ def main():
         rep_base = Path(candidates[0]).with_suffix("")
 
         for classifier in args.classifiers:
-            ref_dict = _ref_dict(classifier, ref_root, region)
+            ref_dict = _common.ref_dict(classifier, ref_root, region, tx_settings)
             if ref_dict is None:
                 print(f"[03_assign] skip {classifier}/{region}: no reference dir")
                 continue
@@ -161,13 +119,16 @@ def main():
             for param_dict in param_grid:
                 param_id = "_".join(f"{k}-{v}" for k, v in sorted(param_dict.items())) or "default"
                 outdir = results_root / region / classifier / param_id
-                outdir.mkdir(parents=True, exist_ok=True)
+                if not args.dry_run:
+                    outdir.mkdir(parents=True, exist_ok=True)
                 build = builders[classifier]
                 kw = dict(rep_seq_base=str(rep_base), outdir=str(outdir),
                           param_dict=param_dict, reference_dict=ref_dict,
                           conda_env=conda_env, dry_run=args.dry_run)
                 if classifier in ("taxonova", "idtaxa", "spingo", "kraken2", "mapseq"):
                     kw["scripts_dir"] = src_dir
+                if classifier == "taxonova":
+                    kw["settings"] = tx_settings
                 if classifier in ("vsearch", "blast", "naive-bayes",
                                   "spingo", "kraken2", "mapseq"):
                     kw["n_threads"] = threads

@@ -1,82 +1,202 @@
 import os
 import subprocess
 from os.path import join, exists
-from qiime2 import Artifact
-from qiime2.plugins.feature_classifier.methods import makeblastdb
-from qiime2.plugins.rescript.pipelines import evaluate_fit_classifier
 
+
+def _query_artifact(rep_seq_base, classifier):
+    """Path of the imported query artifact for one classifier.
+
+    Derived from the (input, classifier) pair, not from the input alone. All
+    three QIIME classifiers previously imported to the same "<base>.qza": run
+    concurrently they truncated each other mid-write, which surfaced as
+    "Archive does not contain a correctly formatted VERSION file" and read like
+    a broken installation.
+    """
+    return "%s.%s.qza" % (rep_seq_base, classifier)
+
+
+def _stale(artifact, rep_seq_base):
+    """True when the artifact is missing or older than the FASTA it came from.
+
+    The previous guard was `if not os.path.exists(...)`, which never noticed
+    that the source had changed. data/real_world_input/rep_seqs_zuo.qza held
+    1,769 sequences against a 3,218-sequence FASTA written five hours later, so
+    three classifiers were scored on a different query set from every other
+    program, and because feature ids are positional the evaluator paired counts
+    with the wrong sequences' taxonomy rather than failing.
+    """
+    if not os.path.exists(artifact):
+        return True
+    src = rep_seq_base + ".fasta"
+    return os.path.exists(src) and os.path.getmtime(src) > os.path.getmtime(artifact)
+
+# QIIME 2 is imported only by the builders that need it, so that this module
+# (and the dry-run and --help paths of the scripts) loads without QIIME 2.
+def _qiime2():
+    from qiime2 import Artifact
+    from qiime2.plugins.feature_classifier.methods import makeblastdb
+    from qiime2.plugins.rescript.pipelines import evaluate_fit_classifier
+    return Artifact, makeblastdb, evaluate_fit_classifier
+
+
+#: Ranks above species, in order, with their taxonova threshold flag names.
+TAXONOVA_PARENT_RANKS = ("domain", "phylum", "class", "order", "family", "genus")
+
+#: Defaults for the "taxonova" block of a classifier config. Used when a config
+#: has no such block, which keeps older configs working unchanged.
+TAXONOVA_DEFAULTS = {
+    "cli": "classification",
+    "models": {},
+    "parent_gates": None,
+}
+
+
+def taxonova_settings(classifiers_cfg):
+    """The "taxonova" block of a classifier config, with defaults filled in."""
+    out = dict(TAXONOVA_DEFAULTS)
+    out.update((classifiers_cfg or {}).get("taxonova", {}))
+    return out
+
+
+def resolve_taxonova_model(region, region_dir, settings, ref_root=None):
+    """Model for one region: a model id (for example "v4"), a file path, or
+    None when nothing is configured or found.
+
+    settings["models"][region] may be
+      - a model id such as "v4" or "16s", passed to taxonova as is (the
+        package downloads and verifies it on first use);
+      - a path to a checkpoint file, absolute or relative to the reference
+        database root (for example "V4/taxonova/gg2_v4_mrgroups_model.pt");
+      - a dict {"path": ..., "md5": ..., "url": ...}; only "path" is used here.
+    Without an entry, the first *model.pt under <region_dir>/taxonova/ (sorted)
+    is used, as in earlier versions of this benchmark.
+    """
+    import glob
+    entry = (settings.get("models") or {}).get(region)
+    spec = entry if isinstance(entry, dict) else {}
+    if isinstance(entry, dict):
+        entry = entry.get("path")
+    if entry:
+        looks_like_path = entry.endswith(".pt") or os.sep in entry
+        if not looks_like_path:
+            return entry
+        if not os.path.isabs(entry) and ref_root:
+            entry = join(ref_root, entry)
+        _check_pinned_model(entry, spec)
+        return entry
+    models = sorted(glob.glob(join(region_dir, "taxonova", "*model.pt")))
+    return models[0] if models else None
+
+
+_VERIFIED_MODELS = {}
+
+
+def _check_pinned_model(path, spec):
+    """Verify a pinned checkpoint against its md5 (once per process).
+    A missing file is reported with its download URL; a file with the wrong
+    md5 raises ValueError, because it would not reproduce the pinned runs."""
+    want = spec.get("md5")
+    if not want:
+        return
+    if not os.path.exists(path):
+        url = spec.get("url")
+        print(f"[taxonova] pinned model not found: {path}"
+              + (f" (download: {url})" if url else ""))
+        return
+    if path not in _VERIFIED_MODELS:
+        import hashlib
+        h = hashlib.md5()
+        with open(path, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        _VERIFIED_MODELS[path] = h.hexdigest()
+    if _VERIFIED_MODELS[path] != want:
+        raise ValueError(f"{path}: md5 {_VERIFIED_MODELS[path]} does not match "
+                         f"the pinned {want}")
 
 
 def build_taxonova_command(
-    rep_seq_base, outdir, param_dict, reference_dict, 
-    scripts_dir, conda_env, dry_run
+    rep_seq_base, outdir, param_dict, reference_dict,
+    scripts_dir, conda_env, dry_run, settings=None
 ):
-    # reference database dir
-    reference_dir = join(os.path.dirname(reference_dict['seqs']), 'taxonova')
-    if not exists(reference_dir):
-        if not dry_run:
-            os.makedirs(reference_dir)
+    """Command line for one taxonova run.
 
-    # build reference/input/output paths
+    settings is the "taxonova" block of the classifier config
+    (see taxonova_settings):
+      cli           "classify" (taxonova >= 26.10.1: model ids, package
+                    default thresholds) or "classification" (the original
+                    CLI, used by the published runs; works in every release)
+      parent_gates  None to keep the package defaults for the ranks above
+                    species, or a dict {rank: threshold} (for example 0.5 at
+                    every parent rank, as in the published runs)
+    The species threshold comes from param_dict["confidence_threshold"], so
+    it names the results directory (confidence_threshold-<value>).
+    """
+    settings = taxonova_settings({"taxonova": settings or {}})
+    cli = settings["cli"]
+    if cli not in ("classify", "classification"):
+        raise ValueError(f"taxonova cli must be 'classify' or 'classification', not {cli!r}")
+
     input_sequences = f"{rep_seq_base}.fasta"
-    reference_seqs = reference_dict['merged']
-    model_file = reference_dict['model']
+    model = reference_dict.get('model')
     taxonomy_raw = join(outdir, 'taxonomy_raw.tsv')
     taxonomy_final = join(outdir, 'taxonomy_final.tsv')
 
-    # train on reference sequence if model is not available
-    if model_file is None:
+    # No configured model and no checkpoint on disk: train one on the region's
+    # reference (slow; a GPU is recommended).
+    if model is None:
+        reference_dir = join(os.path.dirname(reference_dict['seqs']), 'taxonova')
+        model = join(reference_dir, 'taxonova_model.pt')
         if not dry_run:
-            # save final qza file
-            cmd = ["taxonova", "training", "--verbose",
-                   "--full_data", 
-                   "--train_db", reference_seqs, 
-                   "--model_output", model_file]
-            subprocess.run(cmd, check=True)
+            os.makedirs(reference_dir, exist_ok=True)
+            reference_seqs = reference_dict.get('merged') or reference_dict['seqs']
+            subprocess.run(["taxonova", "training", "--verbose", "--smart_full_data",
+                            "--train_db", reference_seqs,
+                            "--model_output", model], check=True)
 
-    # Build threshold arguments from param_dict.
-    #
-    # The parent gates are stated explicitly rather than left to the package
-    # default. The published runs took that default, which was a flat 0.5 at
-    # every parent rank; taxonova now scales the graded profile (0.5 parents,
-    # 0.7 genus, 0.8 species) with --confidence_threshold, so an implicit gate
-    # would no longer mean 0.5 and this config would quietly stop reproducing
-    # the reported numbers. Pinning them here rather than in the config JSON
-    # keeps them out of param_dict, and so out of the param_id that names the
-    # results directory.
-    threshold_args = ""
-    published_parent_gates = {
-        'domain_threshold': 0.5, 'phylum_threshold': 0.5,
-        'class_threshold': 0.5, 'order_threshold': 0.5,
-        'family_threshold': 0.5, 'genus_threshold': 0.5,
-    }
-    for param, gate in published_parent_gates.items():
-        if param not in param_dict:
-            threshold_args += f"--{param} {gate} "
+    # Thresholds. The parent gates are stated explicitly when the config asks
+    # for them, rather than left to the package default: the published runs
+    # used a flat 0.5 at every parent rank, while taxonova >= 26.9 scales a
+    # graded profile (0.5 domain to family, 0.7 genus, 0.8 species) with the
+    # species threshold. Keeping the gates in the "taxonova" block rather than
+    # in param_dict keeps them out of the param_id that names the results
+    # directory.
+    gates = {}
+    for rank, value in (settings.get("parent_gates") or {}).items():
+        if rank not in TAXONOVA_PARENT_RANKS:
+            raise ValueError(f"unknown taxonova parent rank {rank!r}")
+        gates[rank] = value
+    for rank in TAXONOVA_PARENT_RANKS:          # a param_dict entry wins
+        if f"{rank}_threshold" in param_dict:
+            gates[rank] = param_dict[f"{rank}_threshold"]
+    species = param_dict.get("confidence_threshold")
 
-    threshold_params = [
-        'confidence_threshold',
-        'domain_threshold', 'phylum_threshold', 'class_threshold',
-        'order_threshold', 'family_threshold', 'genus_threshold',
-    ]
+    if cli == "classify":
+        threshold_args = f"--confidence {species} " if species is not None else ""
+        threshold_args += "".join(f"--{r}_threshold {gates[r]} "
+                                  for r in TAXONOVA_PARENT_RANKS if r in gates)
+        run = (f"taxonova classify {input_sequences} "
+               f"--model {model} "
+               f"{threshold_args}"
+               f"-o {taxonomy_raw}")
+    else:
+        threshold_args = "".join(f"--{r}_threshold {gates[r]} "
+                                 for r in TAXONOVA_PARENT_RANKS if r in gates)
+        if species is not None:
+            threshold_args += f"--confidence_threshold {species} "
+        run = (f"taxonova classification "
+               f"{threshold_args}"
+               f"--input {input_sequences} "
+               f"--model_input {model} "
+               f"--output {taxonomy_raw}")
 
-    for param in threshold_params:
-        if param in param_dict:
-            threshold_args += f"--{param} {param_dict[param]} "
-
-    # assemble command
     cmd = (
         f"conda run -p {conda_env} bash -c \""
         f"mkdir -p {outdir} && "
-        f"taxonova classification "
-            f"{threshold_args}"
-            f"--input {input_sequences} "
-            f"--model_input {model_file} "
-            f"--output {taxonomy_raw} && "
+        f"{run} && "
         f"python {scripts_dir}/process_taxonova_output.py "
             f"{taxonomy_raw} {taxonomy_final} False \""
     )
-
     return cmd
 
 
@@ -92,7 +212,7 @@ def build_vsearch_command(
             os.makedirs(reference_dir)
 
     # build reference/input/output paths
-    input_sequences = f"{rep_seq_base}.qza"
+    input_sequences = _query_artifact(rep_seq_base, "vsearch")
     reference_seqs = join(reference_dir, "sequences.qza")
     reference_taxa = join(reference_dir, "taxonomy.qza")
     classification_out = join(outdir, 'taxonomy_classification_out.qza')
@@ -103,6 +223,7 @@ def build_vsearch_command(
     if not all(os.path.exists(f) for f in [reference_seqs, reference_taxa]):
         if not dry_run:
             # Import seqs
+            Artifact, makeblastdb, evaluate_fit_classifier = _qiime2()
             ref_seqs = Artifact.import_data(
                 'FeatureData[Sequence]',
                 reference_dict['seqs']
@@ -118,7 +239,7 @@ def build_vsearch_command(
             ref_taxonomy.save(reference_taxa)
 
     # Check if input QZA file exists, if not create it
-    if not os.path.exists(input_sequences):
+    if _stale(input_sequences, rep_seq_base):
         if not dry_run:
             # Use helper script to import sequences
             import subprocess
@@ -161,7 +282,7 @@ def build_blast_command(
             os.makedirs(reference_dir)
 
     # build reference/input/output paths
-    input_sequences = f"{rep_seq_base}.qza"
+    input_sequences = _query_artifact(rep_seq_base, "blast")
     reference_seqs = join(reference_dir, "sequences.qza")
     reference_taxa = join(reference_dir, "taxonomy.qza")
     reference_db = join(reference_dir, "blastdb.qza")
@@ -173,6 +294,7 @@ def build_blast_command(
     if not all(os.path.exists(f) for f in [reference_seqs, reference_taxa, reference_db]):
         if not dry_run:
             # Import seqs
+            Artifact, makeblastdb, evaluate_fit_classifier = _qiime2()
             ref_seqs = Artifact.import_data(
                 'FeatureData[Sequence]',
                 reference_dict['seqs']
@@ -192,7 +314,7 @@ def build_blast_command(
             ref_db.database.save(reference_db)
 
     # Check if input QZA file exists, if not create it
-    if not os.path.exists(input_sequences):
+    if _stale(input_sequences, rep_seq_base):
         if not dry_run:
             # Use helper script to import sequences
             import subprocess
@@ -236,7 +358,7 @@ def build_naive_bayes_command(
             os.makedirs(reference_dir)
 
     # build reference/input/output paths
-    input_sequences = f"{rep_seq_base}.qza"
+    input_sequences = _query_artifact(rep_seq_base, "naive_bayes")
     model_file = reference_dict['model']
     evaluation_file = join(reference_dir, "evaluation.qza")
     prediction_file = join(reference_dir, "predictions.qza")
@@ -247,6 +369,7 @@ def build_naive_bayes_command(
     if model_file is None:
         if not dry_run:
             # Import seqs
+            Artifact, makeblastdb, evaluate_fit_classifier = _qiime2()
             ref_seqs = Artifact.import_data(
                 'FeatureData[Sequence]',
                 reference_dict['seqs']
@@ -276,7 +399,7 @@ def build_naive_bayes_command(
             observed_taxonomy.save(prediction_file)
 
     # Check if input QZA file exists, if not create it
-    if not os.path.exists(input_sequences):
+    if _stale(input_sequences, rep_seq_base):
         if not dry_run:
             # Use helper script to import sequences
             import subprocess

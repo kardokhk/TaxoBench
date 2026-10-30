@@ -1,26 +1,41 @@
 {
+    "_doc": "Default classifier panel. Taxonova runs the current release (taxonova>=26.10.1) with its model ids and the package's default thresholds (0.5 domain to family, 0.7 genus, 0.8 species). For the published configuration use classifiers_paper.json.",
+
     "classifiers": [
         "taxonova", "vsearch", "blast", "naive-bayes",
         "idtaxa",   "spingo",  "kraken2", "mapseq"
     ],
 
     "method_conda_envs": {
-        "taxonova":    "/path/to/conda/envs/taxobench-qiime2",
-        "vsearch":     "/path/to/conda/envs/taxobench-qiime2",
-        "blast":       "/path/to/conda/envs/taxobench-qiime2",
-        "naive-bayes": "/path/to/conda/envs/taxobench-qiime2",
-        "idtaxa":      "/path/to/conda/envs/taxobench-qiime2",
-        "kraken2":     "/path/to/conda/envs/taxobench-qiime2",
-        "mapseq":      "/path/to/conda/envs/taxobench-qiime2",
+        "taxonova":    "taxonova",
+        "vsearch":     "qiime2",
+        "blast":       "qiime2",
+        "naive-bayes": "qiime2",
+        "idtaxa":      "qiime2",
+        "kraken2":     "qiime2",
+        "mapseq":      "qiime2",
         "spingo": {
-            "spingo_env":     "/path/to/conda/envs/taxobench-spingo",
-            "processing_env": "/path/to/conda/envs/taxobench-qiime2"
+            "spingo_env":     "spingo",
+            "processing_env": "qiime2"
         }
+    },
+
+    "taxonova": {
+        "requirement": "taxonova>=26.10.1",
+        "cli": "classify",
+        "models": {
+            "V4":    "v4",
+            "V3-V4": "v3v4",
+            "V5-V7": "v5v7",
+            "V1-V9": "16s",
+            "RRN":   "operon"
+        },
+        "parent_gates": null
     },
 
     "method_parameters_combinations": {
         "taxonova": {
-            "confidence_threshold": [0.7]
+            "confidence_threshold": [0.8]
         },
         "vsearch": {
             "p-maxaccepts":     [10],

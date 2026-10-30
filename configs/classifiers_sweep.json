@@ -1,58 +1,148 @@
 {
-    "_doc": "Confidence-sweep config (Reviewer 2 comment 2.3). Per-rank-confidence tools (taxonova/idtaxa/kraken2/mapseq/spingo) are run ONCE at the most permissive setting and then post-hoc threshold-swept by 04b_evaluate_sweep.py. Single-confidence tools (naive-bayes/vsearch/blast) are re-run at multiple confidence settings; each param dir then becomes one curve point.",
-
+    "_doc": "Confidence sweep, as run for the paper. Tools with per-rank confidences (taxonova, idtaxa, kraken2, mapseq, spingo) run once at the most permissive setting and are swept after the fact by 04b_evaluate_sweep.py; naive-bayes, vsearch and blast run at several settings, one curve point per parameter directory. Taxonova settings are those of classifiers_paper.json.",
     "classifiers": [
-        "taxonova", "vsearch", "blast", "naive-bayes",
-        "idtaxa",   "spingo",  "kraken2", "mapseq"
+        "taxonova",
+        "vsearch",
+        "blast",
+        "naive-bayes",
+        "idtaxa",
+        "spingo",
+        "kraken2",
+        "mapseq"
     ],
-
     "method_conda_envs": {
-        "taxonova":    "/path/to/conda/envs/taxobench-qiime2",
-        "vsearch":     "/path/to/conda/envs/taxobench-qiime2",
-        "blast":       "/path/to/conda/envs/taxobench-qiime2",
-        "naive-bayes": "/path/to/conda/envs/taxobench-qiime2",
-        "idtaxa":      "/path/to/conda/envs/taxobench-qiime2",
-        "kraken2":     "/path/to/conda/envs/taxobench-qiime2",
-        "mapseq":      "/path/to/conda/envs/taxobench-qiime2",
+        "taxonova": "taxonova_paper",
+        "vsearch": "qiime2",
+        "blast": "qiime2",
+        "naive-bayes": "qiime2",
+        "idtaxa": "qiime2",
+        "kraken2": "qiime2",
+        "mapseq": "qiime2",
         "spingo": {
-            "spingo_env":     "/path/to/conda/envs/taxobench-spingo",
-            "processing_env": "/path/to/conda/envs/taxobench-qiime2"
+            "spingo_env": "spingo",
+            "processing_env": "qiime2"
         }
     },
-
+    "taxonova": {
+        "requirement": "taxonova @ git+https://github.com/kardokhk/taxonova@v1.0.0",
+        "cli": "classification",
+        "models": {
+            "V4": {
+                "path": "V4/taxonova/gg2_v4_mrgroups_model.pt",
+                "url": "https://github.com/kardokhk/taxonova/releases/download/v1.0.0/gg2_v4_mrgroups_model.pt",
+                "md5": "debf38c7a0b2c2c8dcb3898949aa6a09",
+                "sha256": "092468295f5439d0789e9aee30acd141333cdaef6d71c226f7fac757d083d396"
+            },
+            "V3-V4": {
+                "path": "V3-V4/taxonova/gg2_v3v4_mrgroups_model.pt",
+                "url": "https://github.com/kardokhk/taxonova/releases/download/v1.0.0/gg2_v3v4_mrgroups_model.pt",
+                "md5": "a40d3c29f78cf4d32dac22b9d3a4a6bd",
+                "sha256": "0a4ad6d18d1d39e866d3abfdba53444e532029c7f53fcdfee9eb54adec46a494"
+            },
+            "V5-V7": {
+                "path": "V5-V7/taxonova/gg2_v5v7_mrgroups_model.pt",
+                "url": "https://github.com/kardokhk/taxonova/releases/download/v1.0.0/gg2_v5v7_mrgroups_model.pt",
+                "md5": "58a15ff11449d180c01fcacd193157de",
+                "sha256": "a481b28ae4c69d859c2a669194ee05f34f6e2fb59e8d53643ff6876094ab3a2a"
+            },
+            "V1-V9": {
+                "path": "V1-V9/taxonova/gg2_v1v9_mrgroups_model.pt",
+                "url": "https://github.com/kardokhk/taxonova/releases/download/v1.0.0/gg2_v1v9_mrgroups_model.pt",
+                "md5": "8cde17c801f3f044efd9cdc17d86401d",
+                "sha256": "4f67916fef5bcaf0acd438c9f4ae6694c505e1e119515de39ef29cc4bdd701d8"
+            },
+            "RRN": {
+                "path": "RRN/taxonova/gtdb_rrn_mrgroups_model.pt",
+                "url": "https://github.com/kardokhk/taxonova/releases/download/v1.0.0/gtdb_rrn_mrgroups_model.pt",
+                "md5": "6f5d4ef039888a33ad765ef41725b624"
+            }
+        },
+        "parent_gates": {
+            "domain": 0.5,
+            "phylum": 0.5,
+            "class": 0.5,
+            "order": 0.5,
+            "family": 0.5,
+            "genus": 0.5
+        },
+        "scoring_rules": "v1"
+    },
     "method_parameters_combinations": {
         "taxonova": {
-            "confidence_threshold": [0.0]
+            "confidence_threshold": [
+                0.0
+            ]
         },
         "vsearch": {
-            "p-maxaccepts":     [10],
-            "p-perc-identity":  [0.80],
-            "p-min-consensus":  [0.51, 0.65, 0.80, 0.95]
+            "p-maxaccepts": [
+                10
+            ],
+            "p-perc-identity": [
+                0.8
+            ],
+            "p-min-consensus": [
+                0.51,
+                0.65,
+                0.8,
+                0.95
+            ]
         },
         "blast": {
-            "p-maxaccepts":     [10],
-            "p-perc-identity":  [0.80],
-            "p-min-consensus":  [0.51, 0.65, 0.80, 0.95]
+            "p-maxaccepts": [
+                10
+            ],
+            "p-perc-identity": [
+                0.8
+            ],
+            "p-min-consensus": [
+                0.51,
+                0.65,
+                0.8,
+                0.95
+            ]
         },
         "naive-bayes": {
-            "p-confidence": [0.0, 0.5, 0.7, 0.9]
+            "p-confidence": [
+                0.0,
+                0.5,
+                0.7,
+                0.9
+            ]
         },
         "idtaxa": {
-            "p-confidence": [0]
+            "p-confidence": [
+                0
+            ]
         },
         "spingo": {
-            "kmersize":  [8],
-            "bootstrap": [10],
-            "subsample": [10]
+            "kmersize": [
+                8
+            ],
+            "bootstrap": [
+                10
+            ],
+            "subsample": [
+                10
+            ]
         },
         "kraken2": {
-            "confidence": [0.0],
-            "quick":      [false],
-            "use_names":  [true]
+            "confidence": [
+                0.0
+            ],
+            "quick": [
+                false
+            ],
+            "use_names": [
+                true
+            ]
         },
         "mapseq": {
-            "nthreads": [20],
-            "cutoff":   [0.0]
+            "nthreads": [
+                20
+            ],
+            "cutoff": [
+                0.0
+            ]
         }
     }
 }
