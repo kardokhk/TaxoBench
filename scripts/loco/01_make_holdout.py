@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LOCO step 01 — generate stratified holdout for a region.
+"""LOCO step 01: generate stratified holdout for a region.
 
 Wraps src/loco/make_holdout.py with the standard taxobench paths.
 """

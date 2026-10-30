@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LOCO step 03 — classify novel + control queries with a single classifier.
+"""LOCO step 03: classify novel + control queries with a single classifier.
 
 Outputs (per region × classifier):
     results/loco/<region>/<classifier>/novel_predictions.tsv

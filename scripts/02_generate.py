@@ -41,7 +41,7 @@ def main():
                          "the 460 bp amplicon can be merged.")
     ap.add_argument("--paired", action="store_true",
                     help="Simulate paired-end reads (default single-end). "
-                         "Don't use for V1-V9 — 200+200bp can't merge ~1500bp.")
+                         "Don't use for V1-V9: 200+200bp can't merge ~1500bp.")
     ap.add_argument("--n-wildcard", action="store_true",
                     help="Truth builder: treat N in a source sequence as a wildcard, as in the published v1 truth (default: N is a mismatch)")
     ap.add_argument("--force", action="store_true")

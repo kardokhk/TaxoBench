@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LOCO step 04 — compute MC and OC rates as a function of confidence threshold.
+"""LOCO step 04: compute MC and OC rates as a function of confidence threshold.
 
 For each (region × classifier × rank × threshold τ):
 
@@ -148,7 +148,7 @@ def load_predictions(tsv_fp, classifier):
     """Yield (id, lineage[7], conf[7])."""
     with open(tsv_fp) as fh:
         reader = csv.DictReader(fh, delimiter="\t")
-        # Some tools name the columns differently — find the right ones.
+        # Some tools name the columns differently: find the right ones.
         cols = reader.fieldnames or []
         id_col   = next((c for c in cols if c in
                         ("Feature ID", "Feature.ID", "feature_id", "id", "sequence_id")), cols[0])
@@ -185,7 +185,7 @@ def load_truth(tsv_fp):
 
 
 def load_novel_meta(tsv_fp):
-    """Returns {id: novel_rank_int} — first rank where this query is novel."""
+    """Returns {id: novel_rank_int}: first rank where this query is novel."""
     out = {}
     with open(tsv_fp) as fh:
         for i, line in enumerate(fh):

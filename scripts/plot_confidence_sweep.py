@@ -86,7 +86,7 @@ def _plot_metric(df: pd.DataFrame, mock: str, metric: str, out_fp: Path):
     fig.legend(handles, labels, loc="upper center",
                ncol=min(len(labels), 8), fontsize=8,
                bbox_to_anchor=(0.5, 1.02), frameon=False)
-    fig.suptitle(f"{mock} — {METRIC_LABEL[metric]} vs confidence threshold",
+    fig.suptitle(f"{mock}: {METRIC_LABEL[metric]} vs confidence threshold",
                  y=1.06, fontsize=11)
     fig.tight_layout()
     out_fp.parent.mkdir(parents=True, exist_ok=True)

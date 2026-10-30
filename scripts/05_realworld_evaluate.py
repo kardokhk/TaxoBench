@@ -6,7 +6,7 @@ For each (study × classifier × param) prediction at
 `results/real_world/<study>/<classifier>/<param>/taxonomy_final.tsv`,
 this script:
 
-  1. Loads the amplicon ASV count table (samples × ASVs) — DADA2 output.
+  1. Loads the amplicon ASV count table (samples × ASVs): DADA2 output.
   2. Loads the classifier's per-ASV taxonomy assignment.
   3. Aggregates ASV counts → per-sample (rank, taxon) frequency vectors.
   4. Loads the paired shotgun OGU (operational genome unit) BIOM table and
@@ -25,7 +25,7 @@ this script:
        - results/evaluation/realworld/by_metric/<metric>.csv (wide)
        - results/evaluation/realworld/per_sample/<study>_<classifier>_<param>.csv
 
-Re-run any time taxonova (or any other classifier) is updated — produces a
+Re-run any time taxonova (or any other classifier) is updated: produces a
 fresh comparison without re-doing the expensive DADA2 / shotgun processing.
 """
 
@@ -191,7 +191,7 @@ def _resolve_group_keys(amp_dict, wgs_dict):
             for e in matches:
                 out[e] = out.get(e, 0.0) + share
         else:
-            # Keep the bracket as one bucket — 1 ASV = 1 prediction unit.
+            # Keep the bracket as one bucket: 1 ASV = 1 prediction unit.
             out[k] = out.get(k, 0.0) + freq
     return out
 
@@ -466,7 +466,7 @@ def main():
         print(f"  + {len(rows)} per-sample rows")
 
     if not all_rows:
-        print("[05_realworld_evaluate] no rows produced — nothing to write")
+        print("[05_realworld_evaluate] no rows produced: nothing to write")
         return
 
     long_df = pd.DataFrame(all_rows)

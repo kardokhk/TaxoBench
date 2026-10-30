@@ -17,7 +17,7 @@ produce:
   holdout_manifest.json       # bookkeeping: per-rank held-out taxa lists,
                               # seed, sizes, etc.
 
-Stratified holdout design — for each region, ONE holdout that produces queries
+Stratified holdout design: for each region, ONE holdout that produces queries
 novel at every rank simultaneously (see docs/loco/README.md).
 """
 import argparse

@@ -109,7 +109,7 @@ def main():
             label = mock.replace("biome_","").replace("mockrobiota-16S","Mockrobiota").replace("digestive_system","Digestive").replace("_"," ").title()
             label = label if metric == "Recall" else ""
             row = [pretty[m] + ":" + str(round(pivoted[mock].get(m,{}).get(key,0), 3)) for m in METHODS]
-            vals = [pivoted[mock].get(m,{}).get(key, "—") for m in METHODS]
+            vals = [pivoted[mock].get(m,{}).get(key, "-") for m in METHODS]
             cells = []
             for v in vals:
                 if isinstance(v, float):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Step 01b — prepare the MBARC-26 mock community for the v_mocks panel.
+"""Step 01b: prepare the MBARC-26 mock community for the v_mocks panel.
 
 Adds:
   - mbarc26  (Singer 2016 MBARC-26 mock; 26 species, 16S from RefSeq NR_)
@@ -9,9 +9,9 @@ sequences match gg2 sister-species labels (e.g., S. aureus → argenteus,
 B. subtilis → inaquosorum, S. enterica → bongori, P. aeruginosa →
 paraeruginosa) at higher identity than canonical-name gg2 references, so the
 gg2-trained classifier panel systematically miscalls species. Not a pipeline
-issue — a reference-DB nomenclature mismatch.
+issue: a reference-DB nomenclature mismatch.
 
-CAMI2 was evaluated and rejected — it is a shotgun-only challenge with no
+CAMI2 was evaluated and rejected: it is a shotgun-only challenge with no
 amplicon-level truth and no curated 16S reference.
 
 Outputs (taxobench convention, mirroring mockrobiota-16S):
@@ -36,7 +36,7 @@ import _common  # noqa: E402
 
 INPUT_DIR = Path(_common.load_pipeline_config()["mock_input_dir"])
 
-# MBARC-26 strain set (Singer 2016, Sci. Data) — gg2-style taxonomies for the
+# MBARC-26 strain set (Singer 2016, Sci. Data): gg2-style taxonomies for the
 # 23 bacteria + 3 archaea. Species labels are the canonical binomials Singer
 # used; higher ranks follow Greengenes2 r2024.09.
 MBARC26 = [
@@ -193,7 +193,7 @@ def fetch_one_16s(query_species: str, retries: int = 3) -> tuple[str, str] | Non
 
     Returns (accession, sequence) of the first NR_ hit. Length 1300-1800 bp.
     """
-    from Bio import Entrez  # lazy import — only when needed
+    from Bio import Entrez  # lazy import: only when needed
     Entrez.email = "taxobench@projects.local"
 
     queries = [

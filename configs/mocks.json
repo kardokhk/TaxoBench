@@ -41,7 +41,7 @@
         "V1-V9"
       ],
       "rrn_counterpart": null,
-      "note": "Part of the published panel. Inputs and generated cells are in the benchmark data (DATA.md); not built by the 01 scripts."
+      "note": "Part of the published panel. Inputs are in mocks/inputs/ (01a_unpack_mock_inputs.py); not built by the 01 scripts."
     },
     "vaginalmock": {
       "description": "Vaginal mock community",
@@ -54,7 +54,7 @@
         "V1-V9"
       ],
       "rrn_counterpart": null,
-      "note": "Part of the published panel. Inputs and generated cells are in the benchmark data (DATA.md); not built by the 01 scripts."
+      "note": "Part of the published panel. Inputs are in mocks/inputs/ (01a_unpack_mock_inputs.py); not built by the 01 scripts."
     }
   },
   "biomes": {
@@ -114,7 +114,7 @@
       "wgs_ogu_biom": "zuo/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "zuo/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "zuo/metadata/paired_samples.csv",
-      "note": "Zuo 2022 pediatric ulcerative colitis paired 16S V4 + shotgun (PRJNA759642). 42 paired biospecimens via metadata.csv from github.com/wbb121/IBD-data-analysis. Pipeline: slurm/zuo_*.sbatch. Reprocessed 2026-05-04."
+      "note": "Zuo et al. 2022, pediatric ulcerative colitis, paired 16S V4 and shotgun (PRJNA759642). 42 paired biospecimens, paired via metadata.csv from github.com/wbb121/IBD-data-analysis. DADA2 paired-end (docs/realworld_amplicon_qc.md). Reported in the paper."
     },
     "mantri": {
       "fasta": "rep_seqs_mantri.fasta",
@@ -125,7 +125,7 @@
       "wgs_ogu_biom": "mantri/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "mantri/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "mantri/metadata/paired_samples.csv",
-      "note": "rep_seqs_mantri.fasta is the 7-paired-16S DADA2 fasta (9622 ASVs across 7 samples). Pipeline: slurm/mantri_{amplicon,wgs}_pipeline.sbatch. Wired 2026-05-03; cleanup 2026-05-04."
+      "note": "Mantri et al., soil. rep_seqs_mantri.fasta holds the DADA2 ASVs of the 7 paired 16S samples (9,622 ASVs). Reported in the paper."
     },
     "virtanen": {
       "fasta": "rep_seqs_virtanen.fasta",
@@ -146,7 +146,7 @@
       "wgs_ogu_biom": "coral/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "coral/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "coral/metadata/paired_samples.csv",
-      "note": "Florida Coral Reef paired 16S V4 + shotgun WGS (PRJNA910824, 15 paired biospecimens — coral tissue + seawater). Pipeline scripts: slurm/coral_*.sbatch. Added 2026-05-04."
+      "note": "Cao et al., Florida coral reef, paired 16S V4 and shotgun (PRJNA910824), 15 paired biospecimens (coral tissue and seawater). Development study, not in the paper."
     },
     "emp500_soil": {
       "fasta": "rep_seqs_emp500_soil.fasta",
@@ -157,7 +157,7 @@
       "wgs_ogu_biom": "emp500_soil/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "emp500_soil/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "emp500_soil/metadata/paired_samples.csv",
-      "note": "EMP500 soil sub-study (myrold.59) — 22 paired biospecimens. 16S V4 single-end MiSeq (Caporaso 515F/806R EMP standard) + Illumina NovaSeq shotgun. Added 2026-05-04. Pipelines: slurm/emp500_*.sbatch."
+      "note": "EMP500 soil sub-study (myrold.59), 22 paired biospecimens. 16S V4 single-end MiSeq (515F/806R, EMP standard) and Illumina NovaSeq shotgun. Development study, not in the paper."
     },
     "emp500_plant": {
       "fasta": "rep_seqs_emp500_plant.fasta",
@@ -168,7 +168,7 @@
       "wgs_ogu_biom": "emp500_plant/woltka_output/ogu_table.biom",
       "wgs_taxonomy": "emp500_plant/qiime2_output/exported_taxonomy/taxonomy.tsv",
       "paired_samples": "emp500_plant/metadata/paired_samples.csv",
-      "note": "EMP500 plant phyllosphere sub-study (berry.2) — 20 paired biospecimens. 16S V4 single-end MiSeq + Illumina NovaSeq shotgun. Added 2026-05-04."
+      "note": "EMP500 plant phyllosphere sub-study (berry.2), 20 paired biospecimens. 16S V4 single-end MiSeq and Illumina NovaSeq shotgun. Development study, not in the paper."
     }
   },
   "matrix": {

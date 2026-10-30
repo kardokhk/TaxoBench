@@ -7,7 +7,7 @@ P / R / F-vs-confidence-threshold curve at every taxonomic level.
 Two cases:
 
 * Per-rank-confidence tools (taxonova, idtaxa, kraken2, mapseq, spingo):
-  one permissive run is enough — the per-rank Confidence column in
+  one permissive run is enough: the per-rank Confidence column in
   taxonomy_final.tsv is reinterpreted at every threshold T in the sweep
   grid by truncating the predicted lineage to the deepest rank whose
   reported per-rank confidence is >= T. This is the natural extension of
@@ -233,7 +233,7 @@ def _evaluate_threshold(true_map, pred_rows, threshold):
             exp_taxa.append(exp_full)
             obs_taxa.append(obs_full)
         _, _, prec, rec, f, _ = precision_recall_fscore(exp_taxa, obs_taxa)
-        # detection rate (taxon-set) — collapse each lineage to its deepest
+        # detection rate (taxon-set): collapse each lineage to its deepest
         # non-empty content within ranks 0..lvl_int (this matches what a
         # downstream user gets when querying "which taxa did the tool
         # detect?" and gives SPINGO-style genus/species-only outputs a fair
@@ -352,7 +352,7 @@ def main():
             pred_rows = _read_tax(pred_fp)
 
             if cls in PER_RANK_TOOLS:
-                # post-hoc sweep — per-classifier percentile grid if available,
+                # post-hoc sweep: per-classifier percentile grid if available,
                 # else the dense fallback SWEEP_GRID.
                 thresholds = per_cls_grids.get(cls, SWEEP_GRID)
                 for T in thresholds:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LOCO step 04c — MC/OC sweep for taxonova from unmasked ("open gates") output.
+"""LOCO step 04c: MC/OC sweep for taxonova from unmasked ("open gates") output.
 
 Why this exists
 ---------------

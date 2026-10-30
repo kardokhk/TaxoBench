@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""LOCO step 02 — train ONE classifier on the held-out reference DB.
+"""LOCO step 02: train ONE classifier on the held-out reference DB.
 
 Designed for SLURM: one job = one (region, classifier). This keeps the GPU
 training (taxonova) separable from CPU-bound work.
 
 Supported classifiers:
-  taxonova       — GPU; smart_full_data training
-  idtaxa         — CPU; R DECIPHER::LearnTaxa
-  naive-bayes    — CPU; QIIME2 fit-classifier-naive-bayes
-  blast-vsearch  — CPU; build QZA artifacts + BLAST DB (used by both BLAST and VSEARCH)
-  spingo         — CPU; reformat fasta to SPINGO header layout (no separate training)
+  taxonova      : GPU; smart_full_data training
+  idtaxa        : CPU; R DECIPHER::LearnTaxa
+  naive-bayes   : CPU; QIIME2 fit-classifier-naive-bayes
+  blast-vsearch : CPU; build QZA artifacts + BLAST DB (used by both BLAST and VSEARCH)
+  spingo        : CPU; reformat fasta to SPINGO header layout (no separate training)
 """
 import argparse
 import os

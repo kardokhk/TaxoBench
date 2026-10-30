@@ -509,7 +509,7 @@ def evaluate_classification(obs_taxon, exp_taxon):
             deepest_exp = i
             break
     if deepest_exp < 0:
-        # expected has no rank info — treat as match
+        # expected has no rank info: treat as match
         return 'match'
 
     deepest_obs = -1

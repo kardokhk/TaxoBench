@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LOCO step 05 — plot MC and OC vs threshold for each (region, rank).
+"""LOCO step 05: plot MC and OC vs threshold for each (region, rank).
 
 Produces:
     results/loco/evaluation/curves/<region>_<rank>.png
@@ -59,8 +59,8 @@ def per_region_per_rank_plot(rows, out_dir):
                 xs  = [p["threshold"] for p in pts]
                 axes[0].plot(xs, [p["mc_rate"] for p in pts], "-", color=color, label=cls, lw=1.7)
                 axes[1].plot(xs, [p["oc_rate"] for p in pts], "-", color=color, label=cls, lw=1.7)
-            axes[0].set_title(f"{region} — {rank}: MC")
-            axes[1].set_title(f"{region} — {rank}: OC")
+            axes[0].set_title(f"{region}: {rank}: MC")
+            axes[1].set_title(f"{region}: {rank}: OC")
             for ax in axes:
                 ax.set_xlabel("confidence threshold τ")
                 ax.set_ylabel("error rate")

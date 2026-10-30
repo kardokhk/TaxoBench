@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Step 02c — V1-V9 generator for *curated* mocks (no MGnify, no backbone).
+"""Step 02c: V1-V9 generator for *curated* mocks (no MGnify, no backbone).
 
 Mirrors the long-read recipe of 02d_generate_longread_biomes.py, except that
 the source pool is the curated mock species directly
@@ -11,7 +11,7 @@ lookup are biome-specific. For curated mocks such as MBARC-26 the source
 pool is simply the species FASTA that 02_generate.py would give to ART.
 
 Recipe:
-  1. Read data/mock_community/input_data/<mock>_seqs.fasta — already
+  1. Read data/mock_community/input_data/<mock>_seqs.fasta: already
      full-length 16S, one record per species (or per rrn copy for Zymo).
   2. For each of 10 replicates, draw a random subsample of `--seqs-per-rep`
      and apply per-base substitution at rate uniform [0.002, 0.02].
@@ -50,7 +50,7 @@ MOCK_DIR = Path(_CFG["data_dir"]) / "mock_community"
 N_REPLICATES = 10
 DEFAULT_SEQS_PER_REP = 75
 # Match mockrobiota-16S: env-seqs are unmutated copies of source (verified
-# 2026-05-10 — mockrobiota env-seqs are 100% identical to input fasta after
+# 2026-05-10: mockrobiota env-seqs are 100% identical to input fasta after
 # primer extraction). Only ART simulation downstream introduces noise.
 # Keeping rates as configurable knobs for future use.
 MUT_RATE_MIN = 0.0
@@ -165,7 +165,7 @@ def main():
 
     all_records: list[tuple[str, str]] = []
     for i in range(args.n_replicates):
-        # sample WITH replacement — pool may be smaller than seqs_per_rep
+        # sample WITH replacement: pool may be smaller than seqs_per_rep
         # for small mocks (e.g. Zymo has 46, MBARC has 26).
         if seqs_per_rep <= len(pool):
             subsample = rng.sample(pool, seqs_per_rep)
