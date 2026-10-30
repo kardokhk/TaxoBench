@@ -22,7 +22,9 @@ def fmt(metric, v):
 class TestV1ReproducesPublished(unittest.TestCase):
     def setUp(self):
         ev._UNIVERSE_CACHE.clear()
-        for lv, n in json.load(open(FX / "universe_V5-V7.json")).items():
+        with open(FX / "universe_V5-V7.json") as fh:
+            universe = json.load(fh)
+        for lv, n in universe.items():
             ev._UNIVERSE_CACHE[("V5-V7", int(lv))] = n
         true_fp = FX / "data/mock_community/gutmock/V5-V7/trueish_taxonomy_gutmock.tsv"
         self.rows = ev._evaluate_combo("gutmock", "V5-V7", FX / "results/gutmock/V5-V7", true_fp,

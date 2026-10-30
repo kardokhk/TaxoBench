@@ -1,0 +1,9 @@
+# Scoring and tests only (scripts/04_evaluate.py, src/scoring_v2.py, tests/).
+# Running the classifiers needs the conda environments in docs/ENVIRONMENTS.md.
+# Versions tested on 2026-10-30 with Python 3.11.
+pandas==2.3.3
+numpy==2.4.6
+scipy==1.17.1
+biom-format==2.1.18
+joblib==1.6.0
+matplotlib==3.11.1
