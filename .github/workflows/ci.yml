@@ -31,7 +31,8 @@ jobs:
   golden-v1:
     # All 47 published cells (15,040 values) rescored with --rules v1 from the
     # Zenodo deposit must equal the deposited all_metrics_v1.csv exactly.
-    runs-on: ubuntu-latest
+    # Pinned image: the locked Python 3.11.13 is not built for newer runners.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
