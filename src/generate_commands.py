@@ -1,6 +1,36 @@
+import json
 import os
+import shlex
+import shutil
 import subprocess
 from os.path import join, exists
+
+
+def conda_bin():
+    """The executable used for `<conda> run -p <prefix>`.
+
+    Order: the TAXOBENCH_CONDA_BIN environment variable, then "conda_bin" in
+    configs/pipeline_config.json, then `conda` on PATH. Any tool with a
+    compatible `run -p` subcommand works (conda, mamba, micromamba).
+    Until 2026-10-31 every main-pipeline command hard-coded `conda run`, so
+    the documented override had no effect outside the LOCO scripts.
+    """
+    env = os.environ.get("TAXOBENCH_CONDA_BIN")
+    if env:
+        return env
+    cfg_fp = join(os.path.dirname(os.path.abspath(__file__)), os.pardir,
+                  "configs", "pipeline_config.json")
+    try:
+        with open(cfg_fp) as fh:
+            configured = json.load(fh).get("conda_bin")
+    except (OSError, ValueError):
+        configured = None
+    return configured or shutil.which("conda") or "conda"
+
+
+def _conda_run(prefix):
+    """`<conda_bin> run -p <prefix>` as a shell fragment."""
+    return f"{shlex.quote(conda_bin())} run -p {prefix}"
 
 
 def _query_artifact(rep_seq_base, classifier):
@@ -195,7 +225,7 @@ def build_taxonova_command(
                f"--output {taxonomy_raw}")
 
     cmd = (
-        f"conda run -p {conda_env} bash -c \""
+        f"{_conda_run(conda_env)} bash -c \""
         f"mkdir -p {outdir} && "
         f"{run} && "
         f"python {scripts_dir}/process_taxonova_output.py "
@@ -248,13 +278,13 @@ def build_vsearch_command(
             # Use helper script to import sequences
             import subprocess
             helper_script = join(os.path.dirname(__file__), 'qiime_helper.py')
-            cmd_import = f'conda run -p {conda_env} python {helper_script} import_fasta_to_qza {rep_seq_base}.fasta {input_sequences}'
+            cmd_import = f'{_conda_run(conda_env)} python {helper_script} import_fasta_to_qza {rep_seq_base}.fasta {input_sequences}'
             subprocess.run(cmd_import, shell=True, check=True)
 
     # assemble command using helper script for conversion
     helper_script = join(os.path.dirname(__file__), 'qiime_helper.py')
     cmd = (
-        f'conda run -p {conda_env} bash -c '
+        f'{_conda_run(conda_env)} bash -c '
         f'"mkdir -p {outdir} && '
         f'qiime feature-classifier classify-consensus-vsearch '
         f'--i-query {input_sequences} '
@@ -323,13 +353,13 @@ def build_blast_command(
             # Use helper script to import sequences
             import subprocess
             helper_script = join(os.path.dirname(__file__), 'qiime_helper.py')
-            cmd_import = f'conda run -p {conda_env} python {helper_script} import_fasta_to_qza {rep_seq_base}.fasta {input_sequences}'
+            cmd_import = f'{_conda_run(conda_env)} python {helper_script} import_fasta_to_qza {rep_seq_base}.fasta {input_sequences}'
             subprocess.run(cmd_import, shell=True, check=True)
 
     # assemble command using helper script for conversion
     helper_script = join(os.path.dirname(__file__), 'qiime_helper.py')
     cmd = (
-        f'conda run -p {conda_env} bash -c '
+        f'{_conda_run(conda_env)} bash -c '
         f'"mkdir -p {outdir} && '
         f'qiime feature-classifier classify-consensus-blast '
         f'--i-query {input_sequences} '
@@ -408,13 +438,13 @@ def build_naive_bayes_command(
             # Use helper script to import sequences
             import subprocess
             helper_script = join(os.path.dirname(__file__), 'qiime_helper.py')
-            cmd_import = f'conda run -p {conda_env} python {helper_script} import_fasta_to_qza {rep_seq_base}.fasta {input_sequences}'
+            cmd_import = f'{_conda_run(conda_env)} python {helper_script} import_fasta_to_qza {rep_seq_base}.fasta {input_sequences}'
             subprocess.run(cmd_import, shell=True, check=True)
 
     # assemble command using helper script for conversion
     helper_script = join(os.path.dirname(__file__), 'qiime_helper.py')
     cmd = (
-        f'conda run -p {conda_env} bash -c '
+        f'{_conda_run(conda_env)} bash -c '
         f'"mkdir -p {outdir} && '
         f'qiime feature-classifier classify-sklearn '
         f'--i-reads {input_sequences} '
@@ -450,7 +480,7 @@ def build_idtaxa_command(
 
     # assemble command - first create raw output, then process to final
     cmd = (
-        f"conda run -p {conda_env} bash -c \""
+        f"{_conda_run(conda_env)} bash -c \""
         f"mkdir -p {outdir} && "
         f"Rscript {scripts_dir}/run_idtaxa_classification.R "
             f"{input_sequences} "
@@ -508,7 +538,7 @@ def build_spingo_command(
         cmd = (
             f"bash -c \""
             f"mkdir -p {outdir} && "
-            f"conda run -p {spingo_env} spingo "
+            f"{_conda_run(spingo_env)} spingo "
                 f"--database {database_file} "
                 f"--input {input_sequences} "
                 f"--processors {n_threads} "
@@ -516,13 +546,13 @@ def build_spingo_command(
                 f"--bootstrap {bootstrap} "
                 f"--subsample {subsample} "
                 f"> {taxonomy_raw} && "
-            f"conda run -p {processing_env} python {scripts_dir}/process_spingo_output.py "
+            f"{_conda_run(processing_env)} python {scripts_dir}/process_spingo_output.py "
                 f"{taxonomy_raw} {taxonomy_final}\""
         )
     else:
         # Fallback to single environment (for backward compatibility)
         cmd = (
-            f"conda run -p {conda_env} bash -c \""
+            f"{_conda_run(conda_env)} bash -c \""
             f"mkdir -p {outdir} && "
             f"spingo "
                 f"--database {database_file} "
@@ -599,7 +629,7 @@ def build_kraken2_command(
     
     # Assemble full command
     cmd = (
-        f"conda run -p {conda_env} bash -c \""
+        f"{_conda_run(conda_env)} bash -c \""
         f"mkdir -p {outdir} && "
         f"{kraken2_cmd} && "
         f"python {scripts_dir}/process_kraken2_output.py "
@@ -671,7 +701,7 @@ def build_mapseq_command(
     # Assemble full command
     cutoff_arg = f" {cutoff}" if cutoff > 0.0 else ""
     cmd = (
-        f"conda run -p {conda_env} bash -c \""
+        f"{_conda_run(conda_env)} bash -c \""
         f"mkdir -p {outdir} && "
         f"{mapseq_cmd} && "
         f"python {scripts_dir}/process_mapseq_output.py "

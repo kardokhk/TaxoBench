@@ -196,10 +196,10 @@ def process_mapseq_output(input_mseq, output_tsv, cutoff_threshold=0.0):
         print(f"Saved results to: {output_tsv}")
         print(f"Output contains {len(output_rows)} classified sequences")
     else:
-        print("Warning: No sequences were successfully processed")
-        # Create empty output file with headers
-        out_df = pd.DataFrame(columns=["Feature ID", "Taxon", "Confidence"])
-        out_df.to_csv(output_tsv, sep='\t', index=False)
+        # Fail closed: a header-only output used to be written here, and it
+        # scored as F 0 at every rank instead of stopping the run.
+        print("Error: no sequence was parsed from the MAPseq output; nothing written")
+        sys.exit(1)
 
 
 def main():

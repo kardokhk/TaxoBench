@@ -14,6 +14,7 @@ Outputs go under {data_dir}/mock_community/{mock_name}/{region}/.
 import argparse
 import os
 import shutil
+import sys
 from os.path import join, exists
 from pathlib import Path
 
@@ -97,6 +98,7 @@ def main():
     from Bio import SeqIO        # noqa
 
     regions_cfg = _common.load_regions_config()
+    failures = []
 
     for region in args.regions:
         region_dir = out_root / region
@@ -158,6 +160,8 @@ def main():
                 threads=threads, force=args.force)
         except Exception as exc:
             print(f"  ! QIIME/DADA2 step failed: {exc}")
+            failures.append(f"{region}: QIIME/DADA2 step failed ({exc})")
+            continue
 
         # 4. Trueish taxonomy
         feature_table = join(region_dir, ("paired" if args.paired else "single"),
@@ -179,9 +183,17 @@ def main():
                 )
             except Exception as exc:
                 print(f"  ! trueish taxonomy failed: {exc}")
+                failures.append(f"{region}: trueish taxonomy failed ({exc})")
         else:
             print("  - skipped trueish taxonomy (missing inputs)")
+            missing = [str(p) for p in (feature_table, rep_seqs_fa, tax_fp) if not exists(p)]
+            failures.append(f"{region}: no trueish taxonomy, missing {missing}")
 
+    if failures:
+        print("\n[02_generate] FAILED:", file=sys.stderr)
+        for f in failures:
+            print("  " + f, file=sys.stderr)
+        sys.exit(1)
     print("\n[02_generate] done")
 
 

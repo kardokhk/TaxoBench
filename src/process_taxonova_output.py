@@ -7,6 +7,9 @@ import pandas as pd
 def convert_taxonomy_with_all_confidences(input_tsv, output_tsv, ncbi_style_taxonomy=False):
     # Read input file
     df = pd.read_csv(input_tsv, sep='\t')
+    if df.empty:
+        print(f"Error: {input_tsv} holds no classified sequence; nothing written")
+        sys.exit(1)
 
     # Set prefixes
     domain_prefix = "k__" if ncbi_style_taxonomy else "d__"

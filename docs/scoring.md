@@ -79,10 +79,24 @@ python scripts/04_evaluate.py --rules v1 \
   --ref-dir data/ref_dbs --out-dir results/evaluation_v1
 ```
 
-On the classifier outputs and truth behind the paper, this reproduced all 26,400
-values of the published `all_metrics.csv` with a maximum absolute difference of 0
-(gut mock V5-V7 excluded, because it was rescored on the corrected truth;
-`tests/test_regression_v1.py` checks its 240 published values on a small fixture).
+`tests/test_golden_v1.py` checks this at two levels, each value by string
+comparison after a stable sort:
+
+- **Zenodo deposit** (public): the 47 published cells, eight classifiers, 15,040
+  values, against the deposited `paper_metric_tables/rescore/all_metrics_v1.csv`.
+  Fetch the inputs with `scripts/fetch_paper_deposit.sh DEST` and set
+  `TAXOBENCH_PAPER_DEPOSIT=DEST`. CI runs this weekly in the locked environment
+  `requirements-golden.txt`.
+- **Archived benchmark run** (not public): all 61 mock cells and 11 methods, 26,840
+  values of the benchmark's own `all_metrics.csv`, on the truth as archived.
+- `tests/test_regression_v1.py` checks the 240 published values of gut mock V5-V7
+  on a small fixture, without a download.
+
+Both golden comparisons pass with a difference of 0 at every value (2026-10-31). The
+v1 code sums the L1 and L2 terms over a Python set, so the sixth decimal of a value
+can depend on the string hash seed (seen once in nine runs, one L2 value, 0.070313
+for 0.070312); the published tables print four decimals and are not affected. The
+golden test runs with `PYTHONHASHSEED=0`.
 Those outputs and the truth tree are on Zenodo ([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)). A cell regenerated from
 `mocks/inputs/` need not match the published one: the read simulation settings of
 each published cell (`--count`, `--length`, `--paired`) are not recorded in this
@@ -94,5 +108,6 @@ its random draws from Python's per-process string hash, and
 The Taxonova outputs themselves come from `configs/classifiers_paper.json`
 (Taxonova 1.0.0, v1.0.0 checkpoints, 0.5 at every rank above species, 0.7 at
 species; install with `scripts/install_taxonova_paper.sh`).
+
 `configs/classifiers_default.json` runs the current Taxonova release instead, whose
 outputs differ from the published ones.

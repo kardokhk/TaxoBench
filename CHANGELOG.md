@@ -4,6 +4,44 @@ Changes to TaxoBench that affect how it runs or what it reports. The development
 kept while the benchmark was built for the paper is in the git history
 (`docs/CHANGELOG.md` at commit 77b619d).
 
+## Unreleased (fix/fail-closed, 2026-10-31)
+
+Scores of valid outputs under `--rules v1` and `--rules v2` are unchanged: the v1 golden
+test below passes with a difference of 0 at every value.
+
+**Fail closed**
+
+- `03_assign.py` and `05_realworld_classify.py` delete the outputs of any earlier run
+  in a job's directory before the job runs, so a failed rerun can no longer leave the
+  previous `taxonomy_final.tsv` to be scored. A job counts as failed unless it exits 0
+  and writes a new `taxonomy_final.tsv` holding every query ID exactly once; a failed
+  job's output is renamed `taxonomy_final.tsv.failed`. Each job writes
+  `run.status.json`. Missing references, command build errors and failed jobs make the
+  script exit 1.
+- `04_evaluate.py` refuses an output with missing, unexpected or duplicated IDs, one
+  whose `run.status.json` reports a failure or a later start than the file, and
+  predictions without a truth file. It then exits 1 and writes nothing. Finding
+  nothing to score also exits 1.
+- `02_generate.py` exits 1 when the QIIME 2/DADA2 step or the truth build fails; an
+  `art_illumina` failure raises an error. The IDTAXA, MAPseq and Taxonova parsers exit 1
+  instead of writing an empty table.
+- `conda_bin` and `TAXOBENCH_CONDA_BIN` are honoured by every command builder (they were
+  used only by the LOCO scripts); `micromamba` works.
+
+**Paper reproduction**
+
+- `scripts/install_taxonova_paper.sh` installs the dependencies of Taxonova 1.0.0,
+  pinned to the paper environment (torch 2.7.1, numpy 1.26.4, pandas 2.2.2,
+  scikit-learn 1.4.2, ...), then the package with `--no-deps`, and checks that
+  `taxonova classification` starts. The v1.0.0 `pyproject.toml` declares no
+  dependencies, so the previous script installed Taxonova without any and the command
+  failed on import.
+- `tests/test_golden_v1.py` replaces the one-cell check as the guard of the paper
+  numbers: all 47 published cells (15,040 values) from the Zenodo deposit, and on
+  MeluXina all 61 archived cells and 11 methods (26,840 values), compared string for
+  string. `scripts/fetch_paper_deposit.sh` downloads and checks the deposit;
+  `requirements-golden.txt` locks the environment; CI runs the test weekly.
+
 ## 26.10.1 (2026-10-30)
 
 Maintenance release alongside Taxonova 26.10.1. Scores under `--rules v1` and `--rules v2`

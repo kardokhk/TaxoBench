@@ -8,7 +8,8 @@ cd tests && python -m unittest discover -s . -p "test_*.py"
 ```
 
 Add a line to `CHANGELOG.md` for any change in behavior. Changes to scoring must keep
-`--rules v1` reproducing the published values (`tests/test_regression_v1.py`).
+`--rules v1` reproducing the published values (`tests/test_regression_v1.py`, and
+`tests/test_golden_v1.py` over all published cells).
 
 ## Adding a classifier
 

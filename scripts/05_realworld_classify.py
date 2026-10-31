@@ -27,11 +27,10 @@ def _expand(params):
     return [dict(zip(keys, c)) for c in product(*vals)] or [{}]
 
 
-def _run(cmd, log_fp):
-    Path(log_fp).parent.mkdir(parents=True, exist_ok=True)
-    with open(log_fp, "w") as fh:
-        ret = subprocess.run(cmd, shell=True, stdout=fh, stderr=subprocess.STDOUT)
-    return cmd, ret.returncode
+def _run(cmd, outdir, log_fp, query_fasta):
+    """Clear earlier outputs, run, and check exit status, freshness and query
+    coverage (fail closed; see 03_assign.py)."""
+    return _common.run_guarded(cmd, outdir, log_fp, query_fasta)
 
 
 def main():
@@ -91,15 +90,18 @@ def main():
     }
 
     jobs = []
+    build_failures = []
     study_fasta = {}
     for study in args.studies:
         meta = mocks_cfg["real_world"].get(study)
         if not meta:
-            print(f"[05_realworld] unknown study {study}; skip")
+            print(f"[05_realworld] FAIL unknown study {study}")
+            build_failures.append(f"{study}: unknown study")
             continue
         fasta = rw_input / meta["fasta"]
         if not fasta.exists():
-            print(f"[05_realworld] missing fasta {fasta}; skip {study}")
+            print(f"[05_realworld] FAIL missing fasta {fasta}")
+            build_failures.append(f"{study}: missing fasta {fasta}")
             continue
         study_fasta[study] = fasta
         rep_base = str(fasta.with_suffix(""))
@@ -108,7 +110,8 @@ def main():
         for classifier in args.classifiers:
             ref_dict = _common.ref_dict(classifier, ref_root, region, tx_settings)
             if ref_dict is None:
-                print(f"[05_realworld] skip {classifier}/{region}: no ref")
+                print(f"[05_realworld] FAIL {classifier}/{region}: no ref")
+                build_failures.append(f"{study}/{classifier}/{region}: no reference")
                 continue
             param_grid = _expand(params_all.get(classifier, {}))
             conda_env = envs_all[classifier]
@@ -132,27 +135,40 @@ def main():
                     cmd = builders[classifier](**kw)
                 except Exception as exc:
                     print(f"  ! build {classifier} failed: {exc}")
+                    build_failures.append(f"{study}/{classifier}/{param_id}: build failed ({exc})")
                     continue
-                jobs.append((cmd, str(outdir / "run.log"), classifier, study))
+                jobs.append((cmd, str(outdir / "run.log"), classifier, study,
+                             str(outdir), str(fasta)))
 
     print(f"[05_realworld] queued {len(jobs)} jobs")
     if args.dry_run:
-        for cmd, log, c, s in jobs:
+        for cmd, log, c, s, *_ in jobs:
             print(f"  [dry] {s} | {c}\n        {cmd}")
+        if build_failures:
+            sys.exit(1)
         return
 
     results = Parallel(n_jobs=args.n_jobs, verbose=10)(
-        delayed(_run)(cmd, log) for cmd, log, *_ in jobs
+        delayed(_run)(cmd, outdir, log, query)
+        for cmd, log, _c, _s, outdir, query in jobs
     )
-    fails = [r for r in results if r[1] != 0]
-    print(f"[05_realworld] done. {len(jobs) - len(fails)} ok / {len(fails)} failed.")
+    fails = [f"{c}/{s}: {'; '.join(probs)} (log {log})"
+             for (cmd, log, c, s, *_), (_, ok, probs) in zip(jobs, results) if not ok]
+    print(f"[05_realworld] done. {len(jobs) - len(fails)} ok / {len(fails)} failed"
+          f" / {len(build_failures)} not built.")
+    if fails or build_failures or not jobs:
+        for m in build_failures + fails:
+            print("  FAILED " + m, file=sys.stderr)
+        if not jobs and not build_failures:
+            print("  FAILED: no job was queued", file=sys.stderr)
+        sys.exit(1)
 
     # Every classifier must have scored exactly the query set it was given.
     # Feature ids are positional (ASV_1..ASV_n), so a stale imported artifact
     # with a different sequence set would otherwise be joined to the counts by
     # id without any error. A row count alone is not enough; the ids must agree.
     mismatches = []
-    for _, _, classifier, study in jobs:
+    for _, _, classifier, study, *_ in jobs:
         fasta = study_fasta.get(study)
         if fasta is None or not fasta.exists():
             continue

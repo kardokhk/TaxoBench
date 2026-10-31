@@ -62,7 +62,10 @@ python scripts/03_assign.py   --mock-name mbarc26 --regions V4 --n-jobs 2
 python scripts/04_evaluate.py --mock-name mbarc26 --regions V4
 ```
 
-`03_assign.py --dry-run` prints the commands without running them. The default
+`03_assign.py --dry-run` prints the commands without running them. Steps 02 to 05
+fail closed: a failed or partial classifier run leaves no `taxonomy_final.tsv`
+behind, `04_evaluate.py` refuses any output that does not hold every query ID
+exactly once, and every step exits with a non-zero status when anything failed. The default
 Taxonova configuration (`configs/classifiers_default.json`) uses the current release,
 its model ids (`v4`, `v3v4`, `v5v7`, `16s`, `operon`) and its default thresholds.
 Scoring uses the v2 rules by default ([docs/scoring.md](docs/scoring.md)).
@@ -91,7 +94,11 @@ published cell are not recorded here, and the reads depend on the ART, QIIME 2 a
 DADA2 versions ([docs/scoring.md](docs/scoring.md)). On the classifier outputs and
 truth behind the paper, `--rules v1` reproduces the published metric tables with a
 maximum absolute difference of 0. Those outputs and the truth are on Zenodo
-([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)), with the exact commands; this repository also includes the gut mock V5-V7 cell, which `tests/test_regression_v1.py` checks. Results
+([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)), with the exact commands. `tests/test_golden_v1.py` rescores all 47 published cells
+from the deposit (`scripts/fetch_paper_deposit.sh`) and requires every one of the
+15,040 values to equal the deposited `all_metrics_v1.csv`; CI runs it weekly. This
+repository also includes the gut mock V5-V7 cell, which `tests/test_regression_v1.py`
+checks without a download. Results
 are reported in the paper and are not repeated here.
 
 ## Adding a classifier or a mock

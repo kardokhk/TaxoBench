@@ -136,9 +136,14 @@ def art_simulation(input_fasta, output_prefix, dir_out, seq_method = "MSv1", len
 
     # Run ART simulations
     if commands:
-        Parallel(n_jobs=parallel_jobs)(
+        rets = Parallel(n_jobs=parallel_jobs)(
             delayed(_with_logging)(cmd, idx, paired) for cmd, idx in commands
         )
+        bad = [(idx, r.returncode) for (cmd, idx), r in zip(commands, rets)
+               if r.returncode != 0]
+        if bad:
+            raise RuntimeError(f"art_illumina failed for replicate(s) {bad} "
+                               f"(logs in {dir_out_prefix})")
 
     # Rename and compress output files to Illumina-style with .fq.gz
     for rep in range(1, n_samples + 1):

@@ -21,7 +21,10 @@ def process_idtaxa_output(input_tsv, output_tsv):
         print(f"Read {len(df)} sequences from input file")
     except Exception as e:
         print(f"Error reading input file: {e}")
-        return
+        sys.exit(1)
+    if df.empty:
+        print(f"Error: {input_tsv} holds no classified sequence")
+        sys.exit(1)
     
     output_rows = []
     

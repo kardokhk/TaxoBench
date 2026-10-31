@@ -3,11 +3,17 @@
 
 For each (mock x region x classifier x param-combo), build the command
 via `generate_commands` and run them in parallel via joblib.
+
+Fail closed (2026-10-31): before a job runs, the outputs of any earlier run in
+its directory are deleted; after it runs, the job counts as failed unless it
+exited 0 and wrote a new taxonomy_final.tsv that covers every query ID exactly
+once. Each job writes run.status.json. The script exits 1 if any job, or any
+command build, failed.
 """
 
 import argparse
 import os
-import subprocess
+import sys
 from itertools import product
 from os.path import join, exists
 from pathlib import Path
@@ -28,12 +34,8 @@ def _expand_param_grid(params):
     return [dict(zip(keys, c)) for c in product(*vals)]
 
 
-def _run_single(cmd, log_fp):
-    Path(os.path.dirname(log_fp)).mkdir(parents=True, exist_ok=True)
-    with open(log_fp, "w") as fh:
-        ret = subprocess.run(cmd, shell=True, stdout=fh,
-                             stderr=subprocess.STDOUT)
-    return cmd, ret.returncode
+def _run_single(cmd, outdir, log_fp, query_fasta):
+    return _common.run_guarded(cmd, outdir, log_fp, query_fasta)
 
 
 def main():
@@ -94,6 +96,7 @@ def main():
 
     import glob
     jobs = []
+    build_failures = []
     for region in args.regions:
         # Match the original convention: mockdir/{region}/*/rep_seqs_{mock}.fasta
         # (the '*' is typically 'source/single' or 'source/paired'). For RRN,
@@ -107,12 +110,15 @@ def main():
         if not candidates:
             print(f"[03_assign] skip {region}: no rep_seqs_{args.mock_name}.fasta under {mock_data_dir/region}")
             continue
+        if len(candidates) > 1:
+            print(f"[03_assign] {region}: {len(candidates)} query files, using {candidates[0]}")
         rep_base = Path(candidates[0]).with_suffix("")
 
         for classifier in args.classifiers:
             ref_dict = _common.ref_dict(classifier, ref_root, region, tx_settings)
             if ref_dict is None:
-                print(f"[03_assign] skip {classifier}/{region}: no reference dir")
+                print(f"[03_assign] FAIL {classifier}/{region}: no reference dir")
+                build_failures.append(f"{classifier}/{region}: no reference dir")
                 continue
             param_grid = _expand_param_grid(params_all.get(classifier, {})) or [{}]
             conda_env = envs_all[classifier]
@@ -137,21 +143,36 @@ def main():
                     cmd = build(**kw)
                 except Exception as exc:
                     print(f"  ! build {classifier}/{region} failed: {exc}")
+                    build_failures.append(f"{classifier}/{region}/{param_id}: build failed ({exc})")
                     continue
                 log_fp = outdir / "run.log"
-                jobs.append((cmd, str(log_fp), classifier, region, param_id))
+                jobs.append((cmd, str(log_fp), classifier, region, param_id,
+                             str(outdir), f"{rep_base}.fasta"))
 
     print(f"[03_assign] queued {len(jobs)} jobs")
     if args.dry_run:
-        for cmd, log, c, r, p in jobs:
+        for cmd, log, c, r, p, *_ in jobs:
             print(f"  [dry] {c} | {r} | {p}\n        {cmd}")
+        if build_failures:
+            sys.exit(1)
         return
 
     results = Parallel(n_jobs=args.n_jobs, verbose=10)(
-        delayed(_run_single)(cmd, log) for cmd, log, *_ in jobs
+        delayed(_run_single)(cmd, outdir, log, query)
+        for cmd, log, _c, _r, _p, outdir, query in jobs
     )
-    fails = [r for r in results if r[1] != 0]
-    print(f"[03_assign] done. {len(jobs) - len(fails)} ok / {len(fails)} failed.")
+    fails = []
+    for (cmd, log, c, r, p, *_), (_, ok, probs) in zip(jobs, results):
+        if not ok:
+            fails.append(f"{c}/{r}/{p}: {'; '.join(probs)} (log {log})")
+    print(f"[03_assign] done. {len(jobs) - len(fails)} ok / {len(fails)} failed"
+          f" / {len(build_failures)} not built.")
+    if fails or build_failures or not jobs:
+        for m in build_failures + fails:
+            print("  FAILED " + m, file=sys.stderr)
+        if not jobs and not build_failures:
+            print("  FAILED: no job was queued", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

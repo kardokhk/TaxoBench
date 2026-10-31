@@ -31,6 +31,13 @@ prediction directories are not touched.
 
 Optional --mock-name / --regions flags restrict the scan for debugging.
 
+Fail closed (2026-10-31). Every taxonomy_final.tsv must hold each truth ID
+exactly once (no missing, unexpected or duplicated IDs), and when a
+run.status.json from 03_assign.py sits beside it, that run must have succeeded
+and the file must be the one it wrote. Any violation, any load error, or
+finding nothing to score stops the script with exit status 1 before anything
+is written. None of this changes how a valid output is scored.
+
 Scoring rules (--rules; details in src/scoring_v2.py and README.md):
     v2 (default)  an abstention is no call (FN in P/R/F, never a taxon in the
                   taxon-set or L1/L2 metrics); a group label is correct iff
@@ -44,6 +51,7 @@ Scoring rules (--rules; details in src/scoring_v2.py and README.md):
 import argparse
 import re
 import shutil
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -196,6 +204,28 @@ def _load_taxa_pairs(true_fp, pred_fp):
     return {k: (v, p.get(k, "Unassigned")) for k, v in t.items()}
 
 
+class OutputError(Exception):
+    """A prediction file that must not be scored (partial, stale, failed)."""
+
+
+def _check_output(true_fp, pred_fp):
+    """Raise OutputError unless `pred_fp` covers the truth IDs exactly and,
+    when 03_assign.py left a run.status.json, comes from a successful run."""
+    status = _common.read_run_status(pred_fp.parent)
+    if status is not None:
+        if not status.get("ok", False):
+            raise OutputError("run.status.json reports a failed run: "
+                              + "; ".join(status.get("problems") or ["(no detail)"]))
+        if pred_fp.stat().st_mtime < float(status.get("started", 0)) - 1:
+            raise OutputError("taxonomy_final.tsv predates the run recorded in run.status.json")
+    truth_ids = _common.table_ids(true_fp)
+    if len(truth_ids) != len(set(truth_ids)):
+        raise OutputError(f"truth file {true_fp} has duplicated IDs")
+    probs = _common.coverage_problems(_common.table_ids(pred_fp), truth_ids)
+    if probs:
+        raise OutputError("; ".join(probs))
+
+
 def _truncate_tax(tax_str, level_int):
     parts = [x.strip() for x in tax_str.split(";")]
     return ";".join(parts[:level_int + 1])
@@ -218,8 +248,9 @@ def _find_trueish(data_root, mock, region):
     return next((p for p in candidates if p.exists()), None)
 
 
-def _discover(res_root, data_root, mock_filter, region_filter):
-    """Yield (mock, region, region_dir, true_fp) for every evaluable combo."""
+def _discover(res_root, data_root, mock_filter, region_filter, missing=None):
+    """Yield (mock, region, region_dir, true_fp) for every evaluable combo.
+    Cells with predictions but no truth file are appended to `missing`."""
     for mock_dir in sorted(res_root.iterdir()):
         if not mock_dir.is_dir() or mock_dir.name in ("evaluation", "real_world", "runtime"):
             continue
@@ -233,6 +264,9 @@ def _discover(res_root, data_root, mock_filter, region_filter):
             true_fp = _find_trueish(data_root, mock_dir.name, region_dir.name)
             if true_fp is None:
                 print(f"  - skip {mock_dir.name}/{region_dir.name}: no trueish file")
+                if missing is not None and any(region_dir.glob("*/*/taxonomy_final.tsv")):
+                    missing.append(f"{mock_dir.name}/{region_dir.name}: predictions "
+                                   "but no trueish taxonomy file")
                 continue
             yield mock_dir.name, region_dir.name, region_dir, true_fp
 
@@ -315,18 +349,27 @@ def _evaluate_pairs(pairs, region, rules, prf_fn):
 
 
 def _evaluate_combo(mock, region, region_dir, true_fp, prf_fn, rules="v2",
-                    tie_hook=None):
+                    tie_hook=None, errors=None):
     """``tie_hook(mock, region, method, param, pred_fp, pairs) -> pairs`` may
     rewrite calls before scoring (for example to rebuild search-hit ties as
-    group labels in a sensitivity analysis)."""
+    group labels in a sensitivity analysis).
+
+    An output that fails `_check_output` or cannot be loaded raises
+    OutputError, or, when a list is passed as ``errors``, is appended to it
+    and skipped (the caller then decides; main() exits 1)."""
     rows = []
     for pred_fp in sorted(region_dir.glob("*/*/taxonomy_final.tsv")):
         method = pred_fp.parent.parent.name
         param  = pred_fp.parent.name
         try:
+            _check_output(Path(true_fp), pred_fp)
             pairs = _load_taxa_pairs(str(true_fp), str(pred_fp))
         except Exception as exc:
-            print(f"  ! {mock}/{region}/{method}/{param}: load failed ({exc})")
+            msg = f"{mock}/{region}/{method}/{param}: {exc}"
+            if errors is None:
+                raise OutputError(msg) from exc
+            print(f"  ! {msg}")
+            errors.append(msg)
             continue
         if tie_hook is not None:
             pairs = tie_hook(mock, region, method, param, pred_fp, pairs)
@@ -376,21 +419,31 @@ def main():
     truth_root = Path(args.truth_dir) if args.truth_dir else data_root
 
     print(f"[04_evaluate] scanning {res_root}")
+    if not res_root.is_dir():
+        print(f"[04_evaluate] FAILED: results directory {res_root} does not exist", file=sys.stderr)
+        sys.exit(1)
     all_rows = []
+    errors = []
     for mock, region, region_dir, true_fp in _discover(
-            res_root, truth_root, args.mock_name, args.regions):
+            res_root, truth_root, args.mock_name, args.regions, missing=errors):
         rows = _evaluate_combo(mock, region, region_dir, true_fp,
                                evaluate_results.precision_recall_fscore,
-                               rules=args.rules)
+                               rules=args.rules, errors=errors)
         if not rows:
             print(f"  - {mock}/{region}: no predictions")
             continue
         print(f"  + {mock}/{region}: {len({(r['method'], r['param']) for r in rows})} (method,param) combos")
         all_rows.extend(rows)
 
+    if errors:
+        print(f"[04_evaluate] FAILED: {len(errors)} output(s) cannot be scored; "
+              "nothing written:", file=sys.stderr)
+        for e in errors:
+            print("  " + e, file=sys.stderr)
+        sys.exit(1)
     if not all_rows:
-        print("[04_evaluate] no evaluable combos found")
-        return
+        print("[04_evaluate] FAILED: no evaluable combos found", file=sys.stderr)
+        sys.exit(1)
 
     # Overwrite the evaluation tree atomically: stage to .tmp, swap, drop old.
     tmp_root = out_root.with_suffix(".tmp")

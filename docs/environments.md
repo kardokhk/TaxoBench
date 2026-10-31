@@ -11,8 +11,9 @@ conda environments below. Set their prefixes once, in `conda_envs` of
 | `taxonova` | `taxobench-qiime2` with Taxonova 26.10.1 or later | default panel |
 | `taxonova_paper` | `taxobench-taxonova-paper` | `classifiers_paper.json` and `classifiers_sweep.json` |
 
-If `conda` is not on `PATH` (for example on some HPC compute nodes), set `conda_bin`
-in `pipeline_config.json` or `TAXOBENCH_CONDA_BIN`.
+Every classifier command runs as `<conda_bin> run -p <prefix> ...`. If `conda` is not
+on `PATH` (for example on some HPC compute nodes), set `conda_bin` in
+`pipeline_config.json` or `TAXOBENCH_CONDA_BIN`; `mamba` and `micromamba` work too.
 
 ## Scoring only
 
@@ -69,13 +70,19 @@ sha256; `03_assign.py` checks the md5 before use).
 
 Taxonova 1.0.0 is not on PyPI, and the `v1.0.0` tag cannot be installed with
 `pip install git+...@v1.0.0`: its `setup.py` names a launcher, `bin/taxonova`, that the
-tag does not contain. `scripts/install_taxonova_paper.sh` checks out the tag, adds the
-launcher (a call to `taxonova.main:main`) and installs the package:
+tag does not contain, and its `pyproject.toml` declares no dependencies, so a plain
+`pip install .` gives a Taxonova that fails on its first import.
+`scripts/install_taxonova_paper.sh` checks out the tag, adds the launcher (a call to
+`taxonova.main:main`), installs the dependencies pinned to the environment of the paper
+runs (Python 3.10.14, torch 2.7.1, numpy 1.26.4, pandas 2.2.2, scikit-learn 1.4.2,
+scipy 1.13.0, tqdm 4.66.5, psutil 6.1.0, setproctitle 1.3.3), installs the package
+without dependencies, and checks that `taxonova classification` starts. Torch comes
+from the CPU wheel index unless `TAXONOVA_TORCH_INDEX` names another (the paper runs
+used the cu128 build, with inference on CPU).
 
 ```bash
-mamba create -n taxobench-taxonova-paper -y -c conda-forge python=3.10 pandas git
+mamba create -n taxobench-taxonova-paper -y -c conda-forge python=3.10.14 git
 mamba run -n taxobench-taxonova-paper bash scripts/install_taxonova_paper.sh
-mamba run -n taxobench-taxonova-paper taxonova classification --help
 ```
 
 The output parser `src/process_taxonova_output.py` runs in the same environment and
