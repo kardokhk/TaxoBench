@@ -1,5 +1,5 @@
 {
-    "_doc": "Default classifier panel. Taxonova runs the current release (taxonova>=26.10.1) with its model ids and the package's default thresholds (0.5 domain to family, 0.7 genus, 0.8 species). For the published configuration use classifiers_paper.json.",
+    "_doc": "Default classifier panel. Taxonova runs the current release (taxonova>=26.11.2) with its model ids and each model's calibrated per-rank thresholds (no threshold is passed). For the published configuration use classifiers_paper.json.",
 
     "classifiers": [
         "taxonova", "vsearch", "blast", "naive-bayes",
@@ -21,7 +21,7 @@
     },
 
     "taxonova": {
-        "requirement": "taxonova>=26.10.1",
+        "requirement": "taxonova>=26.11.2",
         "cli": "classify",
         "models": {
             "V4":    "v4",
@@ -34,9 +34,7 @@
     },
 
     "method_parameters_combinations": {
-        "taxonova": {
-            "confidence_threshold": [0.8]
-        },
+        "taxonova": {},
         "vsearch": {
             "p-maxaccepts":     [10],
             "p-perc-identity":  [0.80],

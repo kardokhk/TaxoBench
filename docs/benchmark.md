@@ -27,7 +27,7 @@ and V1-V9.
 **Tier 2, biome-simulated mocks.** For nine environments (digestive system, lung,
 sputum, skin, soil, plants, marine, ocean and a mixed control), Greengenes2 reference
 sequences are sampled at genus abundances taken from MGnify
-(`mgnify/results/2025-08-20_snapshot/`, retrieved with the scripts in `mgnify/`).
+(`mocks/mgnify/results/2025-08-20_snapshot/`, retrieved with the scripts in `mocks/mgnify/`).
 Each `biome_*` mock has a full-operon counterpart (`gtdb_*`) for RRN, built from GROND.
 
 **Tier 3, paired amplicon and shotgun studies.** Real samples have no curated truth,

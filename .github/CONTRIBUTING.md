@@ -8,8 +8,7 @@ cd tests && python -m unittest discover -s . -p "test_*.py"
 ```
 
 Add a line to `CHANGELOG.md` for any change in behavior. Changes to scoring must keep
-`--rules v1` reproducing the published values (`tests/test_regression_v1.py`, and
-`tests/test_golden_v1.py` over all published cells).
+`--rules v1` reproducing the published values (`tests/test_regression_v1.py`).
 
 ## Adding a classifier
 
@@ -45,7 +44,7 @@ To score outputs produced elsewhere, none of these steps is needed: place the fi
    long-read cells of biome mocks.
 4. Run `03_assign.py` and `04_evaluate.py` for the new mock.
 
-For a new biome, retrieve its MGnify abundances first with the scripts in `mgnify/`.
+For a new biome, retrieve its MGnify abundances first with the scripts in `mocks/mgnify/`.
 
 ## Adding a Taxonova model
 

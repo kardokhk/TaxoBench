@@ -79,25 +79,16 @@ python scripts/04_evaluate.py --rules v1 \
   --ref-dir data/ref_dbs --out-dir results/evaluation_v1
 ```
 
-`tests/test_golden_v1.py` checks this at two levels, each value by string
-comparison after a stable sort:
+On 2026-10-31 this rescoring matched all 47 published cells (eight classifiers,
+15,040 values) with a difference of 0 at every value, by string comparison after a
+stable sort. `tests/test_regression_v1.py` checks the 240 published values of gut
+mock V5-V7 on a small fixture in this repository. The v1 code sums the L1 and L2
+terms over a Python set, so the sixth decimal of a value can depend on the string
+hash seed (seen once in nine runs, one L2 value, 0.070313 for 0.070312); the
+published tables print four decimals and are not affected. Set `PYTHONHASHSEED=0`
+for identical output across runs.
 
-- **Zenodo deposit** (public): the 47 published cells, eight classifiers, 15,040
-  values, against the deposited `paper_metric_tables/rescore/all_metrics_v1.csv`.
-  Fetch the inputs with `scripts/fetch_paper_deposit.sh DEST` and set
-  `TAXOBENCH_PAPER_DEPOSIT=DEST`. CI runs this weekly in the locked environment
-  `requirements-golden.txt`.
-- **Archived benchmark run** (not public): all 61 mock cells and 11 methods, 26,840
-  values of the benchmark's own `all_metrics.csv`, on the truth as archived.
-- `tests/test_regression_v1.py` checks the 240 published values of gut mock V5-V7
-  on a small fixture, without a download.
-
-Both golden comparisons pass with a difference of 0 at every value (2026-10-31). The
-v1 code sums the L1 and L2 terms over a Python set, so the sixth decimal of a value
-can depend on the string hash seed (seen once in nine runs, one L2 value, 0.070313
-for 0.070312); the published tables print four decimals and are not affected. The
-golden test runs with `PYTHONHASHSEED=0`.
-Those outputs and the truth tree are on Zenodo ([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)). A cell regenerated from
+A cell regenerated from
 `mocks/inputs/` need not match the published one: the read simulation settings of
 each published cell (`--count`, `--length`, `--paired`) are not recorded in this
 repository, and the reads and ASVs also depend on the ART, QIIME 2 and DADA2 versions. The long-read biome cells

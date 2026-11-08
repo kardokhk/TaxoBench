@@ -24,9 +24,8 @@ rep_seqs_<study>.fasta                          ASV sequences (classifier input)
 ```
 
 `paired_samples.csv` needs at least the columns `sample_id`, `amplicon_16s_run` and
-`shotgun_wgs_run`. These files, the classifier outputs and the preprocessing records of
-the published studies are in the Zenodo deposit ([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)); the accessions of the raw
-data are listed in [DATA.md](../DATA.md).
+`shotgun_wgs_run`. These files are not in this repository; the accessions of the raw
+data are listed in [data.md](data.md).
 
 ## Registering a study
 
@@ -113,4 +112,4 @@ taxon when none is found.
 The paper reports Zuo et al. (gut, V4), Mantri et al. (soil, V3-V4) and Virtanen et al.
 (vaginal, V3-V4). Three further studies were used during development: Cao et al.
 (coral reef, V4) and two EMP500 sub-studies (forest soil and plant phyllosphere, V4).
-Accessions are in [DATA.md](../DATA.md).
+Accessions are in [data.md](data.md).

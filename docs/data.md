@@ -11,11 +11,9 @@ example `TAXOBENCH_DATA_DIR=/scratch/taxobench/data`). Set the conda environment
 prefixes once, in `conda_envs` of the same file (docs/environments.md). Everything
 below is relative to `data_dir` (`data/` at the repository root by default).
 
-The mock community inputs are in this repository (`mocks/inputs/`). The classifier
-outputs, scoring truth and query sequences behind the paper are deposited on Zenodo
-([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)); the repository also
-includes one published cell (gut mock, V5-V7) under `tests/fixtures/` as an example
-and a regression fixture.
+The mock community inputs are in this repository (`mocks/inputs/`), with one
+published cell (gut mock, V5-V7, classifier outputs and truth) under
+`tests/fixtures/` as an example and a regression fixture.
 
 ## Top-level data layout
 
@@ -129,8 +127,8 @@ The expected file names per mock are listed in `configs/mocks.json` (`input_seqs
   `mocks/inputs/` to reproduce the published cells.
 - **Biome mocks** (`biome_*`): Greengenes2 sequences sampled at biome-specific genus
   abundances from MGnify. The abundance profiles are in
-  `mgnify/results/2025-08-20_snapshot/` (top-100 taxa per rank per biome), retrieved
-  with the scripts in `mgnify/` (see `mgnify/README.md`). Each biome's full-operon
+  `mocks/mgnify/results/2025-08-20_snapshot/` (top-100 taxa per rank per biome), retrieved
+  with the scripts in `mocks/mgnify/` (see `mocks/mgnify/README.md`). Each biome's full-operon
   counterpart (`gtdb_*`, for RRN) was built from GROND sequences. The sampling
   script is not part of this repository; the inputs it produced are.
 

@@ -1,5 +1,5 @@
 # Large inputs, reference databases and run outputs are not tracked.
-# DATA.md says how to obtain and place them.
+# docs/data.md says how to obtain and place them.
 /data/
 /results/
 /backups/

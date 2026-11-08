@@ -1,6 +1,6 @@
 # Environments
 
-Scoring and tests need only `requirements-eval.txt`. Running the classifiers needs the
+Scoring and tests need only `requirements.txt`. Running the classifiers needs the
 conda environments below. Set their prefixes once, in `conda_envs` of
 `configs/pipeline_config.json`; the classifier configs refer to them by key.
 
@@ -8,7 +8,7 @@ conda environments below. Set their prefixes once, in `conda_envs` of
 |---|---|---|
 | `qiime2` | `taxobench-qiime2` | QIIME 2 classifiers, IDTAXA, Kraken 2, MAPseq, output parsers, steps 01 to 06 |
 | `spingo` | `taxobench-spingo` | SPINGO |
-| `taxonova` | `taxobench-qiime2` with Taxonova 26.10.1 or later | default panel |
+| `taxonova` | `taxobench-qiime2` with Taxonova 26.11.2 or later | default panel |
 | `taxonova_paper` | `taxobench-taxonova-paper` | `classifiers_paper.json` and `classifiers_sweep.json` |
 
 Every classifier command runs as `<conda_bin> run -p <prefix> ...`. If `conda` is not
@@ -19,7 +19,7 @@ on `PATH` (for example on some HPC compute nodes), set `conda_bin` in
 
 ```bash
 python3.11 -m venv .venv && . .venv/bin/activate
-pip install -r requirements-eval.txt
+pip install -r requirements.txt
 ```
 
 ## taxobench-qiime2
@@ -39,7 +39,7 @@ mamba install -n taxobench-qiime2 -y \
     q2-feature-classifier rescript
 
 # Current Taxonova release (default panel)
-mamba run -n taxobench-qiime2 pip install "taxonova>=26.10.1"
+mamba run -n taxobench-qiime2 pip install "taxonova>=26.11.2"
 mamba run -n taxobench-qiime2 taxonova models download all
 ```
 

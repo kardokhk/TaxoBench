@@ -66,7 +66,7 @@ tool's output is converted to `taxonomy_final.tsv` (`Feature ID`, `Taxon`,
 
 | File | Purpose |
 |---|---|
-| `classifiers_default.json` | current Taxonova release (`taxonova>=26.10.1`), model ids, package default thresholds |
+| `classifiers_default.json` | current Taxonova release (`taxonova>=26.11.2`), model ids, each model's calibrated thresholds |
 | `classifiers_paper.json` | the published runs: Taxonova 1.0.0, v1.0.0 checkpoints pinned by md5, 0.5 above species, 0.7 at species |
 | `classifiers_sweep.json` | confidence sweep for `04b_evaluate_sweep.py`, with the paper's Taxonova settings |
 
@@ -89,7 +89,7 @@ Default parameters:
 
 | Classifier | Parameter | Default panel |
 |---|---|---|
-| taxonova | `confidence_threshold` (species) | 0.8 (paper: 0.7) |
+| taxonova | `confidence_threshold` (species) | none: each model's calibrated cut-offs (paper: 0.7) |
 | vsearch, blast | `p-perc-identity`, `p-min-consensus`, `p-maxaccepts` | 0.80, 0.51, 10 |
 | naive-bayes | `p-confidence` | 0.7 |
 | idtaxa | `p-confidence` (0 to 100) | 60 |

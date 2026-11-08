@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "TaxoBench is the benchmark of the Taxonova paper. If you use it, please cite the paper below."
 title: "TaxoBench"
 type: software
-version: "26.10.1"
-date-released: "2026-10-30"
+version: "26.11.2"
+date-released: "2026-11-08"
 license: MIT
 repository-code: "https://github.com/kardokhk/TaxoBench"
 url: "https://github.com/kardokhk/TaxoBench"

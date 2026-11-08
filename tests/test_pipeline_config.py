@@ -60,12 +60,12 @@ class TestClassifierConfigs(unittest.TestCase):
         cfg = _common.load_classifiers_config()
         tx = cfg["taxonova"]
         self.assertEqual(tx["cli"], "classify")
-        self.assertEqual(tx["requirement"], "taxonova>=26.10.1")
+        self.assertEqual(tx["requirement"], "taxonova>=26.11.2")
         self.assertEqual(tx["models"], {"V4": "v4", "V3-V4": "v3v4", "V5-V7": "v5v7",
                                         "V1-V9": "16s", "RRN": "operon"})
         self.assertIsNone(tx["parent_gates"])
-        self.assertEqual(cfg["method_parameters_combinations"]["taxonova"],
-                         {"confidence_threshold": [0.8]})
+        # no threshold: each model's calibrated per-rank cut-offs apply
+        self.assertEqual(cfg["method_parameters_combinations"]["taxonova"], {})
 
     def test_paper_pins_published_runs(self):
         cfg = _common.load_classifiers_config("classifiers_paper.json")
@@ -110,7 +110,8 @@ class TestTaxonovaCommand(unittest.TestCase):
         for region, model_id in (("V4", "v4"), ("V1-V9", "16s"), ("RRN", "operon")):
             cmd = _taxonova_cmd("classifiers_default.json", region)
             self.assertIn(f"taxonova classify /in/rep_seqs_m.fasta --model {model_id} "
-                          "--confidence 0.8 -o /out/taxonomy_raw.tsv", cmd)
+                          "-o /out/taxonomy_raw.tsv", cmd)
+            self.assertNotIn("--confidence", cmd)
             self.assertNotIn("_threshold", cmd)
 
     def test_threads_only_with_classify(self):
@@ -181,7 +182,7 @@ class TestScriptsLoad(unittest.TestCase):
     def test_compile_all(self):
         for p in sorted(list((ROOT / "scripts").rglob("*.py")) +
                         list((ROOT / "src").rglob("*.py")) +
-                        list((ROOT / "mgnify").glob("*.py"))):
+                        list((ROOT / "mocks" / "mgnify").glob("*.py"))):
             with self.subTest(script=str(p.relative_to(ROOT))):
                 py_compile.compile(str(p), doraise=True,
                                    cfile=str(Path(tempfile.gettempdir()) / "tb_compile.pyc"))

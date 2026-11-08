@@ -97,7 +97,7 @@ class TestFFTPath(unittest.TestCase):
 class TestGutV5V7KnownAnswer(unittest.TestCase):
     """The rebuild with N as a mismatch must reproduce the 2026-10-06 corrected
     truth exactly, and wildcard mode must reproduce the published truth."""
-    # Needs the generated data tree (DATA.md); set TAXOBENCH_DATA_DIR or the
+    # Needs the generated data tree (docs/data.md); set TAXOBENCH_DATA_DIR or the
     # data_dir of configs/pipeline_config.json. The corrected truth is the
     # regression fixture.
     import _common

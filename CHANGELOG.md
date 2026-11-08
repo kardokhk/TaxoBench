@@ -4,10 +4,28 @@ Changes to TaxoBench that affect how it runs or what it reports. The development
 kept while the benchmark was built for the paper is in the git history
 (`docs/CHANGELOG.md` at commit 77b619d).
 
-## Unreleased (fix/fail-closed, 2026-10-31)
+## 26.11.2 (2026-11-08)
 
-Scores of valid outputs under `--rules v1` and `--rules v2` are unchanged: the v1 golden
-test below passes with a difference of 0 at every value.
+Release alongside Taxonova 26.11.2. Scores of valid outputs under `--rules v1` and
+`--rules v2` are unchanged: rescoring the paper's classifier outputs with `--rules v1`
+matches all 47 published cells (15,040 values) with a difference of 0.
+
+**Taxonova configuration**
+
+- `configs/classifiers_default.json` runs `taxonova>=26.11.2` without a threshold, so
+  each model applies its own calibrated per-rank cut-offs (the package default since
+  Taxonova 26.11.0). Its results are written under `taxonova/default/` instead of
+  `taxonova/confidence_threshold-0.8/`. `classifiers_paper.json` and
+  `classifiers_sweep.json` are unchanged.
+
+**Repository**
+
+- Fewer files at the top level: `DATA.md` is now `docs/data.md`, `CONTRIBUTING.md` is in
+  `.github/`, `requirements-eval.txt` is `requirements.txt`, and `mgnify/` is in
+  `mocks/mgnify/`.
+- The download-based check of all published cells and its weekly CI job are removed,
+  with `requirements-golden.txt`; `tests/test_regression_v1.py` keeps checking the
+  published gut mock V5-V7 cell.
 
 **Fail closed**
 
@@ -36,11 +54,6 @@ test below passes with a difference of 0 at every value.
   `taxonova classification` starts. The v1.0.0 `pyproject.toml` declares no
   dependencies, so the previous script installed Taxonova without any and the command
   failed on import.
-- `tests/test_golden_v1.py` replaces the one-cell check as the guard of the paper
-  numbers: all 47 published cells (15,040 values) from the Zenodo deposit, and on
-  MeluXina all 61 archived cells and 11 methods (26,840 values), compared string for
-  string. `scripts/fetch_paper_deposit.sh` downloads and checks the deposit;
-  `requirements-golden.txt` locks the environment; CI runs the test weekly.
 
 ## 26.10.1 (2026-10-30)
 

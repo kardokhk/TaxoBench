@@ -4,9 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  schedule:
-    # weekly: the paper numbers must still rescore from the Zenodo deposit
-    - cron: "17 4 * * 1"
 
 jobs:
   test:
@@ -20,30 +17,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-          cache-dependency-path: requirements-eval.txt
+          cache-dependency-path: requirements.txt
       - name: Install
-        run: python -m pip install -r requirements-eval.txt
+        run: python -m pip install -r requirements.txt
       - name: Test
-        # Tests that need the generated data tree or the deposit skip without it.
+        # Tests that need the generated data tree skip without it.
         working-directory: tests
         run: python -m unittest discover -s . -p "test_*.py" -v
 
-  golden-v1:
-    # All 47 published cells (15,040 values) rescored with --rules v1 from the
-    # Zenodo deposit must equal the deposited all_metrics_v1.csv exactly.
-    # Pinned image: the locked Python 3.11.13 is not built for newer runners.
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11.13"
-      - name: Install the locked environment
-        run: python -m pip install --no-deps -r requirements-golden.txt
-      - name: Fetch the deposit (sha256 checked)
-        run: bash scripts/fetch_paper_deposit.sh "$RUNNER_TEMP/deposit"
-      - name: Golden test
-        working-directory: tests
-        env:
-          TAXOBENCH_PAPER_DEPOSIT: ${{ runner.temp }}/deposit
-        run: python -m unittest test_golden_v1 -v

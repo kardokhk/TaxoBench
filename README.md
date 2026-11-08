@@ -30,7 +30,7 @@ conda environments in [docs/environments.md](docs/environments.md).
 ```bash
 git clone https://github.com/kardokhk/TaxoBench && cd TaxoBench
 python -m venv .venv && . .venv/bin/activate
-pip install -r requirements-eval.txt
+pip install -r requirements.txt
 ```
 
 Score classifier outputs against a mock. The repository includes one published cell
@@ -46,16 +46,16 @@ python scripts/04_evaluate.py \
 The scores are in `results/example/all_metrics.csv` (one row per mock, region,
 classifier, parameter set, rank and metric) and in one table per metric under
 `results/example/by_metric/`. Specificity needs the reference taxonomy (`--ref-dir`,
-see [DATA.md](DATA.md)); without it the specificity columns are empty. To score your
+see [docs/data.md](docs/data.md)); without it the specificity columns are empty. To score your
 own classifier, write its output as
 `<results>/<mock>/<region>/<classifier>/<parameters>/taxonomy_final.tsv` with the
 columns `Feature ID`, `Taxon` (`d__...; p__...; ...; s__...`) and `Confidence`.
 
 Run a full cell (one mock, one region, all classifiers). The mock inputs ship in
-`mocks/inputs/`; the reference databases are placed as described in [DATA.md](DATA.md):
+`mocks/inputs/`; the reference databases are placed as described in [docs/data.md](docs/data.md):
 
 ```bash
-taxonova models download all                          # Taxonova 26.10.1 or later
+taxonova models download all                          # Taxonova 26.11.2 or later
 python scripts/01a_unpack_mock_inputs.py --mock-name mbarc26
 python scripts/02_generate.py --mock-name mbarc26 --regions V4
 python scripts/03_assign.py   --mock-name mbarc26 --regions V4 --n-jobs 2
@@ -67,7 +67,8 @@ fail closed: a failed or partial classifier run leaves no `taxonomy_final.tsv`
 behind, `04_evaluate.py` refuses any output that does not hold every query ID
 exactly once, and every step exits with a non-zero status when anything failed. The default
 Taxonova configuration (`configs/classifiers_default.json`) uses the current release,
-its model ids (`v4`, `v3v4`, `v5v7`, `16s`, `operon`) and its default thresholds.
+its model ids (`v4`, `v3v4`, `v5v7`, `16s`, `operon`) and each model's calibrated
+per-rank thresholds.
 Scoring uses the v2 rules by default ([docs/scoring.md](docs/scoring.md)).
 
 ## Reproducing the paper
@@ -93,13 +94,9 @@ regenerated cell need not match the published one: the simulation settings of ea
 published cell are not recorded here, and the reads depend on the ART, QIIME 2 and
 DADA2 versions ([docs/scoring.md](docs/scoring.md)). On the classifier outputs and
 truth behind the paper, `--rules v1` reproduces the published metric tables with a
-maximum absolute difference of 0. Those outputs and the truth are on Zenodo
-([doi:10.5281/zenodo.23808921](https://doi.org/10.5281/zenodo.23808921)), with the exact commands. `tests/test_golden_v1.py` rescores all 47 published cells
-from the deposit (`scripts/fetch_paper_deposit.sh`) and requires every one of the
-15,040 values to equal the deposited `all_metrics_v1.csv`; CI runs it weekly. This
-repository also includes the gut mock V5-V7 cell, which `tests/test_regression_v1.py`
-checks without a download. Results
-are reported in the paper and are not repeated here.
+maximum absolute difference of 0. The repository includes one published cell (gut
+mock, V5-V7), whose 240 values `tests/test_regression_v1.py` checks. Results are
+reported in the paper and are not repeated here.
 
 ## Adding a classifier or a mock
 
@@ -107,7 +104,7 @@ A classifier needs an entry in the classifier configs, a command builder in
 `src/generate_commands.py` and a parser `src/process_<tool>_output.py` that writes
 `taxonomy_final.tsv`. A mock needs its `<mock>_seqs.fasta` and `<mock>_taxa.txt` in
 `mocks/inputs/` and an entry in `configs/mocks.json`. See
-[CONTRIBUTING.md](CONTRIBUTING.md).
+[CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
 ## Layout
 
@@ -116,11 +113,9 @@ A classifier needs an entry in the classifier configs, a command builder in
 | `scripts/` | numbered pipeline steps (`01` prepare to `06` runtime) and `loco/` |
 | `src/` | command builders, output parsers, evaluator and scoring rules |
 | `configs/` | paths, regions, mocks, classifier panels (`default`, `paper`, `sweep`) |
-| `mocks/inputs/` | the mock community inputs behind the published cells |
-| `mgnify/` | MGnify abundance retriever and the snapshot used for the biome mocks |
+| `mocks/` | mock community inputs behind the published cells (`inputs/`); MGnify abundance retriever and snapshot behind the biome mocks (`mgnify/`) |
 | `tests/` | unit and regression tests, with a small fixture |
-| `docs/` | benchmark design, scoring rules, pipeline, environments, real-world tier, LOCO |
-| `DATA.md` | reference databases, data layout and study accessions |
+| `docs/` | benchmark design, scoring rules, pipeline, environments, data, real-world tier, LOCO |
 
 ## Tests
 

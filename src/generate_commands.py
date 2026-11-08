@@ -153,8 +153,8 @@ def build_taxonova_command(
 
     settings is the "taxonova" block of the classifier config
     (see taxonova_settings):
-      cli           "classify" (taxonova >= 26.10.1: model ids, package
-                    default thresholds) or "classification" (the original
+      cli           "classify" (taxonova >= 26.10.1: model ids; with no
+                    threshold given, each model's own cut-offs) or "classification" (the original
                     CLI, used by the published runs; works in every release)
       parent_gates  None to keep the package defaults for the ranks above
                     species, or a dict {rank: threshold} (for example 0.5 at
