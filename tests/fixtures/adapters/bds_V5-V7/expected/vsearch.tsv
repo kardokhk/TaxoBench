@@ -1,0 +1,414 @@
+run_id	query_id	rank	raw_label	taxon_ids	confidence	call	note
+fx:vsearch	009766aa4b8ef4991c3d9b50c5c7097a	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	009766aa4b8ef4991c3d9b50c5c7097a	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	0.6	named	
+fx:vsearch	009766aa4b8ef4991c3d9b50c5c7097a	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	0.6	named	
+fx:vsearch	009766aa4b8ef4991c3d9b50c5c7097a	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	0.6	named	
+fx:vsearch	009766aa4b8ef4991c3d9b50c5c7097a	family	f__Dysgonomonadaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Dysgonomonadaceae	0.6	named	
+fx:vsearch	009766aa4b8ef4991c3d9b50c5c7097a	genus	g__Dysgonomonas	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Dysgonomonadaceae;g__Dysgonomonas	0.6	named	
+fx:vsearch	009766aa4b8ef4991c3d9b50c5c7097a	species				nocall	
+fx:vsearch	02445ac277e9c786ed0730ffba705f7d	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	02445ac277e9c786ed0730ffba705f7d	phylum	p__Bacillota_C	d__Bacteria;p__Bacillota_C	1.0	named	
+fx:vsearch	02445ac277e9c786ed0730ffba705f7d	class	c__Negativicutes	d__Bacteria;p__Bacillota_C;c__Negativicutes	1.0	named	
+fx:vsearch	02445ac277e9c786ed0730ffba705f7d	order	o__Acidaminococcales	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Acidaminococcales	1.0	named	
+fx:vsearch	02445ac277e9c786ed0730ffba705f7d	family	f__Acidaminococcaceae	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Acidaminococcales;f__Acidaminococcaceae	1.0	named	
+fx:vsearch	02445ac277e9c786ed0730ffba705f7d	genus	g__Phascolarctobacterium_A_40086	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Acidaminococcales;f__Acidaminococcaceae;g__Phascolarctobacterium_A_40086	1.0	named	
+fx:vsearch	02445ac277e9c786ed0730ffba705f7d	species	s__Phascolarctobacterium_A_40086 faecium	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Acidaminococcales;f__Acidaminococcaceae;g__Phascolarctobacterium_A_40086;s__Phascolarctobacterium_A_40086 faecium	1.0	named	
+fx:vsearch	092345b1892191806091395b54485f14	domain	d__Bacteria	d__Bacteria	0.7	named	
+fx:vsearch	092345b1892191806091395b54485f14	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	0.7	named	
+fx:vsearch	092345b1892191806091395b54485f14	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	0.7	named	
+fx:vsearch	092345b1892191806091395b54485f14	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	0.7	named	
+fx:vsearch	092345b1892191806091395b54485f14	family	f__Bacteroidaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae	0.7	named	
+fx:vsearch	092345b1892191806091395b54485f14	genus	g__Prevotella	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella	0.7	named	
+fx:vsearch	092345b1892191806091395b54485f14	species				nocall	
+fx:vsearch	0b0d664d2caa153919a55d2951774e53	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	0b0d664d2caa153919a55d2951774e53	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	1.0	named	
+fx:vsearch	0b0d664d2caa153919a55d2951774e53	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	1.0	named	
+fx:vsearch	0b0d664d2caa153919a55d2951774e53	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	1.0	named	
+fx:vsearch	0b0d664d2caa153919a55d2951774e53	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	1.0	named	
+fx:vsearch	0b0d664d2caa153919a55d2951774e53	genus				nocall	
+fx:vsearch	0b0d664d2caa153919a55d2951774e53	species				nocall	
+fx:vsearch	1114d8197dc5d70619746268265d28d4	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	1114d8197dc5d70619746268265d28d4	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	0.6	named	
+fx:vsearch	1114d8197dc5d70619746268265d28d4	class	c__Actinomycetes	d__Bacteria;p__Actinomycetota;c__Actinomycetes	0.6	named	
+fx:vsearch	1114d8197dc5d70619746268265d28d4	order	o__Mycobacteriales	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Mycobacteriales	0.6	named	
+fx:vsearch	1114d8197dc5d70619746268265d28d4	family	f__Mycobacteriaceae	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Mycobacteriales;f__Mycobacteriaceae	0.6	named	
+fx:vsearch	1114d8197dc5d70619746268265d28d4	genus	g__Corynebacterium	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Mycobacteriales;f__Mycobacteriaceae;g__Corynebacterium	0.6	named	
+fx:vsearch	1114d8197dc5d70619746268265d28d4	species				nocall	
+fx:vsearch	111a8576ce37171dd3b15b32140c20dc	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	111a8576ce37171dd3b15b32140c20dc	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.8	named	
+fx:vsearch	111a8576ce37171dd3b15b32140c20dc	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.8	named	
+fx:vsearch	111a8576ce37171dd3b15b32140c20dc	order	o__Peptostreptococcales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales	0.8	named	
+fx:vsearch	111a8576ce37171dd3b15b32140c20dc	family	f__Anaerovoracaceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales;f__Anaerovoracaceae	0.8	named	
+fx:vsearch	111a8576ce37171dd3b15b32140c20dc	genus	g__S5-A14a	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales;f__Anaerovoracaceae;g__S5-A14a	0.8	named	
+fx:vsearch	111a8576ce37171dd3b15b32140c20dc	species	s__S5-A14a sp000758905	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales;f__Anaerovoracaceae;g__S5-A14a;s__S5-A14a sp000758905	0.8	named	
+fx:vsearch	14ef6c6293755dfc3807b7d412e3aa0b	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	14ef6c6293755dfc3807b7d412e3aa0b	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	0.6	named	
+fx:vsearch	14ef6c6293755dfc3807b7d412e3aa0b	class	c__Coriobacteriia	d__Bacteria;p__Actinomycetota;c__Coriobacteriia	0.6	named	
+fx:vsearch	14ef6c6293755dfc3807b7d412e3aa0b	order	o__Coriobacteriales	d__Bacteria;p__Actinomycetota;c__Coriobacteriia;o__Coriobacteriales	0.6	named	
+fx:vsearch	14ef6c6293755dfc3807b7d412e3aa0b	family	f__Coriobacteriaceae	d__Bacteria;p__Actinomycetota;c__Coriobacteriia;o__Coriobacteriales;f__Coriobacteriaceae	0.6	named	
+fx:vsearch	14ef6c6293755dfc3807b7d412e3aa0b	genus	g__Collinsella	d__Bacteria;p__Actinomycetota;c__Coriobacteriia;o__Coriobacteriales;f__Coriobacteriaceae;g__Collinsella	0.6	named	
+fx:vsearch	14ef6c6293755dfc3807b7d412e3aa0b	species	s__Collinsella aerofaciens_F	d__Bacteria;p__Actinomycetota;c__Coriobacteriia;o__Coriobacteriales;f__Coriobacteriaceae;g__Collinsella;s__Collinsella aerofaciens_F	0.6	named	
+fx:vsearch	17318eba6b22b695dd2133ef987950a9	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	17318eba6b22b695dd2133ef987950a9	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	1.0	named	
+fx:vsearch	17318eba6b22b695dd2133ef987950a9	class	c__Actinomycetes	d__Bacteria;p__Actinomycetota;c__Actinomycetes	1.0	named	
+fx:vsearch	17318eba6b22b695dd2133ef987950a9	order	o__Mycobacteriales	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Mycobacteriales	1.0	named	
+fx:vsearch	17318eba6b22b695dd2133ef987950a9	family	f__Mycobacteriaceae	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Mycobacteriales;f__Mycobacteriaceae	1.0	named	
+fx:vsearch	17318eba6b22b695dd2133ef987950a9	genus	g__Corynebacterium	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Mycobacteriales;f__Mycobacteriaceae;g__Corynebacterium	1.0	named	
+fx:vsearch	17318eba6b22b695dd2133ef987950a9	species	s__Corynebacterium striatum	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Mycobacteriales;f__Mycobacteriaceae;g__Corynebacterium;s__Corynebacterium striatum	1.0	named	
+fx:vsearch	1a36317c97ead4ba975cbd95b2f549cc	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	1a36317c97ead4ba975cbd95b2f549cc	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.8	named	
+fx:vsearch	1a36317c97ead4ba975cbd95b2f549cc	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.8	named	
+fx:vsearch	1a36317c97ead4ba975cbd95b2f549cc	order	o__Tissierellales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Tissierellales	0.8	named	
+fx:vsearch	1a36317c97ead4ba975cbd95b2f549cc	family	f__Tepidimicrobiaceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Tissierellales;f__Tepidimicrobiaceae	0.8	named	
+fx:vsearch	1a36317c97ead4ba975cbd95b2f549cc	genus				nocall	
+fx:vsearch	1a36317c97ead4ba975cbd95b2f549cc	species				nocall	
+fx:vsearch	225e1d80d8e3dddbb23aa6eb00d9a7c9	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	225e1d80d8e3dddbb23aa6eb00d9a7c9	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	1.0	named	
+fx:vsearch	225e1d80d8e3dddbb23aa6eb00d9a7c9	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	1.0	named	
+fx:vsearch	225e1d80d8e3dddbb23aa6eb00d9a7c9	order	o__Lactobacillales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales	1.0	named	
+fx:vsearch	225e1d80d8e3dddbb23aa6eb00d9a7c9	family	f__Streptococcaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales;f__Streptococcaceae	1.0	named	
+fx:vsearch	225e1d80d8e3dddbb23aa6eb00d9a7c9	genus	g__Streptococcus	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales;f__Streptococcaceae;g__Streptococcus	1.0	named	
+fx:vsearch	225e1d80d8e3dddbb23aa6eb00d9a7c9	species	s__Streptococcus agalactiae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales;f__Streptococcaceae;g__Streptococcus;s__Streptococcus agalactiae	1.0	named	
+fx:vsearch	226f8628ffeab55a6cdc609af480fa1e	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	226f8628ffeab55a6cdc609af480fa1e	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	1.0	named	
+fx:vsearch	226f8628ffeab55a6cdc609af480fa1e	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	1.0	named	
+fx:vsearch	226f8628ffeab55a6cdc609af480fa1e	order	o__Lactobacillales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales	1.0	named	
+fx:vsearch	226f8628ffeab55a6cdc609af480fa1e	family	f__Enterococcaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales;f__Enterococcaceae	1.0	named	
+fx:vsearch	226f8628ffeab55a6cdc609af480fa1e	genus				nocall	
+fx:vsearch	226f8628ffeab55a6cdc609af480fa1e	species				nocall	
+fx:vsearch	2470362eff6532d32e493dbee2a1247d	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	2470362eff6532d32e493dbee2a1247d	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.8	named	
+fx:vsearch	2470362eff6532d32e493dbee2a1247d	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.8	named	
+fx:vsearch	2470362eff6532d32e493dbee2a1247d	order	o__Staphylococcales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales	0.8	named	
+fx:vsearch	2470362eff6532d32e493dbee2a1247d	family	f__Staphylococcaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae	0.8	named	
+fx:vsearch	2470362eff6532d32e493dbee2a1247d	genus	g__Staphylococcus	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus	0.8	named	
+fx:vsearch	2470362eff6532d32e493dbee2a1247d	species	s__Staphylococcus epidermidis	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus;s__Staphylococcus epidermidis	0.8	named	
+fx:vsearch	3052cb057fe3f2d86d0bc4043392d7c7	domain	d__Bacteria	d__Bacteria	0.9	named	
+fx:vsearch	3052cb057fe3f2d86d0bc4043392d7c7	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.9	named	
+fx:vsearch	3052cb057fe3f2d86d0bc4043392d7c7	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.9	named	
+fx:vsearch	3052cb057fe3f2d86d0bc4043392d7c7	order	o__Erysipelotrichales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales	0.9	named	
+fx:vsearch	3052cb057fe3f2d86d0bc4043392d7c7	family	f__Erysipelotrichaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Erysipelotrichaceae	0.9	named	
+fx:vsearch	3052cb057fe3f2d86d0bc4043392d7c7	genus	g__Bulleidia	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Erysipelotrichaceae;g__Bulleidia	0.9	named	
+fx:vsearch	3052cb057fe3f2d86d0bc4043392d7c7	species				nocall	
+fx:vsearch	309e7d8e97c7f824e5063260dd445b1f	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	309e7d8e97c7f824e5063260dd445b1f	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.8	named	
+fx:vsearch	309e7d8e97c7f824e5063260dd445b1f	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.8	named	
+fx:vsearch	309e7d8e97c7f824e5063260dd445b1f	order	o__Staphylococcales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales	0.8	named	
+fx:vsearch	309e7d8e97c7f824e5063260dd445b1f	family	f__Staphylococcaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae	0.8	named	
+fx:vsearch	309e7d8e97c7f824e5063260dd445b1f	genus	g__Staphylococcus	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus	0.8	named	
+fx:vsearch	309e7d8e97c7f824e5063260dd445b1f	species	s__Staphylococcus epidermidis	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus;s__Staphylococcus epidermidis	0.8	named	
+fx:vsearch	38cfbca9a08f8ca7aa7550eee2a4f362	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	38cfbca9a08f8ca7aa7550eee2a4f362	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.6	named	
+fx:vsearch	38cfbca9a08f8ca7aa7550eee2a4f362	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.6	named	
+fx:vsearch	38cfbca9a08f8ca7aa7550eee2a4f362	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	0.6	named	
+fx:vsearch	38cfbca9a08f8ca7aa7550eee2a4f362	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	0.6	named	
+fx:vsearch	38cfbca9a08f8ca7aa7550eee2a4f362	genus	g__Alitiscatomonas	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Alitiscatomonas	0.6	named	
+fx:vsearch	38cfbca9a08f8ca7aa7550eee2a4f362	species	s__Alitiscatomonas sp900066535	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Alitiscatomonas;s__Alitiscatomonas sp900066535	0.6	named	
+fx:vsearch	4107614f5a3b4cc6f39a9372ad1c2c8c	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	4107614f5a3b4cc6f39a9372ad1c2c8c	phylum	p__Bacillota_C	d__Bacteria;p__Bacillota_C	0.8	named	
+fx:vsearch	4107614f5a3b4cc6f39a9372ad1c2c8c	class	c__Negativicutes	d__Bacteria;p__Bacillota_C;c__Negativicutes	0.8	named	
+fx:vsearch	4107614f5a3b4cc6f39a9372ad1c2c8c	order	o__Selenomonadales	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales	0.8	named	
+fx:vsearch	4107614f5a3b4cc6f39a9372ad1c2c8c	family	f__Selenomonadaceae_42771	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales;f__Selenomonadaceae_42771	0.8	named	
+fx:vsearch	4107614f5a3b4cc6f39a9372ad1c2c8c	genus	g__Mitsuokella	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales;f__Selenomonadaceae_42771;g__Mitsuokella	0.8	named	
+fx:vsearch	4107614f5a3b4cc6f39a9372ad1c2c8c	species	s__Mitsuokella multacida	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales;f__Selenomonadaceae_42771;g__Mitsuokella;s__Mitsuokella multacida	0.8	named	
+fx:vsearch	42014dc32e771e0bd13a37fd53f2e172	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	42014dc32e771e0bd13a37fd53f2e172	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	1.0	named	
+fx:vsearch	42014dc32e771e0bd13a37fd53f2e172	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	1.0	named	
+fx:vsearch	42014dc32e771e0bd13a37fd53f2e172	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	1.0	named	
+fx:vsearch	42014dc32e771e0bd13a37fd53f2e172	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	1.0	named	
+fx:vsearch	42014dc32e771e0bd13a37fd53f2e172	genus	g__Butyrivibrio_A_168226	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Butyrivibrio_A_168226	1.0	named	
+fx:vsearch	42014dc32e771e0bd13a37fd53f2e172	species				nocall	
+fx:vsearch	47e894862fe8ef9b33e17dd5d76ac6b2	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	47e894862fe8ef9b33e17dd5d76ac6b2	phylum	p__Bacillota_C	d__Bacteria;p__Bacillota_C	0.8	named	
+fx:vsearch	47e894862fe8ef9b33e17dd5d76ac6b2	class	c__Negativicutes	d__Bacteria;p__Bacillota_C;c__Negativicutes	0.8	named	
+fx:vsearch	47e894862fe8ef9b33e17dd5d76ac6b2	order	o__Acidaminococcales	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Acidaminococcales	0.8	named	
+fx:vsearch	47e894862fe8ef9b33e17dd5d76ac6b2	family	f__Acidaminococcaceae	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Acidaminococcales;f__Acidaminococcaceae	0.8	named	
+fx:vsearch	47e894862fe8ef9b33e17dd5d76ac6b2	genus				nocall	
+fx:vsearch	47e894862fe8ef9b33e17dd5d76ac6b2	species				nocall	
+fx:vsearch	4840a8a83c812f8d29e47f9bd42bc188	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	4840a8a83c812f8d29e47f9bd42bc188	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.8	named	
+fx:vsearch	4840a8a83c812f8d29e47f9bd42bc188	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.8	named	
+fx:vsearch	4840a8a83c812f8d29e47f9bd42bc188	order	o__Staphylococcales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales	0.8	named	
+fx:vsearch	4840a8a83c812f8d29e47f9bd42bc188	family	f__Staphylococcaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae	0.8	named	
+fx:vsearch	4840a8a83c812f8d29e47f9bd42bc188	genus	g__Staphylococcus	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus	0.8	named	
+fx:vsearch	4840a8a83c812f8d29e47f9bd42bc188	species				nocall	
+fx:vsearch	4d1c4a573193324b8de07e573306262b	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	4d1c4a573193324b8de07e573306262b	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	1.0	named	
+fx:vsearch	4d1c4a573193324b8de07e573306262b	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	1.0	named	
+fx:vsearch	4d1c4a573193324b8de07e573306262b	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	1.0	named	
+fx:vsearch	4d1c4a573193324b8de07e573306262b	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	1.0	named	
+fx:vsearch	4d1c4a573193324b8de07e573306262b	genus	g__Pseudobutyrivibrio	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Pseudobutyrivibrio	1.0	named	
+fx:vsearch	4d1c4a573193324b8de07e573306262b	species				nocall	
+fx:vsearch	515c03cedc4cbcb7c91f35624c2bd0ef	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	515c03cedc4cbcb7c91f35624c2bd0ef	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.8	named	
+fx:vsearch	515c03cedc4cbcb7c91f35624c2bd0ef	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.8	named	
+fx:vsearch	515c03cedc4cbcb7c91f35624c2bd0ef	order	o__Paenibacillales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Paenibacillales	0.8	named	
+fx:vsearch	515c03cedc4cbcb7c91f35624c2bd0ef	family	f__NBRC-103111	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Paenibacillales;f__NBRC-103111	0.8	named	
+fx:vsearch	515c03cedc4cbcb7c91f35624c2bd0ef	genus	g__Paenibacillus_E_363445	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Paenibacillales;f__NBRC-103111;g__Paenibacillus_E_363445	0.8	named	
+fx:vsearch	515c03cedc4cbcb7c91f35624c2bd0ef	species	s__Paenibacillus_E_363445 ferrarius	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Paenibacillales;f__NBRC-103111;g__Paenibacillus_E_363445;s__Paenibacillus_E_363445 ferrarius	0.8	named	
+fx:vsearch	594461635a1eac54662aff8f61dd134e	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	594461635a1eac54662aff8f61dd134e	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	1.0	named	
+fx:vsearch	594461635a1eac54662aff8f61dd134e	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	1.0	named	
+fx:vsearch	594461635a1eac54662aff8f61dd134e	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	1.0	named	
+fx:vsearch	594461635a1eac54662aff8f61dd134e	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	1.0	named	
+fx:vsearch	594461635a1eac54662aff8f61dd134e	genus				nocall	
+fx:vsearch	594461635a1eac54662aff8f61dd134e	species				nocall	
+fx:vsearch	59ef5e6202625ae650448ad59d4fcabd	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	59ef5e6202625ae650448ad59d4fcabd	phylum	p__Bacillota_C	d__Bacteria;p__Bacillota_C	0.6	named	
+fx:vsearch	59ef5e6202625ae650448ad59d4fcabd	class	c__Negativicutes	d__Bacteria;p__Bacillota_C;c__Negativicutes	0.6	named	
+fx:vsearch	59ef5e6202625ae650448ad59d4fcabd	order	o__Veillonellales	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Veillonellales	0.6	named	
+fx:vsearch	59ef5e6202625ae650448ad59d4fcabd	family	f__Dialisteraceae	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Veillonellales;f__Dialisteraceae	0.6	named	
+fx:vsearch	59ef5e6202625ae650448ad59d4fcabd	genus	g__Dialister_36337	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Veillonellales;f__Dialisteraceae;g__Dialister_36337	0.6	named	
+fx:vsearch	59ef5e6202625ae650448ad59d4fcabd	species				nocall	
+fx:vsearch	5bd7583a2fd25ccfbed13c5c7b2723dd	domain	d__Bacteria	d__Bacteria	0.9	named	
+fx:vsearch	5bd7583a2fd25ccfbed13c5c7b2723dd	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	0.9	named	
+fx:vsearch	5bd7583a2fd25ccfbed13c5c7b2723dd	class	c__Actinomycetes	d__Bacteria;p__Actinomycetota;c__Actinomycetes	0.9	named	
+fx:vsearch	5bd7583a2fd25ccfbed13c5c7b2723dd	order	o__Actinomycetales	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales	0.9	named	
+fx:vsearch	5bd7583a2fd25ccfbed13c5c7b2723dd	family	f__Bifidobacteriaceae	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae	0.9	named	
+fx:vsearch	5bd7583a2fd25ccfbed13c5c7b2723dd	genus	g__Bifidobacterium_388775	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae;g__Bifidobacterium_388775	0.9	named	
+fx:vsearch	5bd7583a2fd25ccfbed13c5c7b2723dd	species	s__Bifidobacterium dentium	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae;g__Bifidobacterium_388775;s__Bifidobacterium dentium	0.9	named	
+fx:vsearch	5f93e8314e02c2c41506147dcab73112	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	5f93e8314e02c2c41506147dcab73112	phylum	p__Spirochaetota	d__Bacteria;p__Spirochaetota	1.0	named	
+fx:vsearch	5f93e8314e02c2c41506147dcab73112	class	c__Spirochaetia	d__Bacteria;p__Spirochaetota;c__Spirochaetia	1.0	named	
+fx:vsearch	5f93e8314e02c2c41506147dcab73112	order	o__Sphaerochaetales	d__Bacteria;p__Spirochaetota;c__Spirochaetia;o__Sphaerochaetales	1.0	named	
+fx:vsearch	5f93e8314e02c2c41506147dcab73112	family	f__Sphaerochaetaceae	d__Bacteria;p__Spirochaetota;c__Spirochaetia;o__Sphaerochaetales;f__Sphaerochaetaceae	1.0	named	
+fx:vsearch	5f93e8314e02c2c41506147dcab73112	genus	g__Sphaerochaeta	d__Bacteria;p__Spirochaetota;c__Spirochaetia;o__Sphaerochaetales;f__Sphaerochaetaceae;g__Sphaerochaeta	1.0	named	
+fx:vsearch	5f93e8314e02c2c41506147dcab73112	species				nocall	
+fx:vsearch	6644800aba9ff2872ffac8a6da30f0cc	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	6644800aba9ff2872ffac8a6da30f0cc	phylum	p__Bacillota_C	d__Bacteria;p__Bacillota_C	0.6	named	
+fx:vsearch	6644800aba9ff2872ffac8a6da30f0cc	class	c__Negativicutes	d__Bacteria;p__Bacillota_C;c__Negativicutes	0.6	named	
+fx:vsearch	6644800aba9ff2872ffac8a6da30f0cc	order	o__Selenomonadales	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales	0.6	named	
+fx:vsearch	6644800aba9ff2872ffac8a6da30f0cc	family	f__Selenomonadaceae_42771	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales;f__Selenomonadaceae_42771	0.6	named	
+fx:vsearch	6644800aba9ff2872ffac8a6da30f0cc	genus	g__Mitsuokella	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales;f__Selenomonadaceae_42771;g__Mitsuokella	0.6	named	
+fx:vsearch	6644800aba9ff2872ffac8a6da30f0cc	species	s__Mitsuokella multacida	d__Bacteria;p__Bacillota_C;c__Negativicutes;o__Selenomonadales;f__Selenomonadaceae_42771;g__Mitsuokella;s__Mitsuokella multacida	0.6	named	
+fx:vsearch	6726f1b9faa94ff4580129cddbd056fc	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	6726f1b9faa94ff4580129cddbd056fc	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.8	named	
+fx:vsearch	6726f1b9faa94ff4580129cddbd056fc	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.8	named	
+fx:vsearch	6726f1b9faa94ff4580129cddbd056fc	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	0.8	named	
+fx:vsearch	6726f1b9faa94ff4580129cddbd056fc	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	0.8	named	
+fx:vsearch	6726f1b9faa94ff4580129cddbd056fc	genus	g__Lachnoclostridium_A_184689	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Lachnoclostridium_A_184689	0.8	named	
+fx:vsearch	6726f1b9faa94ff4580129cddbd056fc	species				nocall	
+fx:vsearch	6736930ac83b44f218be16ed9dba0b15	domain	d__Bacteria	d__Bacteria	0.7	named	
+fx:vsearch	6736930ac83b44f218be16ed9dba0b15	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	0.7	named	
+fx:vsearch	6736930ac83b44f218be16ed9dba0b15	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	0.7	named	
+fx:vsearch	6736930ac83b44f218be16ed9dba0b15	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	0.7	named	
+fx:vsearch	6736930ac83b44f218be16ed9dba0b15	family	f__Bacteroidaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae	0.7	named	
+fx:vsearch	6736930ac83b44f218be16ed9dba0b15	genus	g__Prevotella	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella	0.7	named	
+fx:vsearch	6736930ac83b44f218be16ed9dba0b15	species	s__Prevotella denticola	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella;s__Prevotella denticola	0.7	named	
+fx:vsearch	771041532a02f7da0d0b0eb8528d7270	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	771041532a02f7da0d0b0eb8528d7270	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	0.8	named	
+fx:vsearch	771041532a02f7da0d0b0eb8528d7270	class	c__Actinomycetes	d__Bacteria;p__Actinomycetota;c__Actinomycetes	0.8	named	
+fx:vsearch	771041532a02f7da0d0b0eb8528d7270	order	o__Actinomycetales	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales	0.8	named	
+fx:vsearch	771041532a02f7da0d0b0eb8528d7270	family	f__Bifidobacteriaceae	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae	0.8	named	
+fx:vsearch	771041532a02f7da0d0b0eb8528d7270	genus	g__Scardovia	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae;g__Scardovia	0.8	named	
+fx:vsearch	771041532a02f7da0d0b0eb8528d7270	species				nocall	
+fx:vsearch	7a7cd791f6be025fffbe23b456e69955	domain	d__Bacteria	d__Bacteria	0.7	named	
+fx:vsearch	7a7cd791f6be025fffbe23b456e69955	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.7	named	
+fx:vsearch	7a7cd791f6be025fffbe23b456e69955	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.7	named	
+fx:vsearch	7a7cd791f6be025fffbe23b456e69955	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	0.7	named	
+fx:vsearch	7a7cd791f6be025fffbe23b456e69955	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	0.7	named	
+fx:vsearch	7a7cd791f6be025fffbe23b456e69955	genus	g__Anaerocolumna	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Anaerocolumna	0.7	named	
+fx:vsearch	7a7cd791f6be025fffbe23b456e69955	species				nocall	
+fx:vsearch	7d4e54141c87de83c29bcf1cfe94aa2b	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	7d4e54141c87de83c29bcf1cfe94aa2b	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	1.0	named	
+fx:vsearch	7d4e54141c87de83c29bcf1cfe94aa2b	class	c__Coriobacteriia	d__Bacteria;p__Actinomycetota;c__Coriobacteriia	1.0	named	
+fx:vsearch	7d4e54141c87de83c29bcf1cfe94aa2b	order	o__Coriobacteriales	d__Bacteria;p__Actinomycetota;c__Coriobacteriia;o__Coriobacteriales	1.0	named	
+fx:vsearch	7d4e54141c87de83c29bcf1cfe94aa2b	family	f__Eggerthellaceae	d__Bacteria;p__Actinomycetota;c__Coriobacteriia;o__Coriobacteriales;f__Eggerthellaceae	1.0	named	
+fx:vsearch	7d4e54141c87de83c29bcf1cfe94aa2b	genus				nocall	
+fx:vsearch	7d4e54141c87de83c29bcf1cfe94aa2b	species				nocall	
+fx:vsearch	7d810c37bee1165568226501ab54d4ab	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	7d810c37bee1165568226501ab54d4ab	phylum	p__Pseudomonadota	d__Bacteria;p__Pseudomonadota	1.0	named	
+fx:vsearch	7d810c37bee1165568226501ab54d4ab	class	c__Gammaproteobacteria	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria	1.0	named	
+fx:vsearch	7d810c37bee1165568226501ab54d4ab	order	o__Burkholderiales	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Burkholderiales	1.0	named	
+fx:vsearch	7d810c37bee1165568226501ab54d4ab	family	f__Neisseriaceae	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Burkholderiales;f__Neisseriaceae	1.0	named	
+fx:vsearch	7d810c37bee1165568226501ab54d4ab	genus				nocall	
+fx:vsearch	7d810c37bee1165568226501ab54d4ab	species				nocall	
+fx:vsearch	80c09fc893e9b715b603d64c701878af	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	80c09fc893e9b715b603d64c701878af	phylum	p__Bacillota_B_370539	d__Bacteria;p__Bacillota_B_370539	1.0	named	
+fx:vsearch	80c09fc893e9b715b603d64c701878af	class				nocall	
+fx:vsearch	80c09fc893e9b715b603d64c701878af	order				nocall	
+fx:vsearch	80c09fc893e9b715b603d64c701878af	family				nocall	
+fx:vsearch	80c09fc893e9b715b603d64c701878af	genus				nocall	
+fx:vsearch	80c09fc893e9b715b603d64c701878af	species				nocall	
+fx:vsearch	83d9e5f84a6ef2619e2fbbc4a4a5fec6	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	83d9e5f84a6ef2619e2fbbc4a4a5fec6	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.6	named	
+fx:vsearch	83d9e5f84a6ef2619e2fbbc4a4a5fec6	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.6	named	
+fx:vsearch	83d9e5f84a6ef2619e2fbbc4a4a5fec6	order	o__Brevibacillales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Brevibacillales	0.6	named	
+fx:vsearch	83d9e5f84a6ef2619e2fbbc4a4a5fec6	family	f__Brevibacillaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Brevibacillales;f__Brevibacillaceae	0.6	named	
+fx:vsearch	83d9e5f84a6ef2619e2fbbc4a4a5fec6	genus	g__Brevibacillus_D_362672	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Brevibacillales;f__Brevibacillaceae;g__Brevibacillus_D_362672	0.6	named	
+fx:vsearch	83d9e5f84a6ef2619e2fbbc4a4a5fec6	species	s__Brevibacillus_D_362672 borstelensis	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Brevibacillales;f__Brevibacillaceae;g__Brevibacillus_D_362672;s__Brevibacillus_D_362672 borstelensis	0.6	named	
+fx:vsearch	88a9462013bcec3e6792d68ee9ed21bf	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	88a9462013bcec3e6792d68ee9ed21bf	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	1.0	named	
+fx:vsearch	88a9462013bcec3e6792d68ee9ed21bf	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	1.0	named	
+fx:vsearch	88a9462013bcec3e6792d68ee9ed21bf	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	1.0	named	
+fx:vsearch	88a9462013bcec3e6792d68ee9ed21bf	family	f__Bacteroidaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae	1.0	named	
+fx:vsearch	88a9462013bcec3e6792d68ee9ed21bf	genus	g__Prevotella	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella	1.0	named	
+fx:vsearch	88a9462013bcec3e6792d68ee9ed21bf	species	s__Prevotella nigrescens	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella;s__Prevotella nigrescens	1.0	named	
+fx:vsearch	8c9d18deb7d9522ca78c004b8b0d0825	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	8c9d18deb7d9522ca78c004b8b0d0825	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.6	named	
+fx:vsearch	8c9d18deb7d9522ca78c004b8b0d0825	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.6	named	
+fx:vsearch	8c9d18deb7d9522ca78c004b8b0d0825	order	o__Erysipelotrichales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales	0.6	named	
+fx:vsearch	8c9d18deb7d9522ca78c004b8b0d0825	family	f__Coprobacillaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Coprobacillaceae	0.6	named	
+fx:vsearch	8c9d18deb7d9522ca78c004b8b0d0825	genus	g__Catenibacterium	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Coprobacillaceae;g__Catenibacterium	0.6	named	
+fx:vsearch	8c9d18deb7d9522ca78c004b8b0d0825	species	s__Catenibacterium mitsuokai	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Coprobacillaceae;g__Catenibacterium;s__Catenibacterium mitsuokai	0.6	named	
+fx:vsearch	900872d02c331b25756909483fb6e318	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	900872d02c331b25756909483fb6e318	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.6	named	
+fx:vsearch	900872d02c331b25756909483fb6e318	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.6	named	
+fx:vsearch	900872d02c331b25756909483fb6e318	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	0.6	named	
+fx:vsearch	900872d02c331b25756909483fb6e318	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	0.6	named	
+fx:vsearch	900872d02c331b25756909483fb6e318	genus	g__Butyrivibrio_A_168226	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Butyrivibrio_A_168226	0.6	named	
+fx:vsearch	900872d02c331b25756909483fb6e318	species	s__Butyrivibrio_A_168226 hungatei_A	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Butyrivibrio_A_168226;s__Butyrivibrio_A_168226 hungatei_A	0.6	named	
+fx:vsearch	923fd464e6f5a29342a04ad97d00aa8c	domain	d__Bacteria	d__Bacteria	0.7	named	
+fx:vsearch	923fd464e6f5a29342a04ad97d00aa8c	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	0.7	named	
+fx:vsearch	923fd464e6f5a29342a04ad97d00aa8c	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	0.7	named	
+fx:vsearch	923fd464e6f5a29342a04ad97d00aa8c	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	0.7	named	
+fx:vsearch	923fd464e6f5a29342a04ad97d00aa8c	family	f__Bacteroidaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae	0.7	named	
+fx:vsearch	923fd464e6f5a29342a04ad97d00aa8c	genus	g__Prevotella	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella	0.7	named	
+fx:vsearch	923fd464e6f5a29342a04ad97d00aa8c	species				nocall	
+fx:vsearch	962f856a10a4eec7bb08a1a399335342	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	962f856a10a4eec7bb08a1a399335342	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	1.0	named	
+fx:vsearch	962f856a10a4eec7bb08a1a399335342	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	1.0	named	
+fx:vsearch	962f856a10a4eec7bb08a1a399335342	order	o__Lactobacillales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales	1.0	named	
+fx:vsearch	962f856a10a4eec7bb08a1a399335342	family	f__Streptococcaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales;f__Streptococcaceae	1.0	named	
+fx:vsearch	962f856a10a4eec7bb08a1a399335342	genus	g__Streptococcus	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales;f__Streptococcaceae;g__Streptococcus	1.0	named	
+fx:vsearch	962f856a10a4eec7bb08a1a399335342	species	s__Streptococcus pneumoniae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Lactobacillales;f__Streptococcaceae;g__Streptococcus;s__Streptococcus pneumoniae	1.0	named	
+fx:vsearch	9ae3353b99856416930bdd492be47387	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	9ae3353b99856416930bdd492be47387	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	1.0	named	
+fx:vsearch	9ae3353b99856416930bdd492be47387	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	1.0	named	
+fx:vsearch	9ae3353b99856416930bdd492be47387	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	1.0	named	
+fx:vsearch	9ae3353b99856416930bdd492be47387	family	f__Marinifilaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Marinifilaceae	1.0	named	
+fx:vsearch	9ae3353b99856416930bdd492be47387	genus	g__Butyricimonas	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Marinifilaceae;g__Butyricimonas	1.0	named	
+fx:vsearch	9ae3353b99856416930bdd492be47387	species				nocall	
+fx:vsearch	9b7165ea227161a98916ae434f5d481b	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	9b7165ea227161a98916ae434f5d481b	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	1.0	named	
+fx:vsearch	9b7165ea227161a98916ae434f5d481b	class	c__Actinomycetes	d__Bacteria;p__Actinomycetota;c__Actinomycetes	1.0	named	
+fx:vsearch	9b7165ea227161a98916ae434f5d481b	order	o__Actinomycetales	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales	1.0	named	
+fx:vsearch	9b7165ea227161a98916ae434f5d481b	family	f__Bifidobacteriaceae	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae	1.0	named	
+fx:vsearch	9b7165ea227161a98916ae434f5d481b	genus	g__Bifidobacterium_388775	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae;g__Bifidobacterium_388775	1.0	named	
+fx:vsearch	9b7165ea227161a98916ae434f5d481b	species	s__Bifidobacterium longum	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Bifidobacteriaceae;g__Bifidobacterium_388775;s__Bifidobacterium longum	1.0	named	
+fx:vsearch	9c31117d0817c23645f633d1e829f7ef	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	9c31117d0817c23645f633d1e829f7ef	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.6	named	
+fx:vsearch	9c31117d0817c23645f633d1e829f7ef	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.6	named	
+fx:vsearch	9c31117d0817c23645f633d1e829f7ef	order	o__Staphylococcales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales	0.6	named	
+fx:vsearch	9c31117d0817c23645f633d1e829f7ef	family	f__Staphylococcaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae	0.6	named	
+fx:vsearch	9c31117d0817c23645f633d1e829f7ef	genus	g__Staphylococcus	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus	0.6	named	
+fx:vsearch	9c31117d0817c23645f633d1e829f7ef	species				nocall	
+fx:vsearch	aa80318113b4cec54891bdf9eabddad4	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	aa80318113b4cec54891bdf9eabddad4	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	1.0	named	
+fx:vsearch	aa80318113b4cec54891bdf9eabddad4	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	1.0	named	
+fx:vsearch	aa80318113b4cec54891bdf9eabddad4	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	1.0	named	
+fx:vsearch	aa80318113b4cec54891bdf9eabddad4	family	f__Dysgonomonadaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Dysgonomonadaceae	1.0	named	
+fx:vsearch	aa80318113b4cec54891bdf9eabddad4	genus	g__Dysgonomonas	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Dysgonomonadaceae;g__Dysgonomonas	1.0	named	
+fx:vsearch	aa80318113b4cec54891bdf9eabddad4	species				nocall	
+fx:vsearch	aedba537a34d6c1ec2017dc85b19f51b	domain	d__Bacteria	d__Bacteria	0.7	named	
+fx:vsearch	aedba537a34d6c1ec2017dc85b19f51b	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	0.7	named	
+fx:vsearch	aedba537a34d6c1ec2017dc85b19f51b	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	0.7	named	
+fx:vsearch	aedba537a34d6c1ec2017dc85b19f51b	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	0.7	named	
+fx:vsearch	aedba537a34d6c1ec2017dc85b19f51b	family	f__Bacteroidaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae	0.7	named	
+fx:vsearch	aedba537a34d6c1ec2017dc85b19f51b	genus	g__Prevotella	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella	0.7	named	
+fx:vsearch	aedba537a34d6c1ec2017dc85b19f51b	species	s__Prevotella denticola	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Prevotella;s__Prevotella denticola	0.7	named	
+fx:vsearch	c0a36ef2c9a18e50059b0053f41a49a9	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	c0a36ef2c9a18e50059b0053f41a49a9	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	0.6	named	
+fx:vsearch	c0a36ef2c9a18e50059b0053f41a49a9	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	0.6	named	
+fx:vsearch	c0a36ef2c9a18e50059b0053f41a49a9	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	0.6	named	
+fx:vsearch	c0a36ef2c9a18e50059b0053f41a49a9	family	f__Bacteroidaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae	0.6	named	
+fx:vsearch	c0a36ef2c9a18e50059b0053f41a49a9	genus	g__Phocaeicola_A	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Phocaeicola_A	0.6	named	
+fx:vsearch	c0a36ef2c9a18e50059b0053f41a49a9	species	s__Phocaeicola_A sartorii	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Bacteroidaceae;g__Phocaeicola_A;s__Phocaeicola_A sartorii	0.6	named	
+fx:vsearch	c2f9c8c70bcc28bc4e8751353e5e9b21	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	c2f9c8c70bcc28bc4e8751353e5e9b21	phylum	p__Pseudomonadota	d__Bacteria;p__Pseudomonadota	1.0	named	
+fx:vsearch	c2f9c8c70bcc28bc4e8751353e5e9b21	class	c__Gammaproteobacteria	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria	1.0	named	
+fx:vsearch	c2f9c8c70bcc28bc4e8751353e5e9b21	order	o__Pseudomonadales_A_660879	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Pseudomonadales_A_660879	1.0	named	
+fx:vsearch	c2f9c8c70bcc28bc4e8751353e5e9b21	family	f__Moraxellaceae	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Pseudomonadales_A_660879;f__Moraxellaceae	1.0	named	
+fx:vsearch	c2f9c8c70bcc28bc4e8751353e5e9b21	genus	g__Acinetobacter	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Pseudomonadales_A_660879;f__Moraxellaceae;g__Acinetobacter	1.0	named	
+fx:vsearch	c2f9c8c70bcc28bc4e8751353e5e9b21	species	s__Acinetobacter junii	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Pseudomonadales_A_660879;f__Moraxellaceae;g__Acinetobacter;s__Acinetobacter junii	1.0	named	
+fx:vsearch	c4866eaaac2f3dfd15bac1b8d8150c0a	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	c4866eaaac2f3dfd15bac1b8d8150c0a	phylum	p__Desulfobacterota_G_459543	d__Bacteria;p__Desulfobacterota_G_459543	0.6	named	
+fx:vsearch	c4866eaaac2f3dfd15bac1b8d8150c0a	class	c__Desulfovibrionia	d__Bacteria;p__Desulfobacterota_G_459543;c__Desulfovibrionia	0.6	named	
+fx:vsearch	c4866eaaac2f3dfd15bac1b8d8150c0a	order	o__Desulfovibrionales	d__Bacteria;p__Desulfobacterota_G_459543;c__Desulfovibrionia;o__Desulfovibrionales	0.6	named	
+fx:vsearch	c4866eaaac2f3dfd15bac1b8d8150c0a	family	f__Desulfonatronaceae	d__Bacteria;p__Desulfobacterota_G_459543;c__Desulfovibrionia;o__Desulfovibrionales;f__Desulfonatronaceae	0.6	named	
+fx:vsearch	c4866eaaac2f3dfd15bac1b8d8150c0a	genus	g__Desulfonatronum	d__Bacteria;p__Desulfobacterota_G_459543;c__Desulfovibrionia;o__Desulfovibrionales;f__Desulfonatronaceae;g__Desulfonatronum	0.6	named	
+fx:vsearch	c4866eaaac2f3dfd15bac1b8d8150c0a	species				nocall	
+fx:vsearch	d867a9619be2a4fb57637e9e5346a645	domain	d__Bacteria	d__Bacteria	0.8	named	
+fx:vsearch	d867a9619be2a4fb57637e9e5346a645	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.8	named	
+fx:vsearch	d867a9619be2a4fb57637e9e5346a645	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.8	named	
+fx:vsearch	d867a9619be2a4fb57637e9e5346a645	order	o__Bacillales_B_306087	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Bacillales_B_306087	0.8	named	
+fx:vsearch	d867a9619be2a4fb57637e9e5346a645	family				nocall	
+fx:vsearch	d867a9619be2a4fb57637e9e5346a645	genus				nocall	
+fx:vsearch	d867a9619be2a4fb57637e9e5346a645	species				nocall	
+fx:vsearch	df803a347bed30cb084149801d0a35cd	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	df803a347bed30cb084149801d0a35cd	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	1.0	named	
+fx:vsearch	df803a347bed30cb084149801d0a35cd	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	1.0	named	
+fx:vsearch	df803a347bed30cb084149801d0a35cd	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	1.0	named	
+fx:vsearch	df803a347bed30cb084149801d0a35cd	family				nocall	
+fx:vsearch	df803a347bed30cb084149801d0a35cd	genus				nocall	
+fx:vsearch	df803a347bed30cb084149801d0a35cd	species				nocall	
+fx:vsearch	e046ee550e6ab10680d37b22583ad0bd	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	e046ee550e6ab10680d37b22583ad0bd	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	1.0	named	
+fx:vsearch	e046ee550e6ab10680d37b22583ad0bd	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	1.0	named	
+fx:vsearch	e046ee550e6ab10680d37b22583ad0bd	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	1.0	named	
+fx:vsearch	e046ee550e6ab10680d37b22583ad0bd	family	f__Lachnospiraceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae	1.0	named	
+fx:vsearch	e046ee550e6ab10680d37b22583ad0bd	genus	g__Roseburia_A_166204	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Roseburia_A_166204	1.0	named	
+fx:vsearch	e046ee550e6ab10680d37b22583ad0bd	species	s__Roseburia_A_166204 hominis	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Lachnospiraceae;g__Roseburia_A_166204;s__Roseburia_A_166204 hominis	1.0	named	
+fx:vsearch	e291fa9ed074c79901fa7bae50527e56	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	e291fa9ed074c79901fa7bae50527e56	phylum	p__Verrucomicrobiota	d__Bacteria;p__Verrucomicrobiota	1.0	named	
+fx:vsearch	e291fa9ed074c79901fa7bae50527e56	class	c__Verrucomicrobiae	d__Bacteria;p__Verrucomicrobiota;c__Verrucomicrobiae	1.0	named	
+fx:vsearch	e291fa9ed074c79901fa7bae50527e56	order	o__Verrucomicrobiales	d__Bacteria;p__Verrucomicrobiota;c__Verrucomicrobiae;o__Verrucomicrobiales	1.0	named	
+fx:vsearch	e291fa9ed074c79901fa7bae50527e56	family	f__Akkermansiaceae	d__Bacteria;p__Verrucomicrobiota;c__Verrucomicrobiae;o__Verrucomicrobiales;f__Akkermansiaceae	1.0	named	
+fx:vsearch	e291fa9ed074c79901fa7bae50527e56	genus	g__Akkermansia	d__Bacteria;p__Verrucomicrobiota;c__Verrucomicrobiae;o__Verrucomicrobiales;f__Akkermansiaceae;g__Akkermansia	1.0	named	
+fx:vsearch	e291fa9ed074c79901fa7bae50527e56	species	s__Akkermansia muciniphila_D_776786	d__Bacteria;p__Verrucomicrobiota;c__Verrucomicrobiae;o__Verrucomicrobiales;f__Akkermansiaceae;g__Akkermansia;s__Akkermansia muciniphila_D_776786	1.0	named	
+fx:vsearch	e709cdec2ff428f17c2de17eaad4caa4	domain	d__Bacteria	d__Bacteria	0.9	named	
+fx:vsearch	e709cdec2ff428f17c2de17eaad4caa4	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.9	named	
+fx:vsearch	e709cdec2ff428f17c2de17eaad4caa4	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.9	named	
+fx:vsearch	e709cdec2ff428f17c2de17eaad4caa4	order	o__Erysipelotrichales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales	0.9	named	
+fx:vsearch	e709cdec2ff428f17c2de17eaad4caa4	family	f__Coprobacillaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Coprobacillaceae	0.9	named	
+fx:vsearch	e709cdec2ff428f17c2de17eaad4caa4	genus	g__Coprobacillus	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Coprobacillaceae;g__Coprobacillus	0.9	named	
+fx:vsearch	e709cdec2ff428f17c2de17eaad4caa4	species	s__Coprobacillus cateniformis	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Coprobacillaceae;g__Coprobacillus;s__Coprobacillus cateniformis	0.9	named	
+fx:vsearch	e8ecbe9721af24e0ed2bdefa179956c8	domain	d__Bacteria	d__Bacteria	0.9	named	
+fx:vsearch	e8ecbe9721af24e0ed2bdefa179956c8	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.9	named	
+fx:vsearch	e8ecbe9721af24e0ed2bdefa179956c8	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.9	named	
+fx:vsearch	e8ecbe9721af24e0ed2bdefa179956c8	order	o__Peptostreptococcales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales	0.9	named	
+fx:vsearch	e8ecbe9721af24e0ed2bdefa179956c8	family	f__Peptostreptococcaceae_256921	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales;f__Peptostreptococcaceae_256921	0.9	named	
+fx:vsearch	e8ecbe9721af24e0ed2bdefa179956c8	genus	g__Clostridium_Y	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales;f__Peptostreptococcaceae_256921;g__Clostridium_Y	0.9	named	
+fx:vsearch	e8ecbe9721af24e0ed2bdefa179956c8	species	s__Clostridium_Y paradoxum	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Peptostreptococcales;f__Peptostreptococcaceae_256921;g__Clostridium_Y;s__Clostridium_Y paradoxum	0.9	named	
+fx:vsearch	e9c2359e68d6e49da4b7d9a561c4cf6c	domain	d__Bacteria	d__Bacteria	0.9	named	
+fx:vsearch	e9c2359e68d6e49da4b7d9a561c4cf6c	phylum	p__Bacillota_A_368345	d__Bacteria;p__Bacillota_A_368345	0.9	named	
+fx:vsearch	e9c2359e68d6e49da4b7d9a561c4cf6c	class	c__Clostridia_258483	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483	0.9	named	
+fx:vsearch	e9c2359e68d6e49da4b7d9a561c4cf6c	order	o__Lachnospirales	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales	0.9	named	
+fx:vsearch	e9c2359e68d6e49da4b7d9a561c4cf6c	family	f__Cellulosilyticaceae	d__Bacteria;p__Bacillota_A_368345;c__Clostridia_258483;o__Lachnospirales;f__Cellulosilyticaceae	0.9	named	
+fx:vsearch	e9c2359e68d6e49da4b7d9a561c4cf6c	genus				nocall	
+fx:vsearch	e9c2359e68d6e49da4b7d9a561c4cf6c	species				nocall	
+fx:vsearch	ea043ebafb38cfa9a2cf1ea625d81442	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	ea043ebafb38cfa9a2cf1ea625d81442	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	0.6	named	
+fx:vsearch	ea043ebafb38cfa9a2cf1ea625d81442	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	0.6	named	
+fx:vsearch	ea043ebafb38cfa9a2cf1ea625d81442	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	0.6	named	
+fx:vsearch	ea043ebafb38cfa9a2cf1ea625d81442	family	f__Porphyromonadaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Porphyromonadaceae	0.6	named	
+fx:vsearch	ea043ebafb38cfa9a2cf1ea625d81442	genus	g__Porphyromonas_A	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas_A	0.6	named	
+fx:vsearch	ea043ebafb38cfa9a2cf1ea625d81442	species	s__Porphyromonas_A macacae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas_A;s__Porphyromonas_A macacae	0.6	named	
+fx:vsearch	eefcb15fdc62d7fb3e2212519f310f91	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	eefcb15fdc62d7fb3e2212519f310f91	phylum	p__Actinomycetota	d__Bacteria;p__Actinomycetota	1.0	named	
+fx:vsearch	eefcb15fdc62d7fb3e2212519f310f91	class	c__Actinomycetes	d__Bacteria;p__Actinomycetota;c__Actinomycetes	1.0	named	
+fx:vsearch	eefcb15fdc62d7fb3e2212519f310f91	order	o__Actinomycetales	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales	1.0	named	
+fx:vsearch	eefcb15fdc62d7fb3e2212519f310f91	family	f__Actinomycetaceae	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Actinomycetaceae	1.0	named	
+fx:vsearch	eefcb15fdc62d7fb3e2212519f310f91	genus	g__Actinomyces	d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Actinomycetaceae;g__Actinomyces	1.0	named	
+fx:vsearch	eefcb15fdc62d7fb3e2212519f310f91	species				nocall	
+fx:vsearch	f54292158494d87b1dbe76c1842e0174	domain	d__Bacteria	d__Bacteria	0.6	named	
+fx:vsearch	f54292158494d87b1dbe76c1842e0174	phylum	p__Bacillota_I	d__Bacteria;p__Bacillota_I	0.6	named	
+fx:vsearch	f54292158494d87b1dbe76c1842e0174	class	c__Bacilli_A	d__Bacteria;p__Bacillota_I;c__Bacilli_A	0.6	named	
+fx:vsearch	f54292158494d87b1dbe76c1842e0174	order	o__Erysipelotrichales	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales	0.6	named	
+fx:vsearch	f54292158494d87b1dbe76c1842e0174	family	f__Erysipelotrichaceae	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Erysipelotrichaceae	0.6	named	
+fx:vsearch	f54292158494d87b1dbe76c1842e0174	genus	g__Allobaculum	d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Erysipelotrichaceae;g__Allobaculum	0.6	named	
+fx:vsearch	f54292158494d87b1dbe76c1842e0174	species				nocall	
+fx:vsearch	f9b250e50c9c634678dec77b71f0cdc4	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	f9b250e50c9c634678dec77b71f0cdc4	phylum	p__Pseudomonadota	d__Bacteria;p__Pseudomonadota	1.0	named	
+fx:vsearch	f9b250e50c9c634678dec77b71f0cdc4	class	c__Gammaproteobacteria	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria	1.0	named	
+fx:vsearch	f9b250e50c9c634678dec77b71f0cdc4	order	o__Enterobacterales_737866	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Enterobacterales_737866	1.0	named	
+fx:vsearch	f9b250e50c9c634678dec77b71f0cdc4	family	f__Pasteurellaceae	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Enterobacterales_737866;f__Pasteurellaceae	1.0	named	
+fx:vsearch	f9b250e50c9c634678dec77b71f0cdc4	genus	g__Haemophilus_D_734546	d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Enterobacterales_737866;f__Pasteurellaceae;g__Haemophilus_D_734546	1.0	named	
+fx:vsearch	f9b250e50c9c634678dec77b71f0cdc4	species				nocall	
+fx:vsearch	ff5328ec5f865ddb45b779125ab9c43a	domain	d__Bacteria	d__Bacteria	1.0	named	
+fx:vsearch	ff5328ec5f865ddb45b779125ab9c43a	phylum	p__Bacteroidota	d__Bacteria;p__Bacteroidota	1.0	named	
+fx:vsearch	ff5328ec5f865ddb45b779125ab9c43a	class	c__Bacteroidia	d__Bacteria;p__Bacteroidota;c__Bacteroidia	1.0	named	
+fx:vsearch	ff5328ec5f865ddb45b779125ab9c43a	order	o__Bacteroidales	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales	1.0	named	
+fx:vsearch	ff5328ec5f865ddb45b779125ab9c43a	family	f__Porphyromonadaceae	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Porphyromonadaceae	1.0	named	
+fx:vsearch	ff5328ec5f865ddb45b779125ab9c43a	genus	g__Porphyromonas_A	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas_A	1.0	named	
+fx:vsearch	ff5328ec5f865ddb45b779125ab9c43a	species	s__Porphyromonas_A gingivalis	d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas_A;s__Porphyromonas_A gingivalis	1.0	named	

@@ -2,7 +2,42 @@
 
 Changes to TaxoBench that affect how it runs or what it reports. The development log
 kept while the benchmark was built for the paper is in the git history
-(`docs/CHANGELOG.md` at commit 77b619d).
+(`docs/CHANGELOG.md` at commit c9c4f46).
+
+## 2.0.0 (2026-11-08)
+
+TaxoBench 2: the benchmark is a Python package with one command, `taxobench`. Truth,
+name resolution and metrics are defined anew, so its scores are not directly comparable
+with those of 26.11.2 and earlier.
+
+**Package**
+
+- `pip install -e .` installs `taxobench` with the commands `import-mocks`, `run`,
+  `ingest`, `validate`, `score`, `compare`, `report` and `adapters`
+  ([docs/taxobench.md](docs/taxobench.md)).
+- One data model of seven tables with sha256 sidecars for tiers (references, taxa,
+  queries, abundance, truth) and runs (runs, predictions). Truth has a status per rank:
+  known, unresolvable, novel or unscorable.
+- Adapters parse each tool's raw output and resolve every name against the run's
+  reference; a name is repaired only when the repair leads to exactly one taxon, and a
+  name the reference lacks is `oov`. Golden tests on raw outputs of all eight tools.
+- Metrics M1 to M11 under three group rules, with 95% cluster bootstrap CIs.
+- `compare`: paired bootstrap CIs, exact McNemar, Wilcoxon and Hodges-Lehmann per tier,
+  a pre-declared confirmatory family (Holm) and non-inferiority guardrails (exit 3 when
+  one fails).
+- `run`: fail-closed runner for local, conda or Apptainer commands, and Snakemake
+  scheduling of a plan.
+- `import-mocks`: the mock builders' output becomes a tier, with per-cell query FASTA
+  files whose IDs are the tier's query IDs.
+
+**Repository**
+
+- The mock builders and their configs moved to `mocks/scripts/` and `mocks/configs/`.
+- Removed, replaced by the package: the classifier runner, parsers and scorer scripts
+  (`scripts/03_assign.py` to `06_runtime.py`, `src/`), their configs, the real-world
+  and LOCO scripts, and the documentation of those scripts. The code of 26.11.2 stays
+  available at tag `v26.11.2`.
+- Python 3.10 to 3.12 in CI.
 
 ## 26.11.2 (2026-11-08)
 
@@ -133,4 +168,4 @@ are unchanged.
 - Relative paths in `pipeline_config.json`; `TAXOBENCH_<KEY>` overrides.
 - Tests, including a regression against the 240 published gut mock V5-V7 values.
 
-Details: [docs/scoring.md](docs/scoring.md).
+Details: [docs/scoring.md](https://github.com/kardokhk/TaxoBench/blob/v26.11.2/docs/scoring.md) at tag `v26.11.2`.

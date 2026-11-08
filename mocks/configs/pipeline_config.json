@@ -1,0 +1,8 @@
+{
+    "_doc": "Paths for the mock builders, relative to the repository root. TAXOBENCH_<KEY> overrides a key.",
+    "data_dir": "data",
+    "reference_database_dir": "data/ref_dbs",
+    "mockrobiota_source_dir": "data/softy/mockrobiota/data",
+    "mock_input_dir": "data/mock_community/input_data",
+    "default_n_threads": 20
+}

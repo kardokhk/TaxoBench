@@ -4,51 +4,41 @@ Issues and pull requests are welcome at <https://github.com/kardokhk/TaxoBench>.
 Run the tests before opening a pull request:
 
 ```bash
-cd tests && python -m unittest discover -s . -p "test_*.py"
+pip install -e ".[test]"
+python -m pytest
 ```
 
-Add a line to `CHANGELOG.md` for any change in behavior. Changes to scoring must keep
-`--rules v1` reproducing the published values (`tests/test_regression_v1.py`).
+Add a line to `CHANGELOG.md` for any change in behaviour. A change to scoring needs a
+known-answer test in `tests/test_known_answer.py`.
 
 ## Adding a classifier
 
-1. Add a parser `src/process_<tool>_output.py` that converts the tool's output to
-   `taxonomy_final.tsv` with the columns `Feature ID`, `Taxon` and `Confidence`.
-   `Taxon` is a lineage `d__...; p__...; c__...; o__...; f__...; g__...; s__...`;
-   leave a rank empty (`s__`) when the tool makes no call at that rank.
-2. Add `build_<tool>_command()` to `src/generate_commands.py`, returning one shell
-   command that writes that file, and register it in the `builders` table and the
-   `SUPPORTED` tuple of `scripts/03_assign.py` (and `05_realworld_classify.py` for the
-   real-world tier).
-3. If the tool needs a prebuilt index, add its lookup to `ref_dict()` in
-   `scripts/_common.py` (indexes live under `data/ref_dbs/<region>/<tool>/`).
-4. Add the tool to `classifiers`, `method_conda_envs` and
-   `method_parameters_combinations` in `configs/classifiers_default.json`.
-5. Add a test in `tests/test_scoring_rules.py` for the tool's abstention format if it
-   differs from those already covered.
+1. Write an adapter: a subclass of `taxobench.adapters.base.Adapter` with a `name`, a
+   `version`, a `confidence_kind` (`probability`, `score`, `run_share` or `none`) and a
+   `parse(raw, **params)` method that returns one `Parsed` record (query ID, lineage
+   per rank, confidence per rank) per query. Leave a rank out where the tool makes no
+   call. Register it with `@register` in `src/taxobench/adapters/tools.py`, or, from
+   another package, under the `taxobench.adapters` entry point.
+2. Add a golden test on a raw output of the real tool to
+   `tests/test_adapters_golden.py`, with the fixture in `tests/fixtures/adapters/`.
+3. Run the tool with a run spec (`docs/taxobench.md`, section Running classifiers).
 
-To score outputs produced elsewhere, none of these steps is needed: place the files as
-`<results>/<mock>/<region>/<tool>/<parameters>/taxonomy_final.tsv` and run
-`scripts/04_evaluate.py --results-dir <results>`.
+A tool that already writes a `Feature ID, Taxon, Confidence` table needs no new adapter:
+use `taxonomy-tsv`.
 
 ## Adding a mock community
 
 1. Write `<mock>_seqs.fasta` and `<mock>_taxa.txt` (`Feature ID`, `Taxon`), by hand
-   or with a `01*` script. To share the mock, add both files gzipped to
-   `mocks/inputs/` and their md5 sums (of the uncompressed files) to
-   `mocks/inputs/MD5SUMS`; `01a_unpack_mock_inputs.py` then places them in the input
-   directory (`mock_input_dir` in `configs/pipeline_config.json`).
-2. Register the mock in `configs/mocks.json` with the regions it is evaluated on.
-3. Generate the cells: `02_generate.py` for V4, V3-V4 and V5-V7;
-   `02c_generate_v1v9_direct.py` for V1-V9; `02d_generate_longread_biomes.py` for
-   long-read cells of biome mocks.
-4. Run `03_assign.py` and `04_evaluate.py` for the new mock.
+   or with a `01*` script in `mocks/scripts/`. To share the mock, add both files
+   gzipped to `mocks/inputs/` and their md5 sums (of the uncompressed files) to
+   `mocks/inputs/MD5SUMS`.
+2. Register the mock in `mocks/configs/mocks.json` with the regions it is built for.
+3. Build the cells (`mocks/README.md`) and convert them with `taxobench import-mocks`.
 
 For a new biome, retrieve its MGnify abundances first with the scripts in `mocks/mgnify/`.
 
-## Adding a Taxonova model
+## Adding a tier
 
-New Taxonova models (other references or regions) are published by the Taxonova
-package under a model id. Add the id for the region to `models` in the `taxonova` block
-of `configs/classifiers_default.json`, or create a separate classifier config that
-points to it.
+Write the five tier tables of the data model (`docs/taxobench.md`, section Data model)
+with their sha256 sidecars (`taxobench.contract.write_table` writes both) and check
+them with `taxobench validate --tier <dir>`.

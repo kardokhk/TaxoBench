@@ -1,0 +1,16 @@
+# TaxoBench 2 run scheduler. Config (written by `taxobench run --snakemake`):
+#   runs: {run_id: {spec: <json>, outdir: <dir>, threads: N}}
+# Each job is fail-closed in `taxobench run --spec`; Snakemake adds resume,
+# parallelism and the dependency on the spec file. A job's marker is written
+# only after its predictions passed every check.
+RUNS = config["runs"]
+
+rule all:
+    input: expand("done/{run_id}.ok", run_id=sorted(RUNS))
+
+rule run_one:
+    input: spec=lambda w: RUNS[w.run_id]["spec"]
+    output: touch("done/{run_id}.ok")
+    threads: lambda w: RUNS[w.run_id]["threads"]
+    log: "logs/{run_id}.log"
+    shell: "taxobench run --spec {input.spec} > {log} 2>&1"

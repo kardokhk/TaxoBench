@@ -1,26 +1,21 @@
-# Large inputs, reference databases and run outputs are not tracked.
-# docs/data.md says how to obtain and place them.
+# Data, tiers, runs and reports are not tracked; mocks/README.md says how to build them.
 /data/
+/tiers/
+/runs/
+/reports/
+/scores/
 /results/
-/backups/
-/models/
-/training/
 /logs/
-/output/
-/slurm/
-/runtime/
-/.envs/
+/taxobench-work/
 
 # Python
 __pycache__/
 *.py[cod]
 .pytest_cache/
 *.egg-info/
-
-# Checkpoints and QIIME 2 artefacts
-*.pt
-*.qza
-*.qzv
+/build/
+/dist/
+/.venv/
 
 # Editors and operating systems
 .DS_Store

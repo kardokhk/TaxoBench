@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taxobench"
+dynamic = ["version"]
+description = "Reference-aware benchmarking of taxonomic classifiers for marker-gene amplicons"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "Kardokh Kakabra", email = "kardokhkaka@gmail.com"}]
+dependencies = ["numpy>=1.26", "pandas>=2.1", "scipy>=1.11"]
+
+[project.optional-dependencies]
+workflow = ["snakemake>=9"]
+test = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/kardokhk/TaxoBench"
+Changelog = "https://github.com/kardokhk/TaxoBench/blob/main/CHANGELOG.md"
+Issues = "https://github.com/kardokhk/TaxoBench/issues"
+
+[project.scripts]
+taxobench = "taxobench.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "taxobench.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["taxobench*"]
+
+[tool.setuptools.package-data]
+taxobench = ["Snakefile", "tools/*.R"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

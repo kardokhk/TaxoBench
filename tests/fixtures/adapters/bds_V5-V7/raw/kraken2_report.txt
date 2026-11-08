@@ -1,0 +1,119 @@
+100.00	59	4	D	1	Bacteria
+ 22.03	13	0	P	2	  Bacillota_A
+ 22.03	13	1	C	3	    Clostridia
+ 16.95	10	1	O	4	      Lachnospirales
+ 13.56	8	4	F	5	        Lachnospiraceae
+  3.39	2	1	G	284	          Butyrivibrio_A
+  1.69	1	1	S	25335	            Butyrivibrio_A_168226 sp000703165
+  1.69	1	0	G	16570	          Shuttleworthia
+  1.69	1	1	S	16571	            Shuttleworthia satelles
+  1.69	1	1	G	7363	          Pseudobutyrivibrio
+  1.69	1	1	F	1401	        Cellulosilyticaceae
+  3.39	2	0	O	17	      Peptostreptococcales
+  1.69	1	0	F	18	        Peptostreptococcaceae
+  1.69	1	0	G	16610	          Clostridium_Y
+  1.69	1	1	S	16611	            Clostridium_Y paradoxum
+  1.69	1	0	F	97	        Anaerovoracaceae
+  1.69	1	0	G	329	          Eubacterium_N
+  1.69	1	1	S	16663	            Eubacterium_N_234271 saphenum
+ 20.34	12	0	P	54	  Bacteroidota
+ 20.34	12	0	C	55	    Bacteroidia
+ 20.34	12	0	O	56	      Bacteroidales
+  8.47	5	0	F	57	        Bacteroidaceae
+  3.39	2	1	G	6661	          Bacteroides_E
+  1.69	1	1	S	22583	            Bacteroides_E_842212 caecicola
+  3.39	2	0	G	7841	          Paraprevotella
+  3.39	2	2	S	22581	            Paraprevotella xylaniphila
+  1.69	1	0	G	354	          Prevotella
+  1.69	1	1	S	22563	            Prevotella nigrescens
+  3.39	2	0	F	7474	        Azobacteroidaceae
+  3.39	2	0	G	24418	          Azobacteroides
+  3.39	2	2	S	24419	            Azobacteroides pseudotrichonymphae
+  3.39	2	0	F	575	        Porphyromonadaceae
+  3.39	2	0	G	576	          Porphyromonas_A
+  1.69	1	1	S	22605	            Porphyromonas_A macacae
+  1.69	1	1	S	22609	            Porphyromonas_A gingivalis
+  3.39	2	0	F	1348	        Dysgonomonadaceae
+  3.39	2	1	G	1349	          Dysgonomonas
+  1.69	1	1	S	25343	            Dysgonomonas sp000711235
+  1.69	1	0	F	389	        Marinifilaceae
+  1.69	1	0	G	967	          Butyricimonas
+  1.69	1	1	S	7982	            Butyricimonas synergistica
+ 16.95	10	0	P	60	  Bacillota_I
+ 16.95	10	4	C	61	    Bacilli_A
+  6.78	4	0	O	62	      Erysipelotrichales
+  3.39	2	0	F	63	        Erysipelotrichaceae
+  1.69	1	0	G	435	          Bulleidia
+  1.69	1	1	S	30230	            Bulleidia timonensis
+  1.69	1	1	G	7874	          Allobaculum
+  3.39	2	1	F	71	        Coprobacillaceae
+  1.69	1	1	G	16493	          Catenibacterium
+  1.69	1	0	O	110	      Lactobacillales
+  1.69	1	0	F	111	        Streptococcaceae
+  1.69	1	1	G	112	          Streptococcus
+  1.69	1	0	O	733	      Paenibacillales
+  1.69	1	0	F	2417	        NBRC-103111
+  1.69	1	1	G	2418	          Paenibacillus_E
+ 13.56	8	0	P	701	  Actinomycetota
+ 10.17	6	0	C	746	    Actinomycetes
+  6.78	4	0	O	747	      Actinomycetales
+  5.08	3	1	F	7390	        Bifidobacteriaceae
+  3.39	2	2	G	20384	          Bifidobacterium
+  1.69	1	0	F	748	        Actinomycetaceae
+  1.69	1	0	G	21032	          Actinomyces
+  1.69	1	1	S	21058	            Actinomyces graevenitzii
+  3.39	2	0	O	915	      Mycobacteriales
+  3.39	2	0	F	916	        Mycobacteriaceae
+  3.39	2	2	G	917	          Corynebacterium
+  3.39	2	0	C	702	    Coriobacteriia
+  3.39	2	0	O	703	      Coriobacteriales
+  1.69	1	0	F	704	        Eggerthellaceae
+  1.69	1	1	G	21382	          Adlercreutzia_A
+  1.69	1	0	F	21415	        Coriobacteriaceae
+  1.69	1	1	G	21416	          Collinsella
+  8.47	5	0	P	38	  Bacillota_C
+  8.47	5	1	C	39	    Negativicutes
+  3.39	2	0	O	341	      Selenomonadales
+  3.39	2	0	F	342	        Selenomonadaceae
+  1.69	1	1	G	1162	          Mitsuokella
+  1.69	1	0	G	17020	          Selenomonas_C
+  1.69	1	1	S	17021	            Selenomonas_C bovis
+  1.69	1	0	O	40	      Veillonellales
+  1.69	1	0	F	448	        Dialisteraceae
+  1.69	1	1	G	449	          Dialister
+  1.69	1	0	O	166	      Acidaminococcales
+  1.69	1	0	F	167	        Acidaminococcaceae
+  1.69	1	0	G	7969	          Succiniclasticum
+  1.69	1	1	S	17066	            Succiniclasticum ruminis
+  5.08	3	0	P	8	  Pseudomonadota
+  5.08	3	1	C	9	    Gammaproteobacteria
+  1.69	1	0	O	75	      Burkholderiales
+  1.69	1	0	F	1077	        Neisseriaceae
+  1.69	1	0	G	10889	          Kingella_B
+  1.69	1	1	S	10894	            Kingella_B_563201 oralis
+  1.69	1	0	O	10	      Enterobacterales
+  1.69	1	0	F	11	        Pasteurellaceae
+  1.69	1	0	G	12	          Haemophilus_D
+  1.69	1	1	S	8766	            Haemophilus_D_734546 influenzae_H
+  1.69	1	0	P	691	  Desulfobacterota_G
+  1.69	1	0	C	692	    Desulfovibrionia
+  1.69	1	0	O	693	      Desulfovibrionales
+  1.69	1	0	F	694	        Desulfovibrionaceae
+  1.69	1	1	G	14193	          Bilophila
+  1.69	1	0	P	1169	  Spirochaetota
+  1.69	1	0	C	1170	    Spirochaetia
+  1.69	1	0	O	4210	      Sphaerochaetales
+  1.69	1	0	F	4211	        Sphaerochaetaceae
+  1.69	1	0	G	23446	          Sphaerochaeta
+  1.69	1	1	S	23448	            Sphaerochaeta associata
+  1.69	1	0	P	306	  Bacillota_B
+  1.69	1	0	C	1002	    Dehalobacteriia
+  1.69	1	0	O	1003	      Dehalobacteriales
+  1.69	1	0	F	1004	        Dehalobacteriaceae
+  1.69	1	0	G	27242	          Dehalobacterium
+  1.69	1	1	S	27243	            Dehalobacterium formicoaceticum
+  1.69	1	0	P	297	  Verrucomicrobiota
+  1.69	1	0	C	384	    Verrucomicrobiae
+  1.69	1	0	O	385	      Verrucomicrobiales
+  1.69	1	0	F	386	        Akkermansiaceae
+  1.69	1	1	G	387	          Akkermansia

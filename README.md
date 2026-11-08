@@ -2,129 +2,66 @@
 
 [![tests](https://github.com/kardokhk/TaxoBench/actions/workflows/ci.yml/badge.svg)](https://github.com/kardokhk/TaxoBench/actions/workflows/ci.yml)
 
-TaxoBench is a benchmark for taxonomic classifiers of rRNA amplicon sequences. It
-runs every classifier on the same simulated and physical mock communities, with the
-same reference data and the same ground truth, and scores the outputs with one
-evaluator. It was built for the [Taxonova](https://github.com/kardokhk/taxonova)
-paper and is maintained alongside Taxonova; any classifier can be added.
+TaxoBench benchmarks taxonomic classifiers of rRNA amplicon sequences against a
+reference-aware truth. Each query's truth is resolved against the reference the
+classifier was given: where that reference has no name for the query's lineage, the
+query is novel at that rank and naming it counts as over-classification. Two releases of
+a classifier are compared with paired confidence intervals. It was built for
+[Taxonova](https://github.com/kardokhk/taxonova); any classifier can be added.
 
-## What it provides
-
-| | |
-|---|---|
-| Regions | 16S V4, V3-V4, V5-V7, whole 16S (V1-V9), rRNA operon (RRN) |
-| Tier 1, physical mocks | Mockrobiota-16S, MBARC-26, gut mock, vaginal mock |
-| Tier 2, biome-simulated mocks | nine biomes (digestive system, lung, sputum, skin, soil, plants, marine, ocean, mixed) with MGnify abundances; RRN counterparts from GROND |
-| Tier 3, real-world studies | amplicon profiles compared with paired shotgun profiles (gut, soil and vaginal in the paper; three more studies registered) |
-| Over-classification test | leave-one-clade-out (LOCO) reference hold-outs |
-| Classifiers | Taxonova, BLASTn and VSEARCH (QIIME 2), QIIME 2 naive Bayes, IDTAXA, SPINGO, Kraken 2, MAPseq |
-| Metrics | precision, recall, F-measure, detection rate, specificity, L1 and L2 abundance error per rank; Jaccard, Bray-Curtis and Aitchison for the real-world tier |
-
-Details: [docs/benchmark.md](docs/benchmark.md).
-
-## Quick start
-
-Scoring needs only Python 3.11 and a few packages. Running classifiers needs the
-conda environments in [docs/environments.md](docs/environments.md).
+## Install
 
 ```bash
 git clone https://github.com/kardokhk/TaxoBench && cd TaxoBench
 python -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[test]"
+taxobench --help
 ```
 
-Score classifier outputs against a mock. The repository includes one published cell
-(gut mock, V5-V7, eight classifiers) as an example:
+Python 3.10 or later; scoring needs only numpy, pandas and scipy.
+
+## How it works
+
+A **tier** is a set of query sequences with their truth, written as tables in one data
+model; a **run** is one classifier release on one tier's queries. `taxobench` converts
+mock communities into a tier, runs or ingests classifier outputs, scores them and
+compares releases:
 
 ```bash
-python scripts/04_evaluate.py \
-  --results-dir tests/fixtures/gutmock_V5-V7/results \
-  --truth-dir   tests/fixtures/gutmock_V5-V7/data \
-  --out-dir     results/example
+taxobench import-mocks --data-dir data --ref-dir data/ref_dbs --out tiers/mocks
+taxobench run --plan plan.json                               # classifiers, fail closed
+taxobench score --tier tiers/mocks --runs runs/* --out scores
+taxobench compare --a <run_id A> --b <run_id B> --tier tiers/mocks --runs runs/* \
+  --plan compare_plan.json --out reports/A-vs-B
 ```
 
-The scores are in `results/example/all_metrics.csv` (one row per mock, region,
-classifier, parameter set, rank and metric) and in one table per metric under
-`results/example/by_metric/`. Specificity needs the reference taxonomy (`--ref-dir`,
-see [docs/data.md](docs/data.md)); without it the specificity columns are empty. To score your
-own classifier, write its output as
-`<results>/<mock>/<region>/<classifier>/<parameters>/taxonomy_final.tsv` with the
-columns `Feature ID`, `Taxon` (`d__...; p__...; ...; s__...`) and `Confidence`.
+| | |
+|---|---|
+| Truth | per rank: known, unresolvable (a tie, never truncated), novel (no name in the reference), unscorable |
+| Calls | named, group, no call, out of vocabulary (a name the run's reference lacks or names ambiguously) |
+| Metrics | precision, recall, F1, Edgar accuracy, misclassification, under- and over-classification rates, coverage; precision-coverage curves and AURC; calibration (ECE, Brier); per-sample L1, Bray-Curtis, weighted UniFrac and Aitchison |
+| Uncertainty | 95% cluster bootstrap CI for every rate; paired bootstrap, McNemar and Wilcoxon tests between releases, with a pre-declared confirmatory family and guardrails |
+| Adapters | Taxonova, BLAST and VSEARCH (QIIME 2), QIIME 2 naive Bayes, IDTAXA, SPINGO, Kraken 2, MAPseq, and any `Feature ID, Taxon, Confidence` table |
+| Mock communities | Mockrobiota-16S, MBARC-26, gut and vaginal mocks, nine MGnify biome mocks and their rRNA operon counterparts; regions V4, V3-V4, V5-V7, V1-V9 and the operon |
 
-Run a full cell (one mock, one region, all classifiers). The mock inputs ship in
-`mocks/inputs/`; the reference databases are placed as described in [docs/data.md](docs/data.md):
-
-```bash
-taxonova models download all                          # Taxonova 26.11.2 or later
-python scripts/01a_unpack_mock_inputs.py --mock-name mbarc26
-python scripts/02_generate.py --mock-name mbarc26 --regions V4
-python scripts/03_assign.py   --mock-name mbarc26 --regions V4 --n-jobs 2
-python scripts/04_evaluate.py --mock-name mbarc26 --regions V4
-```
-
-`03_assign.py --dry-run` prints the commands without running them. Steps 02 to 05
-fail closed: a failed or partial classifier run leaves no `taxonomy_final.tsv`
-behind, `04_evaluate.py` refuses any output that does not hold every query ID
-exactly once, and every step exits with a non-zero status when anything failed. The default
-Taxonova configuration (`configs/classifiers_default.json`) uses the current release,
-its model ids (`v4`, `v3v4`, `v5v7`, `16s`, `operon`) and each model's calibrated
-per-rank thresholds.
-Scoring uses the v2 rules by default ([docs/scoring.md](docs/scoring.md)).
-
-## Reproducing the paper
-
-The paper used Taxonova 1.0.0 with the v1.0.0 checkpoints and the v1 scoring rules.
-`configs/classifiers_paper.json` pins that configuration: the checkpoint files with
-their checksums, a threshold of 0.5 at every rank above species and 0.7 at species.
-Install Taxonova 1.0.0 with `scripts/install_taxonova_paper.sh`
-([docs/environments.md](docs/environments.md)).
-
-```bash
-python scripts/02_generate.py --mock-name mbarc26 --regions V4 --n-wildcard
-python scripts/03_assign.py   --mock-name mbarc26 --regions V4 \
-  --params-config classifiers_paper.json --results-dir results_paper/mbarc26
-python scripts/04_evaluate.py --mock-name mbarc26 --regions V4 --rules v1 \
-  --results-dir results_paper --out-dir results_paper/evaluation
-```
-
-The v1 truth treats an `N` in a source sequence as a wildcard, hence `--n-wildcard`
-(also on `02b_generate_v5v7.py`). The exception is gut mock V5-V7, which the paper
-scored on a corrected truth, included in `tests/fixtures/gutmock_V5-V7/`. A
-regenerated cell need not match the published one: the simulation settings of each
-published cell are not recorded here, and the reads depend on the ART, QIIME 2 and
-DADA2 versions ([docs/scoring.md](docs/scoring.md)). On the classifier outputs and
-truth behind the paper, `--rules v1` reproduces the published metric tables with a
-maximum absolute difference of 0. The repository includes one published cell (gut
-mock, V5-V7), whose 240 values `tests/test_regression_v1.py` checks. Results are
-reported in the paper and are not repeated here.
-
-## Adding a classifier or a mock
-
-A classifier needs an entry in the classifier configs, a command builder in
-`src/generate_commands.py` and a parser `src/process_<tool>_output.py` that writes
-`taxonomy_final.tsv`. A mock needs its `<mock>_seqs.fasta` and `<mock>_taxa.txt` in
-`mocks/inputs/` and an entry in `configs/mocks.json`. See
-[CONTRIBUTING.md](.github/CONTRIBUTING.md).
+The commands, the data model, the run specs and the metrics are described in
+[docs/taxobench.md](docs/taxobench.md); building the mock communities in
+[mocks/README.md](mocks/README.md).
 
 ## Layout
 
 | Path | Content |
 |---|---|
-| `scripts/` | numbered pipeline steps (`01` prepare to `06` runtime) and `loco/` |
-| `src/` | command builders, output parsers, evaluator and scoring rules |
-| `configs/` | paths, regions, mocks, classifier panels (`default`, `paper`, `sweep`) |
-| `mocks/` | mock community inputs behind the published cells (`inputs/`); MGnify abundance retriever and snapshot behind the biome mocks (`mgnify/`) |
-| `tests/` | unit and regression tests, with a small fixture |
-| `docs/` | benchmark design, scoring rules, pipeline, environments, data, real-world tier, LOCO |
+| `src/taxobench/` | the package: data model, adapters, runner, metrics, statistics, comparison, command line |
+| `mocks/` | mock community inputs, MGnify abundances and the scripts that build the mock cells |
+| `tests/` | known-answer, statistics, data model, command line and adapter golden tests; mock builder tests in `tests/mocks/` |
+| `docs/` | reference for the commands, data model, run specs and metrics |
 
 ## Tests
 
 ```bash
-cd tests && python -m unittest discover -s . -p "test_*.py"
+python -m pytest
 ```
-
-One test rebuilds the gut mock V5-V7 truth and runs only when the benchmark data are
-present (`TAXOBENCH_DATA_DIR`).
 
 ## Citation
 

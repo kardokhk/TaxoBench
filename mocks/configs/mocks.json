@@ -1,0 +1,142 @@
+{
+  "mockrobiota": {
+    "mockrobiota-16S": {
+      "description": "Concatenated Mockrobiota 16S mocks",
+      "input_seqs": "mockrobiota-16S_seqs.fasta",
+      "input_taxa": "mockrobiota-16S_taxa.txt",
+      "regions_v": [
+        "V4",
+        "V3-V4",
+        "V5-V7",
+        "V1-V9"
+      ],
+      "rrn_counterpart": null,
+      "note": "Mockrobiota does not have a full-rRNA-operon counterpart; RRN evaluation uses the GTDB-derived gtdb_* mocks below."
+    }
+  },
+  "extra_mocks": {
+    "mbarc26": {
+      "description": "MBARC-26 mock community (Singer 2016 Sci. Data)",
+      "input_seqs": "mbarc26_seqs.fasta",
+      "input_taxa": "mbarc26_taxa.txt",
+      "regions_v": [
+        "V4",
+        "V3-V4",
+        "V5-V7",
+        "V1-V9"
+      ],
+      "rrn_counterpart": null,
+      "source": "NCBI RefSeq NR_ 16S records, fetched 2026-05-10 by mocks/scripts/01b_prepare_extra_mocks.py",
+      "truth_kind": "uneven_4_orders",
+      "note": "23 bacteria + 3 archaea spanning 10 phyla. Reference 16S is one representative full-length NR_ record per species (no rrn-copy multiplicity). Singer reports DNA-mass abundance spanning 4 orders of magnitude; for taxobench's Jaccard / detection-rate metrics this is fine, but L1/L2 abundance error is not meaningful here (truth is per-species, not per-rep_seq)."
+    },
+    "gutmock": {
+      "description": "Gut mock community",
+      "input_seqs": "gutmock_seqs.fasta",
+      "input_taxa": "gutmock_taxa.txt",
+      "regions_v": [
+        "V4",
+        "V3-V4",
+        "V5-V7",
+        "V1-V9"
+      ],
+      "rrn_counterpart": null,
+      "note": "Part of the published panel. Inputs are in mocks/inputs/ (01a_unpack_mock_inputs.py); not built by the 01 scripts."
+    },
+    "vaginalmock": {
+      "description": "Vaginal mock community",
+      "input_seqs": "vaginalmock_seqs.fasta",
+      "input_taxa": "vaginalmock_taxa.txt",
+      "regions_v": [
+        "V4",
+        "V3-V4",
+        "V5-V7",
+        "V1-V9"
+      ],
+      "rrn_counterpart": null,
+      "note": "Part of the published panel. Inputs are in mocks/inputs/ (01a_unpack_mock_inputs.py); not built by the 01 scripts."
+    }
+  },
+  "biomes": {
+    "sputum": {
+      "v_seqs": "biome_sputum_seqs.fasta",
+      "v_taxa": "biome_sputum_taxa.txt",
+      "rrn_counterpart": "gtdb_sputum"
+    },
+    "soil": {
+      "v_seqs": "biome_soil_seqs.fasta",
+      "v_taxa": "biome_soil_taxa.txt",
+      "rrn_counterpart": "gtdb_soil"
+    },
+    "skin": {
+      "v_seqs": "biome_skin_seqs.fasta",
+      "v_taxa": "biome_skin_taxa.txt",
+      "rrn_counterpart": "gtdb_skin"
+    },
+    "lung": {
+      "v_seqs": "biome_lung_seqs.fasta",
+      "v_taxa": "biome_lung_taxa.txt",
+      "rrn_counterpart": "gtdb_lung"
+    },
+    "digestive_system": {
+      "v_seqs": "biome_digestive_system_seqs.fasta",
+      "v_taxa": "biome_digestive_system_taxa.txt",
+      "rrn_counterpart": "gtdb_digestive_system"
+    },
+    "mixed": {
+      "v_seqs": "biome_mixed_seqs.fasta",
+      "v_taxa": "biome_mixed_taxa.txt",
+      "rrn_counterpart": "gtdb_mixed"
+    },
+    "marine": {
+      "v_seqs": "biome_marine_seqs.fasta",
+      "v_taxa": "biome_marine_taxa.txt",
+      "rrn_counterpart": "gtdb_marine"
+    },
+    "plants": {
+      "v_seqs": "biome_plants_seqs.fasta",
+      "v_taxa": "biome_plants_taxa.txt",
+      "rrn_counterpart": "gtdb_plants"
+    },
+    "ocean": {
+      "v_seqs": "biome_ocean_seqs.fasta",
+      "v_taxa": "biome_ocean_taxa.txt",
+      "rrn_counterpart": "gtdb_ocean"
+    }
+  },
+  "matrix": {
+    "v_regions": [
+      "V4",
+      "V3-V4",
+      "V5-V7",
+      "V1-V9"
+    ],
+    "rrn_region": "RRN",
+    "v_mocks": [
+      "mockrobiota-16S",
+      "biome_sputum",
+      "biome_soil",
+      "biome_skin",
+      "biome_lung",
+      "biome_digestive_system",
+      "biome_mixed",
+      "biome_marine",
+      "biome_plants",
+      "biome_ocean",
+      "mbarc26",
+      "gutmock",
+      "vaginalmock"
+    ],
+    "rrn_mocks": [
+      "gtdb_sputum",
+      "gtdb_soil",
+      "gtdb_skin",
+      "gtdb_lung",
+      "gtdb_digestive_system",
+      "gtdb_mixed",
+      "gtdb_marine",
+      "gtdb_plants",
+      "gtdb_ocean"
+    ]
+  }
+}
